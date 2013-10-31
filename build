@@ -1,0 +1,3 @@
+#!/usr/bin/perl
+
+`cd src; javac *.java; mv *.class ../bin`;
