@@ -2,19 +2,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.lang.String;
-import java.util.List;
+import java.util.LinkedList;
 
 
 public abstract class Parser {
 
-	private String modeID;
-	private String fileName;
-	private File inputFile;
-	private BufferedReader inputReader;
-
-	public void setModeID( String modeID ) {
-		this.modeID = modeID;
-	}
+	protected LinkedList<String> stableModeList;
+	protected String fileName;
+	protected File inputFile;
+	protected BufferedReader inputReader;
 
 	public void setFileName( String fileName ) throws java.io.FileNotFoundException{
 		this.fileName = fileName;
@@ -23,8 +19,8 @@ public abstract class Parser {
 		this.inputReader = new BufferedReader(new FileReader( this.inputFile ));
 	}
 
-	public String getModeID() {
-		return this.modeID;
+	public LinkedList<String> getStableModeList() {
+		return this.stableModeList;
 	}
 
 	public String getFileName() {
@@ -35,10 +31,11 @@ public abstract class Parser {
 		this.inputReader.close();
 	}
 
-	public abstract List<String> extractResetList();
-	public abstract List<String> extractGuardList();
-	public abstract List<String> extractODEs();
-	public abstract List<String> extractDOEs();
+	public abstract LinkedList<String> parseVariableList();
+	public abstract LinkedList<String> parseResetList( String ModeID );
+	public abstract LinkedList<String> parseGuardList( String ModeID );
+	public abstract LinkedList<String> parseODEList( String ModeID );
+	public abstract LinkedList<String> parseDOEList( String ModeID );
 
 }
 

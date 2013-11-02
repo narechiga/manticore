@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.*;
 
 class EITool {
 
@@ -15,18 +16,31 @@ class EITool {
 		} else {
 			System.out.println("Input argument is: " + args[0] );
 		}
-
 		
+		/* * * Everything below is still in testing! * * */
+		/* Parse the input file */	
 		try {
-			Preprocessor myPreProc = new Preprocessor( args[0] );
-			Parser myParser = new KeYmaeraParser("M1", args[0]);
+			KeYmaeraParser myParser = new KeYmaeraParser( args[0] );
 
-			myPreProc.die();
+			LinkedList<String> listOfModes = myParser.parseStableModes();
+			System.out.println("Stable modes are: ");
+			System.out.println(listOfModes);
+
 			myParser.die();
 		} catch ( Exception ex ) {
 			ex.printStackTrace();
 		}
-		
+
+		/* Generate an SoS invariant */
+		/* * * Artificially generate a mode, because mode parsing is not yet functional * * */
+		Mode myMode = new Mode("M1");
+		myMode.addVariable("x1"); myMode.addVariable("x2"); myMode.addVariable("x3");
+		myMode.addODE("-x1^3 - x1*x3^2)*(x3^2 + 1)");
+		myMode.addODE("(-x2 - x1^2*x2)*(x3^2 + 1)");
+		myMode.addODE("(-x3 + 3*x1^2*x3)*(x3^2 + 1) - 3*x3");
+
+		SoSLyapunovCandidateGenerator candidateGen = new SoSLyapunovCandidateGenerator( myMode );
+		candidateGen.generateCandidate();
 
 	} 
 
