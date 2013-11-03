@@ -6,11 +6,18 @@ import java.util.regex.*;
 
 public class KeYmaeraParser extends Parser {
 
+	boolean debugMode;
+	
 	// Constructor
 	public KeYmaeraParser ( String fileName) throws FileNotFoundException {
 		this.setFileName(fileName);
-
 		this.stableModeList = new LinkedList<String>();
+		this.debugMode = false;
+	 }
+	public KeYmaeraParser ( String fileName, boolean debugMode ) throws FileNotFoundException {
+		this.setFileName(fileName);
+		this.stableModeList = new LinkedList<String>();
+		this.debugMode = debugMode;
 	 }
 
 	// inputReader is the name of the BufferedReader that points to the file we want
@@ -60,7 +67,9 @@ public class KeYmaeraParser extends Parser {
                 while ( nextLine != null ) { 
                         Matcher declarationMatcher = declarationPattern.matcher( nextLine );
 
-                        System.out.println("Line was: " + nextLine );
+                        if ( debugMode ) {
+                        	System.out.println("(KeYmaera parser@parseStableModes) Line was: " + nextLine );
+			}
 
                         while ( declarationMatcher.find() ) { 
                                 String declaration = declarationMatcher.group();
@@ -68,16 +77,18 @@ public class KeYmaeraParser extends Parser {
                                 int end = declarationMatcher.end();
                                 String mode;
 
-                                System.out.println("Found declaration match " + declaration );
-                                System.out.println("Starting at " + start );
-                                System.out.println("Ending at " + end );
-
                                 Matcher modeMatcher = modePattern.matcher( declaration );
                                 modeMatcher.find();
                                 mode = modeMatcher.group();
                                 mode = mode.substring(1,mode.length() - 1);
-                                System.out.println("Found mode " + mode );
                                 this.stableModeList.addLast( mode );
+
+                                if ( debugMode ) {
+                                	System.out.println("Found declaration match " + declaration );
+                                	System.out.println("Starting at " + start );
+                                	System.out.println("Ending at " + end );
+                                	System.out.println("Found mode " + mode );
+				}
                         }   
                         nextLine = inputReader.readLine();
 

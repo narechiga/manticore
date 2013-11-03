@@ -35,12 +35,26 @@ class EITool {
 		/* * * Artificially generate a mode, because mode parsing is not yet functional * * */
 		Mode myMode = new Mode("M1");
 		myMode.addVariable("x1"); myMode.addVariable("x2"); myMode.addVariable("x3");
-		myMode.addODE("-x1^3 - x1*x3^2)*(x3^2 + 1)");
+		myMode.addODE("(-x1^3 - x1*x3^2)*(x3^2 + 1)");
 		myMode.addODE("(-x2 - x1^2*x2)*(x3^2 + 1)");
 		myMode.addODE("(-x3 + 3*x1^2*x3)*(x3^2 + 1) - 3*x3");
 
-		SoSLyapunovCandidateGenerator candidateGen = new SoSLyapunovCandidateGenerator( myMode );
-		candidateGen.generateCandidate();
+		//myMode.addVariable("firstVar"); myMode.addVariable("secondVar");
+		//myMode.addODE("secondVar"); myMode.addODE("-firstVar");
+
+		SoSLyapunovCandidateGenerator candidateGenerator = new SoSLyapunovCandidateGenerator( myMode );
+		MathematicaCandidateValidator candidateValidator = new MathematicaCandidateValidator( myMode );
+
+		String lyapCandidate = candidateGenerator.generateCandidate();
+		System.out.println("A candidate Lyapunov function is: " + lyapCandidate);
+
+		/* Conditions can be checked separately */
+		/*candidateValidator.checkLyapunovPositivity( lyapCandidate );
+		candidateValidator.checkLyapunovDerivativeNegativity( lyapCandidate );*/
+		/* or all at once */
+
+		boolean isLyapunov = candidateValidator.checkLyapunov( lyapCandidate );
+		System.out.println("The result of checking the Lyapunov conditions is: " + isLyapunov);
 
 	} 
 

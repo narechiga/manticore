@@ -1,24 +1,62 @@
 import java.io.*;
 import java.util.*;
 import java.text.*;
+import java.lang.*;
+import java.util.regex.*;
 
 
 
 class SoSLyapunovCandidateGenerator extends CandidateGenerator {
 
+	boolean debugMode;
+
 	public SoSLyapunovCandidateGenerator( Mode myMode ) {
 		this.myMode = myMode;
+		this.debugMode = false;
+	}
+	public SoSLyapunovCandidateGenerator( Mode myMode, boolean debugMode ) {
+		this.myMode = myMode;
+		this.debugMode = debugMode;
 	}
 
 	public String generateCandidate() {
-		String candidate;
+		String lyapunovCandidate = "";
 
-		candidate = generateQueryFile();
+		try {
+			generateQueryFile();
 
-		return candidate;
+			ProcessBuilder builder = new ProcessBuilder("matlab", "-nojvm", "-nosplash", "< ./scratch/SoSLyapunovQuery.m");
+			builder.redirectErrorStream(true);
+			Process process = builder.start();
+			InputStream stdout = process.getInputStream();
+			BufferedReader reader = new BufferedReader (new InputStreamReader(stdout));
+
+			String line;
+			Pattern lyapunovCandidatePattern = Pattern.compile("V = .+");
+
+			while ((line = reader.readLine()) != null) {
+				if ( debugMode ) {
+					System.out.println ("Matlab output: " + line);
+				}
+
+				Matcher lyapunovCandidateMatcher = lyapunovCandidatePattern.matcher( line );
+				if ( lyapunovCandidateMatcher.find() ) {
+					lyapunovCandidate = lyapunovCandidateMatcher.group();
+
+					lyapunovCandidate = lyapunovCandidate.replace("V = ", "");
+					lyapunovCandidate = lyapunovCandidate.replace(">","");
+				}
+			}
+
+		} catch ( Exception ex ) {
+			ex.printStackTrace();
+		}
+
+
+		return lyapunovCandidate;
 	}
 
-	private String generateQueryFile() {
+	private void generateQueryFile() throws Exception {
 
 		// Write a timestamp at the top
 		String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
@@ -86,18 +124,23 @@ class SoSLyapunovCandidateGenerator extends CandidateGenerator {
 
 		/*********************************************************/
 		/* * * * * Clean up and return * * * * */
-		fileContents = fileContents + "% Clean result and return\n";
 		fileContents = fileContents + "P = clean(double(P),1e-3); epsilon = double(epsilon);\n";
 		fileContents = fileContents + "V = X'*P*X;\n";
-		fileContents = fileContents + "sdisplay(V);";
+		fileContents = fileContents + "V = sdisplay(V); V = V{1};";
+		fileContents = fileContents + "fprintf('V = %s', V);";
 		//fileContents = fileContents + "dV = jacobian(V,X)*f;\n";
 		//fileContents = fileContents + "sdisplay(sosd(-dV));\n";
 		/*=======================================================*/
 		/*********************************************************/
 
-		System.out.println(fileContents);
-		return "a query file";
+		if ( debugMode ) {
+			System.out.println(fileContents);
+		}
+		PrintWriter writer = new PrintWriter("scratch/SoSLyapunovQuery.m", "UTF-8");
+		writer.println(fileContents);
+		writer.close();
 
+		//return "a query file";
 	}
 
 
