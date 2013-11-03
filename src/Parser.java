@@ -12,11 +12,15 @@ public abstract class Parser {
 	protected File inputFile;
 	protected BufferedReader inputReader;
 
-	public void setFileName( String fileName ) throws java.io.FileNotFoundException{
+	public void setFileName( String fileName ) {//throws FileNotFoundException{
 		this.fileName = fileName;
 
 		this.inputFile = new File( this.fileName );
-		this.inputReader = new BufferedReader(new FileReader( this.inputFile ));
+		try {
+			this.inputReader = new BufferedReader(new FileReader( this.inputFile ));
+		} catch ( Exception ex ) {
+			ex.printStackTrace();
+		}
 	}
 
 	public LinkedList<String> getStableModeList() {
@@ -27,14 +31,23 @@ public abstract class Parser {
 		return this.fileName;
 	}
 
-	public void die() throws java.io.IOException {
-		this.inputReader.close();
+	public void die() {
+		try {
+			this.inputReader.close();
+		} catch ( Exception ex ) {
+			ex.printStackTrace();
+		}
+	}
+
+	public void rewindFile() {
+		this.die();
+		this.setFileName( this.fileName );
 	}
 
 	public abstract LinkedList<String> parseVariableList();
 	public abstract LinkedList<String> parseResetList( String ModeID );
 	public abstract LinkedList<String> parseGuardList( String ModeID );
-	public abstract LinkedList<String> parseODEList( String ModeID );
+	public abstract void parseODEs( Mode thisMode );
 	public abstract LinkedList<String> parseDOEList( String ModeID );
 
 }
