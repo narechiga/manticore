@@ -1,0 +1,3 @@
+> Make proof generator automatically declare hycut, barrier certs, etc
+> Make proof generator extract user settings
+> Make proof generator detect multiple assignments on the same line (in preamble)

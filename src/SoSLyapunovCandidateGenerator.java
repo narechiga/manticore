@@ -4,8 +4,6 @@ import java.text.*;
 import java.lang.*;
 import java.util.regex.*;
 
-
-
 class SoSLyapunovCandidateGenerator extends CandidateGenerator {
 
 	boolean debugMode;
@@ -142,7 +140,5 @@ class SoSLyapunovCandidateGenerator extends CandidateGenerator {
 
 		//return "a query file";
 	}
-
-
 
 }

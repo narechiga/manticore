@@ -1,6 +1,5 @@
-import java.util.LinkedList;
 import java.io.*;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.regex.*;
 
 
@@ -35,12 +34,192 @@ public class KeYmaeraParser extends Parser {
 		return resetList;
 	}
 
-	public LinkedList<String> parseGuardList( String modeID ){
+	public void parseGuardList( Mode thisMode ){
 		LinkedList<String> guardList = new LinkedList<String>();
-		guardList.addLast("outgoing!");
 
-		return guardList;
+		/* Pattern matching setup */
+		Pattern thisModeAlertPattern = Pattern.compile("M(\\s)*=(\\s)*" + thisMode.getID());
+		Pattern modeAlertPattern = Pattern.compile("M(\\s)*=");
+		LinkedList<Pattern> varPlusAssignStarPatterns = generateVarPlusAssignStarPatterns( thisMode );
+		//LinkedList<Pattern> varPlusPatterns = generateVarPlusPatterns( thisMode );
+		Pattern plusPattern = Pattern.compile(Pattern.quote("_plus"));
+		Pattern questionMarkPattern = Pattern.compile(Pattern.quote("?"));
+		Pattern openBracePattern = Pattern.compile("\\{");
+		Pattern assignmentPattern = Pattern.compile(Pattern.quote(":="));
+		System.out.println( varPlusAssignStarPatterns );
+
+		/* Parser is a state machine */
+		final int INIT = 0;
+		final int GETSTARASSIGNS = 1;
+		final int GETQUESTION = 2;
+		final int GETGUARDS = 3;
+		final int TERMINATE = 4;
+
+		int STATE = 0;
+		this.rewindFile();
+		String line = "";
+		
+		try { line = inputReader.readLine(); } catch ( Exception ex ) { ex.printStackTrace(); }
+		while( (line != null) & ( STATE != TERMINATE ) ) {
+			System.out.println("Running parser loop...");
+
+			Matcher thisModeAlert = thisModeAlertPattern.matcher( line );
+			//Matcher modeAlert = modeAlertPattern.matcher( line );
+			Matcher questionMark = questionMarkPattern.matcher( line );
+			Matcher openBrace = openBracePattern.matcher( line );
+			Matcher assignment = assignmentPattern.matcher( line );
+			//Matcher odeStructure = odeStructurePattern.matcher( line );
+			//Matcher closeBrace = closeBracePattern.matcher( line );
+			//**
+			LinkedList<Matcher> starAssign = new LinkedList<Matcher>();
+			Iterator<Pattern> sap = varPlusAssignStarPatterns.iterator();
+			while ( sap.hasNext() ) {
+				starAssign.add( sap.next().matcher( line ) );
+			}
+			//**
+
+			boolean thisModeAlertFlag = thisModeAlert.find();
+			//boolean modeAlertFlag = modeAlert.find();
+			boolean questionFlag = questionMark.find();
+			boolean openBraceFlag = openBrace.find();
+			boolean assignmentFlag = assignment.find();
+			//boolean odeStructureFlag = odeStructure.find();
+			//boolean closeBraceFlag = closeBrace.find();
+			LinkedList<Boolean> starAssignFlags = new LinkedList<Boolean>();
+			Iterator<Matcher> sa = starAssign.iterator();
+			while ( sa.hasNext() ) {
+				starAssignFlags.add( sa.next().find() );
+			}
+
+			if ( STATE == INIT ) {
+				if ( thisModeAlertFlag ) {
+					STATE = GETSTARASSIGNS;
+					System.out.println("Transition to state GETSTARASSIGNS on input: ");
+					System.out.println( line );
+				}
+			}
+
+			if ( STATE == GETSTARASSIGNS ){
+				if ( openBraceFlag ) {
+					STATE = INIT;
+					System.out.println("Transition to state INIT on input: ");
+					System.out.println( line );
+				}
+				if ( orList(starAssignFlags) ) {
+					STATE = GETQUESTION;
+					System.out.println("Transition to state GETQUESTION on input: ");
+					System.out.println( line );
+				}
+			}
+			if ( STATE == GETQUESTION ) {
+				if ( questionFlag ) {
+					STATE = GETGUARDS;
+					System.out.println("Transition to state GETGUARDS on input: ");
+					System.out.println( line );
+				}
+			}
+			if ( STATE == GETGUARDS ) {
+				System.out.println( "In state GETGUARDS...");
+				System.out.println( line );
+
+				// split the string on ";"
+				LinkedList<String> candidates = new LinkedList<String>();
+				String [] components = line.split(";");
+				for ( int i = 0; i < components.length; i = i + 1 ) {
+					// discard bits that include ":="
+					// discard bits that include "_plus"
+					// --> TODO: in the future, be able to split logical connectives with things that include plus
+					Matcher localAssignment = assignmentPattern.matcher( components[i] );
+					Matcher localPlus = plusPattern.matcher( components[i] );
+					Matcher localModeAlert = modeAlertPattern.matcher( components[i] );
+
+					if( (!localAssignment.find() ) & (!localPlus.find()) & (!localModeAlert.find()) ) {
+						thisMode.guards.add( components[i].replace("?",""));
+						System.out.println("Detected guard: "+ components[i].replace("?","") );
+					} else {
+						System.out.println("Discarding string: " + components[i] );
+					}
+			
+				}
+
+				if ( assignmentFlag ) {
+					STATE = TERMINATE;
+					System.out.println("Transition to state TERMINATE on input: ");
+					System.out.println( line );
+				}
+			}
+		//	TODO: Resets actually requires looking at which modes you can come from
+		//	if ( STATE == GETRESETS ) {
+		//		// split the string on ";"
+		//		LinkedList<String> candidates = new LinkedList<String>();
+		//		String [] components = line.split(";");
+		//		for ( int i = 0; i < components.length; i = i + 1 ) {
+		//			// discard bits that include ":="
+		//			// collect only bits that include "_plus"
+		//			Matcher localAssignment = assignmentPattern.matcher( components[i] );
+		//			Matcher localPlus = plusPattern.matcher( components[i] );
+		//			Matcher localModeAlert = modeAlertPattern.matcher( components[i] );
+
+		//			if( (!localAssignment.find() ) & (localPlus.find()) & (!localModeAlert.find()) ) {
+		//				thisMode.guards.add( components[i].replace("?",""));
+		//				System.out.println("Detected reset: "+ components[i].replace("?","") );
+		//			} else {
+		//				System.out.println("Discarding string: " + components[i] );
+		//			}
+		//	
+		//		}
+
+
+		//	}
+
+			if ( STATE == TERMINATE ) {
+				STATE = TERMINATE;
+			}
+
+			try { line = inputReader.readLine(); } catch ( Exception ex ) { ex.printStackTrace(); }
+		}
+
 	}
+
+	private LinkedList<Pattern> generateVarPlusAssignStarPatterns( Mode thisMode ){
+		LinkedList<Pattern> patterns = new LinkedList<Pattern>();
+		Iterator<String> varIterator = thisMode.variables.iterator();
+
+		String thisvarname = "";
+		while ( varIterator.hasNext() ) {
+			thisvarname = varIterator.next();
+			patterns.add( Pattern.compile( thisvarname +"_plus(\\s)*:=(\\s)*.+;") );
+		}
+
+		return patterns;
+	}
+
+	private LinkedList<Pattern> generateVarPlusPatterns( Mode thisMode ) {
+		LinkedList<Pattern> patterns = new LinkedList<Pattern>();
+		Iterator<String> varIterator = thisMode.variables.iterator();
+
+		String thisvarname = "";
+		while ( varIterator.hasNext() ) {
+			thisvarname = varIterator.next();
+			patterns.add( Pattern.compile( thisvarname +"_plus") );
+		}
+
+		return patterns;
+	}
+
+
+	
+	private boolean orList( LinkedList<Boolean> myList ) {
+		boolean orresult = false;
+		Iterator<Boolean> items = myList.iterator();
+
+		while ( items.hasNext() ) {
+			orresult = orresult | items.next();
+		}
+
+		return orresult;
+	}
+
 	public void parseODEs( Mode thisMode ) {
 		//LinkedList<String> odeList = new LinkedList<String>();
 		//odeList.addLast("ODE!");

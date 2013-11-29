@@ -46,7 +46,7 @@ public abstract class Parser {
 
 	public abstract LinkedList<String> parseVariableList();
 	public abstract LinkedList<String> parseResetList( String ModeID );
-	public abstract LinkedList<String> parseGuardList( String ModeID );
+	public abstract void parseGuardList( Mode thisMode );
 	public abstract void parseODEs( Mode thisMode );
 	public abstract LinkedList<String> parseDOEList( String ModeID );
 

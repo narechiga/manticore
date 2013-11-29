@@ -28,6 +28,7 @@ class EITool {
 			System.out.println(listOfModes);
 			
 			myParser.parseODEs( myMode );
+			myParser.parseGuardList( myMode );
 
 			myParser.die();
 		} catch ( Exception ex ) {
@@ -58,6 +59,17 @@ class EITool {
 
 		boolean isLyapunov = candidateValidator.checkLyapunov( lyapCandidate );
 		System.out.println("The result of checking the Lyapunov conditions is: " + isLyapunov);
+
+		System.out.println("I will now try to find a sublevel set that excludes the mode guard.");
+		String level = MathematicaSublevelSetFinder.findSublevelSet( myMode, lyapCandidate );
+
+		String hybridInvariant = "("+lyapCandidate+" - "+level+" < 0 ) & M = " + myMode.modeID;
+		System.out.println("Hybrid invariant is: " + hybridInvariant);
+
+		ProofGenerator myProofGenerator = new ProofGenerator();
+		myProofGenerator.applyFirstCut( hybridInvariant, args[0] );
+		//myProofGenerator.writePartialProof( args[0] );
+		//my
 
 	} 
 
