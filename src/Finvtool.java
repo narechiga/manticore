@@ -1,21 +1,38 @@
 import java.io.*;
 import java.util.*;
 
-class EITool {
+class Finvtool {
 
 	public static void main( String [] args ) {
 
 		System.out.println("Hello world!");
 
-		if ( args.length < 1 ) {
-			System.out.println("No input file given.");
-			System.exit(1);
-		} else if ( args.length > 1 ) {
-			System.out.println("Too many arguments.");
-			System.exit(1);
-		} else {
-			System.out.println("Input argument is: " + args[0] );
-		}
+		//if ( args.length < 1 ) {
+		//	System.out.println("No input file given.");
+		//	System.exit(1);
+		//} else if ( args.length > 1 ) {
+		//	System.out.println("Too many arguments.");
+		//	System.exit(1);
+		//} else {
+		//	System.out.println("Input argument is: " + args[0] );
+		//}
+
+	        String input = null;
+                Scanner in = new Scanner( System.in );
+
+                try {
+                        do {
+                                System.out.print("INPUT: ");
+                                input = in.nextLine() + "\n";
+                                StringReader inreader = new StringReader( input );
+                                Lexer myLexer = new Lexer( inreader );
+                                YYParser myParser = new YYParser( myLexer );
+                                myParser.parse();
+
+                        } while ( input != null );
+                } catch ( Exception e ) { 
+                        System.err.println( e );
+                }   
 		
 		/* * * Everything below is still in testing! * * */
 		/* Parse the input file */	

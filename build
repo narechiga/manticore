@@ -1,3 +1,5 @@
 #!/usr/bin/perl
 
+`cd src; jflex Lexer.lex; bison YYParser.y`;
+#`rm -rf bin; mkdir bin`;
 `cd src; javac -Xlint:unchecked *.java; mv *.class ../bin`;
