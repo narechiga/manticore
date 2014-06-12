@@ -5,3 +5,10 @@ Invariants Prototype
 ====================
 - This prototype takes input from the user about modes that are suspected to be stable. Tries to generate a SoS Lyapunov function for
 that mode.
+
+6-10-2014
+Full dLParser
+=============
+- In this version, I want to generalize to not just having hybrid automata structure. Invariants will be searched for by providing ranges
+on variables, both continuous and discrete. Will start by writing a bison parser for full dL. Actually, I expect it will be simpler than
+for the very detailed hybrid automaton structure I was working on before.
