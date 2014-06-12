@@ -38,7 +38,7 @@ InequalityLiteral = < | > | <= | >= | \!=
 "\&\&"			{ return RESTRICTDOMAIN;	}
 "\{"			{ return OPENBRACE;		}
 "}"			{ return CLOSEBRACE;		}
-"'"			{ return PRIME;		}
+"'"			{ return PRIME;			}
 "\\["			{ return OPENBOX;		}
 "\\]"			{ return CLOSEBOX;		}
 "\\<"			{ return OPENDIAMOND;		}
@@ -86,7 +86,7 @@ InequalityLiteral = < | > | <= | >= | \!=
 {IdentifierName}	{ return IDENTIFIER;	}
 
 [^]			{	System.out.println("Lexer: I'm confused, throwing error");
-				return YYERROR;}
+				return YYParser.YYERROR;}
 
 
 

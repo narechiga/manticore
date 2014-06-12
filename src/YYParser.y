@@ -73,7 +73,7 @@
 
 %%
 input: // dLFormula
-//	| folformula { System.out.println("Found: folformula");}
+	folformula { System.out.println("Found: folformula");}
 	| folformula IMPLIES OPENBOX automaton ASTERISK CLOSEBOX folformula
 		{ 
 			System.out.println( $1 );
@@ -210,10 +210,13 @@ term:
 	;
 
 argumentlist:
-	IDENTIFIER						{ $$ = (String)$1; System.out.println(" found arglist");					}
+	| IDENTIFIER						{ $$ = (String)$1; System.out.println(" found arglist");					}
 	| STATEVAR						{ $$ = (String)$1; System.out.println(" found arglist");					}
 	| STATEVARPLUS						{ $$ = (String)$1; System.out.println(" found arglist");					}
-	| argumentlist COMMA argumentlist				{ $$ = (String)$1 + ", " + (String)$3; System.out.println("found arglist, lots");		}
+	| IDENTIFIER COMMA argumentlist				{ $$ = (String)$1 + ", " + (String)$3; System.out.println("found arglist, multiple args");	}
+	| STATEVAR COMMA argumentlist				{ $$ = (String)$1 + ", " + (String)$3; System.out.println("found arglist, multiple args");	}
+	| STATEVARPLUS COMMA argumentlist			{ $$ = (String)$1 + ", " + (String)$3; System.out.println("found arglist, multiple args");	}
+	//| argumentlist COMMA argumentlist				{ $$ = (String)$1 + ", " + (String)$3; System.out.println("found arglist, lots");		}
 	;
 %%
 
