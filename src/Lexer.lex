@@ -32,61 +32,61 @@ InequalityLiteral = < | > | <= | >= | \!=
 				/* ignore */}
 
 // Hybrid programs
-":="			{ return YYParser.ASSIGN;		}
-"?"			{ return YYParser.TEST;			}
-"++"			{ return YYParser.CUP;			}
-"\&\&"			{ return YYParser.RESTRICTDOMAIN;	}
-"\{"			{ return YYParser.OPENBRACE;		}
-"}"			{ return YYParser.CLOSEBRACE;		}
-"'"			{ return YYParser.PRIME;		}
-"\\["			{ return YYParser.OPENBOX;		}
-"\\]"			{ return YYParser.CLOSEBOX;		}
-"\\<"			{ return YYParser.OPENDIAMOND;		}
-"\\>"			{ return YYParser.CLOSEDIAMOND;		}
+":="			{ return ASSIGN;		}
+"?"			{ return TEST;			}
+"++"			{ return CUP;			}
+"\&\&"			{ return RESTRICTDOMAIN;	}
+"\{"			{ return OPENBRACE;		}
+"}"			{ return CLOSEBRACE;		}
+"'"			{ return PRIME;		}
+"\\["			{ return OPENBOX;		}
+"\\]"			{ return CLOSEBOX;		}
+"\\<"			{ return OPENDIAMOND;		}
+"\\>"			{ return CLOSEDIAMOND;		}
 {ModeID}		{ System.out.println("Lexer: Found Mode ID: " + yytext() );
-				return YYParser.MODEID;		}
+				return MODEID;		}
 {StateVar}		{ System.out.println("Lexer: Found statevar: " + yytext() );
-				return YYParser.STATEVAR;	}
+				return STATEVAR;	}
 {StateVarPlus}		{ System.out.println("Lexer: Found statevar_plus: " + yytext() );
-				return YYParser.STATEVARPLUS;
+				return STATEVARPLUS;
 			}
 "M"			{ System.out.println("Lexer: Found Mode variable");
-				return YYParser.MODEVAR;		}
+				return MODEVAR;		}
 
 
 
 // Punctuation
-"("			{ return YYParser.LPAREN;	}
-","			{ return YYParser.COMMA;	}
-";"			{ return YYParser.SEMICOLON;	}
-")"			{ return YYParser.RPAREN;	}
-"\n"			{ /*return YYParser.NEWLINE;*/	}
+"("			{ return LPAREN;	}
+","			{ return COMMA;	}
+";"			{ return SEMICOLON;	}
+")"			{ return RPAREN;	}
+"\n"			{ /*return NEWLINE;*/	}
 
 // Basic arithmetic
-"+"			{ return YYParser.PLUS;		}
-"*"			{ return YYParser.ASTERISK;	}
-"-"			{ return YYParser.MINUS;	}
-"/"			{ return YYParser.DIVIDE;	}
-"^"			{ return YYParser.POWER;	}
+"+"			{ return PLUS;		}
+"*"			{ return ASTERISK;	}
+"-"			{ return MINUS;	}
+"/"			{ return DIVIDE;	}
+"^"			{ return POWER;	}
 "="			{ System.out.println("Lexer: Found equals");
-				return YYParser.EQUALS;	}
-{DecIntegerLiteral}	{	/*System.out.println("Detected number");*/ return YYParser.NUMBER;}
-{InequalityLiteral}	{ return YYParser.INEQUALITY;	}
+				return EQUALS;	}
+{DecIntegerLiteral}	{	/*System.out.println("Detected number");*/ return NUMBER;}
+{InequalityLiteral}	{ return INEQUALITY;	}
 
 
 // First order logic symbols
-"true"			{ return YYParser.TRUE;		}
-"false"			{ return YYParser.FALSE;	}	
-"\&"			{ return YYParser.AND;		}
-"\|"			{ return YYParser.OR;		}
-"\!"			{ return YYParser.NOT;		}
-"->"			{ return YYParser.IMPLIES;	}
-"\\forall R"		{ return YYParser.FORALL;	}
-"\\exists R"		{ return YYParser.EXISTS;	}
-{IdentifierName}	{ return YYParser.IDENTIFIER;	}
+"true"			{ return TRUE;		}
+"false"			{ return FALSE;	}	
+"\&"			{ return AND;		}
+"\|"			{ return OR;		}
+"\!"			{ return NOT;		}
+"->"			{ return IMPLIES;	}
+"\\forall R"		{ return FORALL;	}
+"\\exists R"		{ return EXISTS;	}
+{IdentifierName}	{ return IDENTIFIER;	}
 
 [^]			{	System.out.println("Lexer: I'm confused, throwing error");
-				return YYParser.YYERROR;}
+				return YYERROR;}
 
 
 
