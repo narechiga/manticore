@@ -1,11 +1,11 @@
 import java.io.*;
 import java.util.*;
 
-class Finvtool {
+class Manticore {
 
 	public static void main( String [] args ) {
 
-		System.out.println("Hello world!");
+		System.out.println("This is Manticore, with a human head and the body of a lion");
 
 		//if ( args.length < 1 ) {
 		//	System.out.println("No input file given.");
