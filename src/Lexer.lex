@@ -20,16 +20,15 @@
 	}
 %}
 
-IdentifierName = [a-z0-9A-Z]*
-ModeID = M[0-9]+
-StateVar = x[0-9]+
-StateVarPlus = x[0-9]+_plus
+IdentifierName = [a-z0-9A-Z]+
 DecIntegerLiteral = 0 | [1-9][0-9]* 
 InequalityLiteral = < | > | <= | >= | \!=
 
 %%
 " "			{	//System.out.println("Detected space");
 				/* ignore */}
+
+"R"			{return REALDECLARATION;	}
 
 // Hybrid programs
 ":="			{ return ASSIGN;		}
@@ -43,16 +42,8 @@ InequalityLiteral = < | > | <= | >= | \!=
 "\\]"			{ return CLOSEBOX;		}
 "\\<"			{ return OPENDIAMOND;		}
 "\\>"			{ return CLOSEDIAMOND;		}
-{ModeID}		{ System.out.println("Lexer: Found Mode ID: " + yytext() );
-				return MODEID;		}
-{StateVar}		{ System.out.println("Lexer: Found statevar: " + yytext() );
-				return STATEVAR;	}
-{StateVarPlus}		{ System.out.println("Lexer: Found statevar_plus: " + yytext() );
-				return STATEVARPLUS;
-			}
-"M"			{ System.out.println("Lexer: Found Mode variable");
-				return MODEVAR;		}
-
+"***"			{ return KLEENESTAR;		}
+"**"			{ return RANDOM;		}
 
 
 // Punctuation
@@ -64,10 +55,10 @@ InequalityLiteral = < | > | <= | >= | \!=
 
 // Basic arithmetic
 "+"			{ return PLUS;		}
-"*"			{ return ASTERISK;	}
-"-"			{ return MINUS;	}
+"*"			{ return MULTIPLY;	}
+"-"			{ return MINUS;		}
 "/"			{ return DIVIDE;	}
-"^"			{ return POWER;	}
+"^"			{ return POWER;		}
 "="			{ System.out.println("Lexer: Found equals");
 				return EQUALS;	}
 {DecIntegerLiteral}	{	/*System.out.println("Detected number");*/ return NUMBER;}

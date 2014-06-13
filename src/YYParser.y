@@ -14,25 +14,27 @@
 %token TEST
 %token CUP
 %token RANDOM
+%token REALDECLARATION
+/*%token KLEENESTAR*/
 
+
+/* precedence for hybrid program operators */
+%right KLEENESTAR
+%right SEMICOLON CUP
+
+
+/* Modalities */
 %token OPENBOX
 %token CLOSEBOX
 %token OPENDIAMOND
 %token CLOSEDIAMOND
 
-%token MODEVAR
-%token MODEID
-%token STATEVAR
-%token STATEVARPLUS
-
-/* semicolon is already above */
-
 /* Arithmetic */
 %token NUMBER
-%token ASTERISK
 %token IDENTIFIER
 %token PLUS
 %token MINUS
+%token MULTIPLY
 %token DIVIDE
 %token POWER
 %token NEWLINE
@@ -54,89 +56,94 @@
 %token TRUE
 %token FALSE
 
-%left SEMICOLON
-%left CUP
-//%left TEST
-
 %right IMPLIES
 %right OR AND
+%left OPENBOX CLOSEBOX OPENDIAMOND CLOSEDIAMOND
 %left NOT QUANTIFIER
 
 %right INEQUALITY /* <, >, <=, >=, =, != */
 %left MINUS PLUS
-%left DIVIDE ASTERISK
-%left NEGATIVE
+%left DIVIDE MULTIPLY
 %right POWER
-
-
-
+%left NEGATIVE
+%left REALDECLARATION
 
 %%
-input: // dLFormula
-	folformula { System.out.println("Found: folformula");}
-	| folformula IMPLIES OPENBOX automaton ASTERISK CLOSEBOX folformula
-		{ 
-			System.out.println( $1 );
+input: 
+	dLformula { System.out.println("Found: dLformula"); System.out.println((String)$1); }
+	| hybridprogram
+		{$$ = (String)$1; System.out.println("Found hybrid program"); System.out.println( (String)$1 ); }
+	| OPENBOX vardeclaration CLOSEBOX
+		{ $$ = "(declare-vars: \n" + (String)$2 + ")"; System.out.println( $$ ); }
+;
+
+dLformula:
+	TRUE { 
+			$$ = "true";
 		}
-	| automaton { System.out.println("Found: automaton"); }
-	| modecheck { System.out.println("Found: modecheck");}
-	| assignrandomplusvars { System.out.println("Found: assignrandomplusvars");	}
-	| updatevars { System.out.println("Found: updatevars");	}
-	| modeswitch { System.out.println("Found: modeswitch");}
-	| odesystem { System.out.println("Found: odesystem");}
-	| jumpcondition { System.out.println("Found: jumpcondition");}
-
+	| FALSE	{ 
+			$$ = "false";
+		}
+	| comparison { 
+		$$ = $1; 							
+		}
+	| dLformula AND dLformula				{ $$ = "(and " + (String)$1 + ", " + (String)$3 + " )"; 	}
+	| dLformula OR dLformula				{ $$ = "(or " + (String)$1 + ", " + (String)$3 + " )"; 		}
+	| NOT dLformula						{ $$ = "(not " + (String)$2 + " )"; 				}
+	| LPAREN dLformula RPAREN				{ $$ = "( " + (String)$2 + ")"; 				}
+	| dLformula IMPLIES dLformula		
+								{ $$ = "(implies " + (String)$1 + ", " + (String)$3 + " )"; 	}
+	| FORALL IDENTIFIER SEMICOLON dLformula %prec QUANTIFIER
+								{ $$ = "(forall " + (String)$2 + "; " + (String)$4 + " )";	}
+	| EXISTS IDENTIFIER SEMICOLON dLformula %prec QUANTIFIER
+								{ $$ = "(exists " + (String)$2 + "; " + (String)$4 + " )";	}
+	| OPENBOX hybridprogram CLOSEBOX dLformula
+								{ $$ = "(box (hp: " + (String)$2 + " ), (post: " + (String)$4 + " )"; }
+	| OPENDIAMOND hybridprogram CLOSEDIAMOND dLformula
+								{ $$ = "(diamond (hp: " + (String)$2 + " ), (post: " + (String)$4 + " )"; }
 ;
 
-automaton:
-	mode
-	| edge
-	| automaton CUP mode
-	| automaton CUP edge
+hybridprogram:
+	| odesystem
+		{ $$ = (String)$1; }
+	| test
+		{ $$ = (String)$1; }
+	| assignment
+		{ $$ = (String)$1; }
+	| hybridprogram SEMICOLON hybridprogram
+		{ $$ = "(sequence " + (String)$1 + ", " + (String)$3 + " )"; }
+	| hybridprogram CUP hybridprogram
+		{ $$ = "(choice " + (String)$1 + ", " + (String)$3 + " )"; }
+	| hybridprogram KLEENESTAR
+		{ $$ = "(repeat " + (String)$1 + " )"; }
 ;
 
-edge:
-	modecheck SEMICOLON assignrandomplusvars SEMICOLON jumpcondition SEMICOLON updatevars SEMICOLON modeswitch
-	| LPAREN edge RPAREN
+vardeclaration:
+	REALDECLARATION IDENTIFIER
+		{$$ = "\t(declare-real " + (String)$2 + " )\n"; }
+	| REALDECLARATION IDENTIFIER SEMICOLON vardeclaration
+		{$$ = "\t(declare-real " + (String)$2 + " )\n"  + (String)$4; }
 ;
 
-modecheck:
-	TEST LPAREN MODEVAR EQUALS MODEID RPAREN
-	| LPAREN modecheck RPAREN
+assignment:
+	IDENTIFIER ASSIGN RANDOM
+		{ $$ = "(assign " + (String)$1 + ", " + (String)$3 + " )"; }
+	| IDENTIFIER ASSIGN term
+		{ $$ = "(assign " + (String)$1 + ", " + (String)$3 + " )"; }
+	| LPAREN assignment RPAREN
+		{ $$ = (String)$2; }
 ;
 
-assignrandomplusvars:
-	STATEVARPLUS ASSIGN ASTERISK
-	| assignrandomplusvars SEMICOLON STATEVARPLUS ASSIGN ASTERISK
-	| LPAREN assignrandomplusvars RPAREN
-	;
-
-jumpcondition:
-	// I guess no details checking for now
-	test
-;
-updatevars:
-	STATEVAR ASSIGN STATEVARPLUS
-	| updatevars SEMICOLON STATEVAR ASSIGN STATEVARPLUS
-	| LPAREN updatevars RPAREN
-	;
-
-modeswitch:
-	MODEVAR ASSIGN MODEID
-;
-
-mode:
-	modecheck SEMICOLON odesystem
-	| LPAREN mode RPAREN
-;
 
 test:
-	TEST folformula						{ $$ = "(test " + (String)$2 + " )";				}
+	TEST dLformula						{ $$ = "(test " + (String)$2 + " )";				}
 	| LPAREN test RPAREN					{ $$ = (String)$2;						}
 	;
 
 odesystem:
-	OPENBRACE odelist CLOSEBRACE
+	LPAREN odesystem RPAREN
+		{ $$ = (String)$2; }
+	| OPENBRACE odelist CLOSEBRACE
 		{ $$ = "(continuous " + "(odelist: " + (String)$2 + " )" + ", (domain: true )"; }
 	| OPENBRACE odelist RESTRICTDOMAIN folformula CLOSEBRACE	
 		{ $$ = "(continuous " + "(odelist: " + (String)$2 + " )" + ", (domain: " + (String)$4 + " )"; }
@@ -146,12 +153,12 @@ odelist:
 	| odelist COMMA ode					{ $$ = (String)$1 + ", " + (String)$3;				}
 	;
 ode:
-	STATEVAR PRIME EQUALS term				{ $$ = (String)$1 + "' = " + (String)$4;			}
+	IDENTIFIER PRIME EQUALS term				{ $$ = (String)$1 + "' = " + (String)$4;			}
 	;
 
 
 folformula:
-	| TRUE { 
+	TRUE { 
 			$$ = "true";
 		}
 	| FALSE	{ 
@@ -162,7 +169,7 @@ folformula:
 		}
 	| folformula AND folformula				{ $$ = "(and " + (String)$1 + ", " + (String)$3 + " )"; 	}
 	| folformula OR folformula				{ $$ = "(or " + (String)$1 + ", " + (String)$3 + " )"; 		}
-	| NOT folformula						{ $$ = "(not " + (String)$2 + " )"; 				}
+	| NOT folformula					{ $$ = "(not " + (String)$2 + " )"; 				}
 	| LPAREN folformula RPAREN				{ $$ = "( " + (String)$2 + ")"; 				}
 	| folformula IMPLIES folformula		
 								{ $$ = "(implies " + (String)$1 + ", " + (String)$3 + " )"; 	}
@@ -174,6 +181,9 @@ folformula:
 comparison:
 	term INEQUALITY term { 
 		//this.parsedFormula = new dLFormula( (String)$2, );
+		$$ = "(" + (String)$2 +" "+ (String)$1 + ", " + (String)$3 + ")"; 
+	}
+	| term EQUALS term {
 		$$ = "(" + (String)$2 +" "+ (String)$1 + ", " + (String)$3 + ")"; 
 	}
 	;
@@ -190,12 +200,6 @@ term:
 	| IDENTIFIER { 
 		$$ = (String)$1;
 	}
-	| STATEVAR { 
-		$$ = (String)$1;
-	}
-	| STATEVARPLUS { 
-		$$ = (String)$1;
-	}
 	| LPAREN term RPAREN { 
 		$$ = "("+ (String)$2 +")"; 					
 	}
@@ -203,20 +207,16 @@ term:
 		$$ = "(+ " + (String)$1 + ", " + (String)$3+ " )";		
 	}
 	| term MINUS term					{ $$ = "(- " + (String)$1 + ", " + (String)$3 + ")";		}
-	| term ASTERISK term					{ $$ = "(* " + (String)$1 + ", " + (String)$3 +")";		}
+	| term MULTIPLY term
+								{ $$ = "(* " + (String)$1 + ", " + (String)$3 +")";		}
 	| term DIVIDE term					{ $$ = "(/ " + (String)$1 + ", " + (String)$3 + ")";		}
 	| term POWER term					{ $$ = "(^ " + (String)$1 + ", " + (String)$3 + ")";		}
 	| MINUS term %prec NEGATIVE				{ $$ = "(- 0, " + (String)$2;					}
 	;
 
 argumentlist:
-	| IDENTIFIER						{ $$ = (String)$1; System.out.println(" found arglist");					}
-	| STATEVAR						{ $$ = (String)$1; System.out.println(" found arglist");					}
-	| STATEVARPLUS						{ $$ = (String)$1; System.out.println(" found arglist");					}
-	| IDENTIFIER COMMA argumentlist				{ $$ = (String)$1 + ", " + (String)$3; System.out.println("found arglist, multiple args");	}
-	| STATEVAR COMMA argumentlist				{ $$ = (String)$1 + ", " + (String)$3; System.out.println("found arglist, multiple args");	}
-	| STATEVARPLUS COMMA argumentlist			{ $$ = (String)$1 + ", " + (String)$3; System.out.println("found arglist, multiple args");	}
-	//| argumentlist COMMA argumentlist				{ $$ = (String)$1 + ", " + (String)$3; System.out.println("found arglist, lots");		}
+	| term							{ $$ = (String)$1; System.out.println(" found arglist");					}
+	| term COMMA argumentlist				{ $$ = (String)$1 + ", " + (String)$3; System.out.println("found arglist, multiple args");	}
 	;
 %%
 
