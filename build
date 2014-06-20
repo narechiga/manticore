@@ -1,5 +1,19 @@
 #!/usr/bin/perl
 
+`cd bin; rm -rf *`;
+`mkdir bin/manticore`;
+`mkdir bin/manticore/dl`;
 `cd src; jflex Lexer.lex; bison YYParser.y`;
-#`rm -rf bin; mkdir bin`;
-`cd src; javac -Xlint:unchecked *.java; mv *.class ../bin`;
+`cd src; javac *.java dl/*.java;`;
+`mv src/*.class bin;`;
+`mv src/dl/*.class bin/manticore/dl/`;
+
+
+#@dlfiles = `ls src/dl/*.java`;
+#chomp(@dlfiles);
+#
+#foreach (@dlfiles) {
+#	print $_
+#}
+
+

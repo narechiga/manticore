@@ -2,12 +2,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.lang.String;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 
 public abstract class Parser {
 
-	protected LinkedList<String> stableModeList;
+	protected ArrayList<String> stableModeList;
 	protected String fileName;
 	protected File inputFile;
 	protected BufferedReader inputReader;
@@ -23,7 +23,7 @@ public abstract class Parser {
 		}
 	}
 
-	public LinkedList<String> getStableModeList() {
+	public ArrayList<String> getStableModeList() {
 		return this.stableModeList;
 	}
 
@@ -44,11 +44,11 @@ public abstract class Parser {
 		this.setFileName( this.fileName );
 	}
 
-	public abstract LinkedList<String> parseVariableList();
-	public abstract LinkedList<String> parseResetList( String ModeID );
+	public abstract ArrayList<String> parseVariableList();
+	public abstract ArrayList<String> parseResetList( String ModeID );
 	public abstract void parseGuardList( Mode thisMode );
 	public abstract void parseODEs( Mode thisMode );
-	public abstract LinkedList<String> parseDOEList( String ModeID );
+	public abstract ArrayList<String> parseDOEList( String ModeID );
 
 }
 
