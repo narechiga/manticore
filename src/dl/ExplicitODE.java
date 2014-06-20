@@ -22,13 +22,13 @@ public class ExplicitODE extends dLStructure {
 
 	}
 
-	//public RealVariable lhs() {
-	//	return (RealVariable)children.get(0);
-	//}
+	public dLStructure lhs() {
+		return children.get(0);
+	}
 
-	//public Term rhs() {
-	//	return (Term)children.get(1);
-	//}
+	public dLStructure rhs() {
+		return children.get(1);
+	}
 
 	public String toInfix() {
 		return toString();

@@ -82,7 +82,8 @@
 
 %type <String> input fullblock problemblock schemavarsblock rulesblock schematext varblock funblock functiondeclaration argumentdeclaration annotationblock
 %type <ArrayList<String>> vardeclaration varlist varinitlist
-%type <dLStructure> dLformula assignment test ode comparison term
+%type <dLStructure> dLformula assignment test ode comparison
+%type <Term> term
 %type <HybridProgram> hybridprogram
 %type <ContinuousProgram> odesystem
 %type <ArrayList<dLStructure>> odelist argumentlist annotationlist
@@ -158,7 +159,7 @@ input:
 			System.err.println("Exception at location 7");
 			System.err.println( e );
 		}
-	}
+	} 
 	| error {
 		System.err.println("Parser: I'm confused, throwing error");
 	}
@@ -538,7 +539,7 @@ dLformula:
 			ArrayList<dLStructure> args = new ArrayList<dLStructure>();
 			args.add( (dLStructure)$1 );
 			args.add( (dLStructure)$3 );
-			$$ = new dLStructure( "and", args );
+			$$ = new dLStructure( "&", args );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location 34");
 			System.err.println( e );
@@ -880,7 +881,8 @@ comparison:
 term:
 	NUMBER { 
 		try {
-			$$ = new dLStructure( (String)$1 );
+			$$ = new Real( (String)$1 );
+			//System.out.println( ((Term)$$).toString() );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location 61");
 			System.err.println( e );
@@ -898,7 +900,8 @@ term:
 	| IDENTIFIER { 
 		//$$ = (String)$1;
 		try {
-			$$ = new dLStructure( (String)$1 );
+			$$ = new RealVariable( (String)$1 );
+			System.out.println( $$.toString() );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location 63");
 			System.err.println( e );
@@ -916,9 +919,9 @@ term:
 	| term PLUS term { 
 		//$$ = "(+ " + (String)$1 + ", " + (String)$3+ " )";		
 		try {
-			ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			args.add( (dLStructure)$1 );
-			args.add( (dLStructure)$3 );
+			ArrayList<Term> args = new ArrayList<Term>();
+			args.add( (Term)$1 );
+			args.add( (Term)$3 );
 			$$ = new dLStructure( "+", args );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location 65");

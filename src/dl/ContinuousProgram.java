@@ -23,6 +23,15 @@ public class ContinuousProgram extends HybridProgram {
 	}
 
 	// Operations on ODE List
+	public ExplicitODE getODEs () {
+		// TODO
+		return null;
+	}
+
+	public ExplicitODE getODE( int index ) {
+		return (ExplicitODE)children.get( index );
+	}
+
 	public void addODE( dLStructure ode ) {
 		int doeIndex = children.size() - 1;
 		

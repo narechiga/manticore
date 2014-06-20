@@ -9,14 +9,13 @@ public class Term extends dLStructure {
 
 	public Term ( Operator operator, ArrayList<Term> subterms ) {
 		this.operator = operator;
-		//this.children = subterms;
 		this.children = new ArrayList<dLStructure>();
 		this.children.addAll( subterms );
 	}
 
 	public String toString() {
 
-		String returnString = "";
+		String returnString = "TERM: ";
 
 		if ( operator.infix == false ) {
 			returnString = returnString + operator.toString() + "(";
