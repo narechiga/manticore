@@ -13,6 +13,12 @@ public class Term extends dLStructure {
 		this.children.addAll( subterms );
 	}
 
+	public Term ( String operator, ArrayList<Term> subterms ) {
+		this.operator = new Operator( operator );
+		this.children = new ArrayList<dLStructure>();
+		this.children.addAll( subterms );
+	}
+
 	public String toString() {
 
 		String returnString = "TERM: ";

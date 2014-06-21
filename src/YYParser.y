@@ -1,3 +1,5 @@
+// TODO: renumber exceptions
+
 %{
 	import java.util.*;
 	import manticore.dl.*;
@@ -86,7 +88,8 @@
 %type <Term> term
 %type <HybridProgram> hybridprogram
 %type <ContinuousProgram> odesystem
-%type <ArrayList<dLStructure>> odelist argumentlist annotationlist
+%type <ArrayList<dLStructure>> odelist annotationlist
+%type <ArrayList<Term>> argumentlist
 
 %type <String> EXTERNAL FUNCTIONS RULES SCHEMAVARIABLES SCHEMATEXT PROBLEM ASSIGN PRIME OPENBRACE CLOSEBRACE EQUALS TEST CUP RANDOM REALDECLARATION OPENBOX CLOSEBOX OPENDIAMOND CLOSEDIAMOND NUMBER IDENTIFIER PLUS MINUS MULTIPLY DIVIDE POWER NEWLINE INEQUALITY LPAREN RPAREN SEMICOLON COMMA AND OR NOT IMPLIES IFF FORALL EXISTS TRUE FALSE 
 
@@ -891,7 +894,7 @@ term:
 	| IDENTIFIER LPAREN argumentlist RPAREN {
 		//$$ = "(" + (String)$1 + " " + (String)$3 + ")";
 		try {
-			$$ = new dLStructure( (String)$1, (ArrayList<dLStructure>)$3 );
+			$$ = new Term( new Operator( (String)$1 ), (ArrayList<Term>)$3 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location 62");
 			System.err.println( e );
@@ -901,7 +904,7 @@ term:
 		//$$ = (String)$1;
 		try {
 			$$ = new RealVariable( (String)$1 );
-			System.out.println( $$.toString() );
+	//		System.out.println( $$.toString() );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location 63");
 			System.err.println( e );
@@ -910,7 +913,7 @@ term:
 	| LPAREN term RPAREN { 
 		//$$ = "("+ (String)$2 +")"; 					
 		try {
-			$$ = (dLStructure)$2;
+			$$ = (Term)$2;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location 64");
 			System.err.println( e );
@@ -922,7 +925,7 @@ term:
 			ArrayList<Term> args = new ArrayList<Term>();
 			args.add( (Term)$1 );
 			args.add( (Term)$3 );
-			$$ = new dLStructure( "+", args );
+			$$ = new Term( "+", args );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location 65");
 			System.err.println( e );
@@ -931,10 +934,10 @@ term:
 	| term MINUS term { 
 		//$$ = "(- " + (String)$1 + ", " + (String)$3 + ")";
 		try {
-			ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			args.add( (dLStructure)$1 );
-			args.add( (dLStructure)$3 );
-			$$ = new dLStructure( "-", args );
+			ArrayList<Term> args = new ArrayList<Term>();
+			args.add( (Term)$1 );
+			args.add( (Term)$3 );
+			$$ = new Term( "-", args );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location 66");
 			System.err.println( e );
@@ -943,10 +946,10 @@ term:
 	| term MULTIPLY term { 
 		//$$ = "(* " + (String)$1 + ", " + (String)$3 +")";
 		try {
-			ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			args.add( (dLStructure)$1 );
-			args.add( (dLStructure)$3 );
-			$$ = new dLStructure( "*", args );
+			ArrayList<Term> args = new ArrayList<Term>();
+			args.add( (Term)$1 );
+			args.add( (Term)$3 );
+			$$ = new Term( "*", args );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location 67");
 			System.err.println( e );
@@ -955,10 +958,10 @@ term:
 	| term DIVIDE term { 
 		//$$ = "(/ " + (String)$1 + ", " + (String)$3 + ")";
 		try {
-			ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			args.add( (dLStructure)$1 );
-			args.add( (dLStructure)$3 );
-			$$ = new dLStructure( "/", args );
+			ArrayList<Term> args = new ArrayList<Term>();
+			args.add( (Term)$1 );
+			args.add( (Term)$3 );
+			$$ = new Term( "/", args );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location 68");
 			System.err.println( e );
@@ -967,10 +970,10 @@ term:
 	| term POWER term { 
 		//$$ = "(^ " + (String)$1 + ", " + (String)$3 + ")";		
 		try {
-			ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			args.add( (dLStructure)$1 );
-			args.add( (dLStructure)$3 );
-			$$ = new dLStructure( "^", args );
+			ArrayList<Term> args = new ArrayList<Term>();
+			args.add( (Term)$1 );
+			args.add( (Term)$3 );
+			$$ = new Term( "^", args );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location 69");
 			System.err.println( e );
@@ -979,10 +982,10 @@ term:
 	| MINUS term %prec NEGATIVE { 
 		//$$ = "(- 0, " + (String)$2 + " )";
 		try {
-			ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			args.add( new dLStructure( "0" ) );
-			args.add( (dLStructure)$2 );
-			$$ = new dLStructure( "-", args );
+			ArrayList<Term> args = new ArrayList<Term>();
+			args.add( new Real( "0" ) );
+			args.add( (Term)$2 );
+			$$ = new Term( "-", args );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location 70");
 			System.err.println( e );
@@ -997,8 +1000,8 @@ argumentlist:
 	| term	{ 
 		//$$ = (String)$1; System.out.println(" found arglist");					
 		try {
-			ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			args.add( (dLStructure)$1 );
+			ArrayList<Term> args = new ArrayList<Term>();
+			args.add( (Term)$1 );
 			$$ = args;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location 71");
@@ -1008,9 +1011,9 @@ argumentlist:
 	| argumentlist COMMA term { 
 		//$$ = (String)$1 + ", " + (String)$3; System.out.println("found arglist, multiple args");
 		try {
-			ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			args.addAll( (ArrayList<dLStructure>)$1 );
-			args.add( (dLStructure)$3 );
+			ArrayList<Term> args = new ArrayList<Term>();
+			args.addAll( (ArrayList<Term>)$1 );
+			args.add( (Term)$3 );
 			$$ = args;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location 72");
