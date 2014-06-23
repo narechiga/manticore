@@ -1,4 +1,3 @@
-// TODO: renumber exceptions
 
 %{
 	import java.util.*;
@@ -99,7 +98,7 @@ input:
 		try {
 			$$ = (String)$1; System.out.println("full block"); //System.out.println($$); 
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 0");
+			System.err.println("Exception at location input:fullblock");
 			System.err.println( e );
 		}
 	}
@@ -107,7 +106,7 @@ input:
 		try {
 			$$ = (String)$1; System.out.println("function block"); //System.out.println($$); 
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 1");
+			System.err.println("Exception at location input:funblock");
 			System.err.println( e );
 		}
 	}
@@ -115,7 +114,7 @@ input:
 		try {
 			$$ = (String)$1; System.out.println("variable declaration block"); //System.out.println($$); 
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 2");
+			System.err.println("Exception at location input:varblock");
 			System.err.println( e );
 		}
 	}
@@ -123,7 +122,7 @@ input:
 		try {
 			$$ = (String)$1; System.out.println("schema variables block"); //System.out.println($$); 
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 3");
+			System.err.println("Exception at location input:schemavarsblock");
 			System.err.println( e );
 		}
 			
@@ -132,7 +131,7 @@ input:
 		try {
 			$$ = (String)$1; System.out.println("rules block"); //System.out.println($$); 
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 4");
+			System.err.println("Exception at location input:rulesblock");
 			System.err.println( e );
 		}
 	}
@@ -141,7 +140,7 @@ input:
 			System.out.println("Found: dLformula"); 
 			parsedStructure = (dLStructure)$1;	
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 5");
+			System.err.println("Exception at location input:dLformula");
 			System.err.println( e );
 		}
 	}
@@ -151,7 +150,7 @@ input:
 			$$ = "hybrid program"; 
 			parsedStructure = (HybridProgram)$1;	
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 6");
+			System.err.println("Exception at location input:hybridprogram");
 			System.err.println( e );
 		}
 	}
@@ -159,7 +158,7 @@ input:
 		try {
 			$$ = (String)$1; System.out.println("annotation block"); //System.out.println($$); 
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 7");
+			System.err.println("Exception at location input:annotationblock");
 			System.err.println( e );
 		}
 	} 
@@ -173,7 +172,7 @@ fullblock:
 		try{
 			$$ = (String)$1;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 8");
+			System.err.println("Exception at location fullblock:problemblock");
 			System.err.println( e );
 		}
 	}
@@ -181,7 +180,7 @@ fullblock:
 		try{
 			$$ = (String)$1 + (String)$2;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 9");
+			System.err.println("Exception at location fullblock:funblock problemblock");
 			System.err.println( e );
 		}
 	}
@@ -189,7 +188,7 @@ fullblock:
 		try{
 			$$ = (String)$1 + (String)$2 + (String)$3 + (String)$4;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 10");
+			System.err.println("Exception at location fullblock:funblock schemavarsblock rulesblock problemblock");
 			System.err.println( e );
 		}
 	}
@@ -197,7 +196,7 @@ fullblock:
 		try{
 			$$ = (String)$1 + (String)$2;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 11");
+			System.err.println("Exception at location annotationblock:fullblock");
 			System.err.println( e );
 		}
 	}
@@ -209,7 +208,7 @@ problemblock:
 			parsedStructure = (dLStructure)$3;
 			$$ = "{\n" + ((dLStructure)$3).toString() + "\n}"; System.out.println( $$ );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 12");
+			System.err.println("Exception at location problemblock:PROBLEM OPENBRACE dLformula CLOSEBRACE");
 			System.err.println( e );
 		}
 	}
@@ -218,7 +217,7 @@ problemblock:
 			parsedStructure = (dLStructure)$4;
 			$$ = "{\n" + (String)$3 + "\n" + ((dLStructure)$4).toString() + "\n}"; System.out.println($$);
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 13");
+			System.err.println("Exception at location problemblock:PROBLEM OPENBRACE varblock dLformula CLOSEBRACE");
 			System.err.println( e );
 		}
 	}
@@ -231,7 +230,7 @@ annotationblock:
 		try {
 			this.annotations = (ArrayList<dLStructure>)$3;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 14");
+			System.err.println("Exception at location annotationblock:ANNOTATION OPENBRACE annotationlist CLOSEBRACE");
 			System.err.println( e );
 		}
 	}
@@ -244,7 +243,7 @@ annotationlist:
 			annot.add( (dLStructure)$1 );
 			$$ = annot;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 15");
+			System.err.println("Exception at location annotationlist:dLformula SEMICOLON");
 			System.err.println( e );
 		}
 	}
@@ -255,7 +254,7 @@ annotationlist:
 			annot.add( (dLStructure)$2 );
 			$$ = annot;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 16");
+			System.err.println("Exception at location annotationlist:annotationlist dLformula SEMICOLON");
 			System.err.println( e );
 		}
 
@@ -275,7 +274,7 @@ schemavarsblock:
 			$$ = "(declare-schema-vars: \n" + (String)$3 + "\n)"; System.out.println( $$ );
 			parsedStructure.declaredSchemaVariables = (String)$3;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 17");
+			System.err.println("Exception at location schemavarsblock:SCHEMAVARIABLES OPENBRACE schematext CLOSEBRACE");
 			System.err.println( e );
 		}
 	}
@@ -291,7 +290,7 @@ rulesblock:
 			assert( parsedStructure != null );
 			parsedStructure.declaredRules = (String)$3;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 18");
+			System.err.println("Exception at location rulesblock:RULES OPENBRACE schematext CLOSEBRACE");
 			System.err.println( e );
 		}
 	}
@@ -302,7 +301,7 @@ schematext:
 		try {
 			$$ = (String)$1; 
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 19");
+			System.err.println("Exception at location schematext:SCHEMATEXT");
 			System.err.println( e );
 		}
 	}
@@ -310,7 +309,7 @@ schematext:
 		try {
 			$$ = (String)$1 + (String)$2; 
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 20");
+			System.err.println("Exception at location schematext:SCHEMATEXT schematext");
 			System.err.println( e );
 		}
 	}
@@ -331,7 +330,7 @@ varblock:
 			ArrayList<String> vars = (ArrayList<String>)parsedStructure.declaredProgramVariables;
 			$$ = vars.toString();
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 21");
+			System.err.println("Exception at location varblock:OPENBOX vardeclaration CLOSEBOX");
 			System.err.println( e );
 		}
 		
@@ -350,7 +349,7 @@ varblock:
 			result.addAll( parsedStructure.variableInitializations );
 			$$ = result.toString();
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 17");
+			System.err.println("Exception at location varblock:OPENBOX vardeclaration varinitlist CLOSEBOX");
 			System.err.println( e );
 		}
 
@@ -362,7 +361,7 @@ vardeclaration:
 		try {
 			$$ = (ArrayList<String>)$2;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 18");
+			System.err.println("Exception at location vardeclaration:REALDECLARATION varlist SEMICOLON");
 			System.err.println( e );
 		}
 	}
@@ -373,7 +372,7 @@ vardeclaration:
 			vars.add( (String)$4 );
 			$$ = vars;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 19");
+			System.err.println("Exception at location vardeclaration:vardeclaration REALDECLARATION varlist SEMICOLON");
 			System.err.println( e );
 		}
 	}
@@ -387,7 +386,7 @@ varlist:
 			vars.add( (String)$1 );
 			$$ = vars;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 20");
+			System.err.println("Exception at location varlist:IDENTIFIER");
 			System.err.println( e );
 		}
 	}
@@ -399,7 +398,7 @@ varlist:
 			vars.add( (String)$3 );
 			$$ = vars;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 21");
+			System.err.println("Exception at location varlist:varlist COMMA IDENTIFIER");
 			System.err.println( e );
 		}
 	}
@@ -414,7 +413,7 @@ varinitlist:
 			init.add( (String)$1 + " := " + myTerm.toString() );
 			$$ = init;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 22");
+			System.err.println("Exception at location varinitlist:IDENTIFIER ASSIGN term SEMICOLON");
 			System.err.println( e );
 		}
 
@@ -427,7 +426,7 @@ varinitlist:
 			init.add( (String)$2 + " := " + myTerm.toString() );
 			$$ = init;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 23");
+			System.err.println("Exception at location varinitlist:varinitlist IDENTIFIER ASSIGN term SEMICOLON");
 			System.err.println( e );
 		}
 	}
@@ -441,7 +440,7 @@ funblock:
 			//$$ = "(declare-funs: \n" + (String)$3 + ")"; System.out.println( $$ ); 
 			$$ = (String)$3;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 24");
+			System.err.println("Exception at location funblock:FUNCTIONS OPENBRACE functiondeclaration CLOSEBRACE");
 			System.err.println( e );
 		}
 	}
@@ -453,7 +452,7 @@ functiondeclaration:
 			//$$ = "(R fun " + (String)$2 + " " + (String)$4 + " )\n";
 			$$ = (String)$1 + (String)$2 + (String)$3 + (String)$4 + (String)$5 + (String)$6 + "\n";
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 25");
+			System.err.println("Exception at location functiondeclaration:REALDECLARATION IDENTIFIER LPAREN argumentdeclaration RPAREN SEMICOLON");
 			System.err.println( e );
 		}
 	}
@@ -462,7 +461,7 @@ functiondeclaration:
 			//$$ = "(R fun " + (String)$3 + " " + (String)$5 + " )\n"; 
 			$$ = (String)$1 + (String)$2 + (String)$3 + (String)$4 + (String)$5 + (String)$6 + (String)$7 + "\n";
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 26");
+			System.err.println("Exception at location functiondeclaration:REALDECLARATION IDENTIFIER LPAREN argumentdeclaration RPAREN SEMICOLON");
 			System.err.println( e );
 		}
 	}
@@ -471,7 +470,7 @@ functiondeclaration:
 			//$$ = "(R fun " + (String)$2 + " " + (String)$4 + " )\n" + (String)$7; 
 			$$ = (String)$1 + (String)$2 + (String)$3 + (String)$4 + (String)$5 + (String)$6 + (String)$7 + "\n";
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 27");
+			System.err.println("Exception at location functiondeclaration:REALDECLARATION IDENTIFIER LPAREN argumentdeclaration RPAREN SEMICOLON");
 			System.err.println( e );
 		}
 	}
@@ -480,7 +479,7 @@ functiondeclaration:
 			//$$ = "(R fun " + (String)$3 + " " + (String)$5 + " )\n" + (String)$8; 
 			$$ = (String)$1 + (String)$2 + (String)$3 + (String)$4 + (String)$5 + (String)$6 + (String)$7 + (String)$8 + "\n";
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 28");
+			System.err.println("Exception at location functiondeclaration:functiondeclaration EXTERNAL REALDECLARATION IDENTIFIER LPAREN argumentdeclaration RPAREN SEMICOLON");
 			System.err.println( e );
 		}
 	}
@@ -494,7 +493,7 @@ argumentdeclaration:
 		try {
 			$$ = (String)$1;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 29");
+			System.err.println("Exception at location argumentdeclaration:REALDECLARATION");
 			System.err.println( e );
 		}
 	}
@@ -502,7 +501,7 @@ argumentdeclaration:
 		try {
 			$$ = (String)$1 + (String)$2 + (String)$3; 
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 30");
+			System.err.println("Exception at location argumentdeclaration:argumentdeclaration COMMA REALDECLARATION");
 			System.err.println( e );
 		}
 	}
@@ -515,7 +514,7 @@ dLformula:
 		try {
 			$$ = new dLStructure( "true" );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 31");
+			System.err.println("Exception at location dLformula:TRUE");
 			System.err.println( e );
 		}
 	}
@@ -523,7 +522,7 @@ dLformula:
 		try {
 			$$ = new dLStructure( "false" );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 32");
+			System.err.println("Exception at location dLformula:FALSE");
 			System.err.println( e );
 		}
 	}
@@ -532,7 +531,7 @@ dLformula:
 		try {
 			$$ = (dLStructure)$1;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 33");
+			System.err.println("Exception at location dLformula:comparison");
 			System.err.println( e );
 		}
 	}
@@ -544,7 +543,7 @@ dLformula:
 			args.add( (dLStructure)$3 );
 			$$ = new dLStructure( "&", args );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 34");
+			System.err.println("Exception at location dLformula:dLformula AND dLformula");
 			System.err.println( e );
 		}
 	}
@@ -556,7 +555,7 @@ dLformula:
 			args.add( (dLStructure)$3 );
 			$$ = new dLStructure( "or", args );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 35");
+			System.err.println("Exception at location dLformula:dLformula OR dLformula");
 			System.err.println( e );
 		}
 	}
@@ -567,7 +566,7 @@ dLformula:
 			args.add( (dLStructure)$2 );
 			$$ = new dLStructure( "not", args );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 36");
+			System.err.println("Exception at location dLformula:NOT dLformula");
 			System.err.println( e );
 		}
 	}
@@ -576,7 +575,7 @@ dLformula:
 		try {
 			$$ = (dLStructure)$2;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 37");
+			System.err.println("Exception at location dLformula:LPAREN dLformula RPAREN");
 			System.err.println( e );
 		}
 	}
@@ -588,7 +587,7 @@ dLformula:
 			args.add( (dLStructure)$3 );
 			$$ = new dLStructure( "implies", args );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 38");
+			System.err.println("Exception at location dLformula:dLformula IMPLIES dLformula");
 			System.err.println( e );
 		}
 	}
@@ -600,7 +599,7 @@ dLformula:
 			args.add( (dLStructure)$3 );
 			$$ = new dLStructure( "iff", args );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 39");
+			System.err.println("Exception at location dLformula:dLformula IFF dLformula");
 			System.err.println( e );
 		}
 	}
@@ -612,7 +611,7 @@ dLformula:
 			args.add( (dLStructure)$4 );
 			$$ = new dLStructure( "forall", args );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 40");
+			System.err.println("Exception at location dLformula:FORALL IDENTIFIER SEMICOLON dLformula");
 			System.err.println( e );
 		}
 	}
@@ -624,7 +623,7 @@ dLformula:
 			args.add( (dLStructure)$4 );
 			$$ = new dLStructure( "exists", args );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 41");
+			System.err.println("Exception at location dLformula:EXISTS IDENTIFIER SEMICOLON dLformula");
 			System.err.println( e );
 		}
 	}
@@ -636,7 +635,7 @@ dLformula:
 			args.add( (dLStructure)$4 );
 			$$ = new dLStructure( "[]", args );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 42");
+			System.err.println("Exception at location OPENBOX:hybridprogram CLOSEBOX dLformula");
 			System.err.println( e );
 		}
 	}
@@ -648,7 +647,7 @@ dLformula:
 			args.add( (dLStructure)$4 );
 			$$ = new dLStructure( "<>", args );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 43");
+			System.err.println("Exception at location OPENDIAMOND hybridprogram CLOSEDIAMOND dLformula");
 			System.err.println( e );
 		}
 	}
@@ -660,7 +659,7 @@ hybridprogram:
 		try {
 			$$ = (ContinuousProgram)$1;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 44");
+			System.err.println("Exception at location hybridprogram:odesystem");
 			System.err.println( e );
 		}
 	}
@@ -669,7 +668,7 @@ hybridprogram:
 		try {
 			$$ = (TestProgram)$1;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 45");
+			System.err.println("Exception at location hybridprogram:test");
 			System.err.println( e );
 		}
 	}
@@ -678,7 +677,7 @@ hybridprogram:
 		try {
 			$$ = (AssignmentProgram)$1;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 46");
+			System.err.println("Exception at location hybridprogram:assignment");
 			System.err.println( e );
 		}
 	}
@@ -691,7 +690,7 @@ hybridprogram:
 			//$$ = new dLStructure( "sequence", args );
 			$$ = new SequenceProgram( (HybridProgram)$1, (HybridProgram)$3 );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 47");
+			System.err.println("Exception at location hybridprogram:hybridprogram SEMICOLON hybridprogram");
 			System.err.println( e );
 		}
 	}
@@ -704,7 +703,7 @@ hybridprogram:
 		//	$$ = new HybridProgram( "choice", args );
 			$$ = new ChoiceProgram( (HybridProgram)$1, (HybridProgram)$3 );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 48");
+			System.err.println("Exception at location hybridprogram:hybridprogram CUP hybridprogram");
 			System.err.println( e );
 		}
 	}
@@ -716,7 +715,7 @@ hybridprogram:
 			//$$ = new HybridProgram( "repeat", args );
 			$$ = new RepetitionProgram( (HybridProgram)$1 );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 49");
+			System.err.println("Exception at location hybridprogram:hybridprogram KLEENESTAR");
 			System.err.println( e );
 		}
 	}
@@ -725,7 +724,7 @@ hybridprogram:
 		try {
 			$$ = (HybridProgram)$2;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 50");
+			System.err.println("Exception at location hybridprogram:LPAREN hybridprogram RPAREN");
 			System.err.println( e );
 		}
 	}
@@ -739,9 +738,9 @@ assignment:
 			//args.add( new dLStructure( (String)$1 ) );
 			//args.add( new dLStructure( "arbitrary" ) );
 			//$$ = new HybridProgram( ":=", args );
-			$$ = new AssignmentProgram( new dLStructure( (String)$1 ), new dLStructure( "arbitrary" ) );
+			$$ = new AssignmentProgram( new RealVariable( (String)$1 ), new Term( "arbitrary" ) );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 51");
+			System.err.println("Exception at location assignment:IDENTIFIER ASSIGN RANDOM");
 			System.err.println( e );
 		}
 	}
@@ -752,9 +751,9 @@ assignment:
 			//args.add( new dLStructure( (String)$1 ));
 			//args.add( (dLStructure)$3 );
 			//$$ = new HybridProgram( ":=", args );
-			$$ = new AssignmentProgram( new dLStructure( (String)$1 ), (dLStructure)$3 );
+			$$ = new AssignmentProgram( new RealVariable( (String)$1 ), (Term)$3 );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 52");
+			System.err.println("Exception at location IDENTIFIER ASSIGN term");
 			System.err.println( e );
 		}
 	}
@@ -770,7 +769,7 @@ test:
 			//$$ = new dLStructure( "?", args );
 			$$ = new TestProgram( (dLStructure)$2 );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 53");
+			System.err.println("Exception at location test:TEST dLformula");
 			System.err.println( e );
 		}
 	}
@@ -787,7 +786,7 @@ odesystem:
 			//$$ = new dLStructure( "continuous", args );
 			$$ = new ContinuousProgram( (ArrayList<dLStructure>)$2 ); // Constructor appends "true" doe automaticaly
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 54");
+			System.err.println("Exception at location odesystem:OPENBRACE odelist CLOSEBRACE");
 			System.err.println( e );
 		}
 	}
@@ -801,7 +800,7 @@ odesystem:
 			//$$ = new dLStructure( "continuous", args );
 			$$ = new ContinuousProgram( (ArrayList<dLStructure>)$2, (dLStructure)$4 );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 55");
+			System.err.println("Exception at location odesystem:OPENBRACE odelist AND dLformula CLOSEBRACE");
 			System.err.println( e );
 		}
 	}
@@ -815,7 +814,7 @@ odelist:
 			args.add( (dLStructure)$1 );
 			$$ = args;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 56");
+			System.err.println("Exception at location odelist:ode");
 			System.err.println( e );
 		}
 
@@ -828,7 +827,7 @@ odelist:
 			args.add( (dLStructure)$3 );
 			$$ = args;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 57");
+			System.err.println("Exception at location odelist:odelist COMMA ode");
 			System.err.println( e );
 		}
 
@@ -842,9 +841,9 @@ ode:
 			//args.add( new dLStructure( (String)$1) );
 			//args.add( (dLStructure)$4 );
 			//$$ = new dLStructure( "d/dt", args );
-			$$ = new ExplicitODE( new dLStructure( (String)$1 ), (dLStructure)$4 );
+			$$ = new ExplicitODE( new RealVariable( (String)$1 ), (Term)$4 );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 58");
+			System.err.println("Exception at location ode:IDENTIFIER PRIME EQUALS term");
 			System.err.println( e );
 		}
 
@@ -862,7 +861,7 @@ comparison:
 			args.add( (dLStructure)$3 );
 			$$ = new dLStructure( (String)$2, args );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 59");
+			System.err.println("Exception at location comparison:term INEQUALITY term");
 			System.err.println( e );
 		}
 	}
@@ -874,7 +873,7 @@ comparison:
 			args.add( (dLStructure)$3 );
 			$$ = new dLStructure( (String)$2, args );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 60");
+			System.err.println("Exception at location comparison:term EQUALS term");
 			System.err.println( e );
 		}
 	}
@@ -887,7 +886,7 @@ term:
 			$$ = new Real( (String)$1 );
 			//System.out.println( ((Term)$$).toString() );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 61");
+			System.err.println("Exception at location term:NUMBER");
 			System.err.println( e );
 		}
 	}
@@ -896,7 +895,7 @@ term:
 		try {
 			$$ = new Term( new Operator( (String)$1 ), (ArrayList<Term>)$3 );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 62");
+			System.err.println("Exception at location term:IDENTIFIER LPAREN argumentlist RPAREN");
 			System.err.println( e );
 		}
 	}
@@ -906,7 +905,7 @@ term:
 			$$ = new RealVariable( (String)$1 );
 	//		System.out.println( $$.toString() );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 63");
+			System.err.println("Exception at location term:IDENTIFIER");
 			System.err.println( e );
 		}
 	}
@@ -915,7 +914,7 @@ term:
 		try {
 			$$ = (Term)$2;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 64");
+			System.err.println("Exception at location term:LPAREN term RPAREN");
 			System.err.println( e );
 		}
 	}
@@ -927,7 +926,7 @@ term:
 			args.add( (Term)$3 );
 			$$ = new Term( "+", args );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 65");
+			System.err.println("Exception at location term:term PLUS term");
 			System.err.println( e );
 		}
 	}
@@ -939,7 +938,7 @@ term:
 			args.add( (Term)$3 );
 			$$ = new Term( "-", args );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 66");
+			System.err.println("Exception at location term:term MINUS term");
 			System.err.println( e );
 		}
 	}
@@ -951,7 +950,7 @@ term:
 			args.add( (Term)$3 );
 			$$ = new Term( "*", args );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 67");
+			System.err.println("Exception at location term:term MULTIPLY term");
 			System.err.println( e );
 		}
 	}
@@ -963,7 +962,7 @@ term:
 			args.add( (Term)$3 );
 			$$ = new Term( "/", args );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 68");
+			System.err.println("Exception at location term:term DIVIDE term");
 			System.err.println( e );
 		}
 	}
@@ -975,7 +974,7 @@ term:
 			args.add( (Term)$3 );
 			$$ = new Term( "^", args );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 69");
+			System.err.println("Exception at location term:term POWER tterm:term POWER term");
 			System.err.println( e );
 		}
 	}
@@ -987,7 +986,7 @@ term:
 			args.add( (Term)$2 );
 			$$ = new Term( "-", args );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 70");
+			System.err.println("Exception at location term:MINUS term");
 			System.err.println( e );
 		}
 	}
@@ -1004,7 +1003,7 @@ argumentlist:
 			args.add( (Term)$1 );
 			$$ = args;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 71");
+			System.err.println("Exception at location argumentlist:term");
 			System.err.println( e );
 		}
 	}
@@ -1016,7 +1015,7 @@ argumentlist:
 			args.add( (Term)$3 );
 			$$ = args;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location 72");
+			System.err.println("Exception at location argumentlist:argumentlist COMMA term");
 			System.err.println( e );
 		}
 	}

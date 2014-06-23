@@ -16,16 +16,8 @@ public class SequenceProgram extends HybridProgram {
 	}
 
 	// String methods
-	public String toString() {
-		return "( sequence " + children.get(0).toString() + ", " + children.get(1).toString() + " )";
-	}
-
-	public String toInfix() {
+	public String toKeYmaeraString() {
 		return "( " + children.get(0).toString() + " ; " + children.get(1).toString() + " )";
-	}
-
-	public String toKeYmaera() {
-		return toInfix();
 	}
 
 

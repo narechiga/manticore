@@ -36,6 +36,23 @@ public class dLStructure {
 	}
 
 
+	public ArrayList<RealVariable> getVariables () {
+		ArrayList<RealVariable> myVariables = new ArrayList<RealVariable>();
+
+		if ( this instanceof RealVariable ) {
+			myVariables.add( (RealVariable)this );
+		} else if ( children != null ) {
+			Iterator<dLStructure> childIterator = children.iterator();
+
+			while ( childIterator.hasNext() ) {
+				myVariables.addAll( childIterator.next().getVariables() );
+			}
+
+		}
+
+		return myVariables;
+	}
+
 	public ArrayList<ContinuousProgram> extractContinuousBlocks() {
 
 		ArrayList<ContinuousProgram> continuousBlocks = new ArrayList<ContinuousProgram>();
@@ -64,11 +81,11 @@ public class dLStructure {
 	}
 
 	// String operations
-	public String toString() {
-		return toInfix();
-	}
+	//public String toString() {
+	//	return toInfix();
+	//}
 
-	public String toPrefix() {
+	public String toString() {
 		if ( (operator != null) && (children != null) ) {
 			return "(" + operator.toString() + " " + children.toString() + " )";
 		} else if ( (operator != null) && (children == null) ) {
@@ -81,17 +98,17 @@ public class dLStructure {
 
 
 
-	public String toInfix() {
-		
-		if ( (operator != null) && (children != null) && (children.size() == 2) ) {
-			return "("+ (children.get(0)).toInfix() + operator.toString() + (children.get(1)).toInfix() + " )";
-		} else {
-			return toPrefix();
-		}
-	}
+	//public String toInfix() {
+	//	
+	//	if ( (operator != null) && (children != null) && (children.size() == 2) ) {
+	//		return "("+ (children.get(0)).toInfix() + operator.toString() + (children.get(1)).toInfix() + " )";
+	//	} else {
+	//		return toPrefix();
+	//	}
+	//}
 
 
-	public String toKeYmaera() { // dumps output in KeYmaera format
+	public String toKeYmaeraString() { // dumps output in KeYmaera format
 		return "to do";
 	}
 

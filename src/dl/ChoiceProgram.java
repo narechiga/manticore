@@ -15,17 +15,8 @@ public class ChoiceProgram extends HybridProgram {
 		this.children.add( rightChild );
 	}
 
-	// String methods
-	//public String toString() {
-	//	return "( choice " + children.get(0).toString() + ", " + children.get(1).toString() + " )";
-	//}
-
-	public String toInfix() {
+	public String toKeYmaeraString() {
 		return "( " + children.get(0).toString() + " ++ " + children.get(1).toString() + " )";
-	}
-
-	public String toKeYmaera() {
-		return toInfix();
 	}
 
 	// Administrative

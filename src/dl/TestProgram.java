@@ -14,16 +14,8 @@ public class TestProgram extends DiscreteProgram {
 	}
 
 	// String methods
-	public String toString() {
-		return "( test " + children.get(0).toString() + " )";
-	}
-
-	public String toInfix() {
-		return "(? " + children.get(0).toString() + " )";
-	}
-
-	public String toKeYmaera() {
-		return toInfix();
+	public String toKeYmaeraString() {
+		return "(? " + children.get(0).toKeYmaeraString() + " )";
 	}
 
 	// Administrative

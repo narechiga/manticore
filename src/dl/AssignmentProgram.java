@@ -5,7 +5,7 @@ import java.util.*;
 
 public class AssignmentProgram extends DiscreteProgram {
 
-	public AssignmentProgram( dLStructure leftChild, dLStructure rightChild ) {
+	public AssignmentProgram( Term leftChild, Term rightChild ) {
 		operator = new Operator( "assign" );
 
 		children = new ArrayList<dLStructure>();
@@ -13,18 +13,12 @@ public class AssignmentProgram extends DiscreteProgram {
 		children.add( rightChild );
 	}
 
+//	public String toString() {
+//		return "( assign " + children.get(0).toString() + ", " + children.get(1).toString() +" )";
+//	}
 
-	// Print methods
-	//public String toString() {
-	//	return "( assign " + children.get(0).toString() + ", " + children.get(1).toString() +" )";
-	//}
-
-	public String toInfix() {
+	public String toKeYmaeraString() {
 		return "( " + children.get(0).toString() + " := " + children.get(1).toString() +" )";
-	}
-
-	public String toKeYmaera() {
-		return toInfix();
 	}
 
 	// Administrative

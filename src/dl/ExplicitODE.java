@@ -34,12 +34,10 @@ public class ExplicitODE extends dLStructure {
 		return toString();
 	}
 
-	public String toString () {
+	public String toKeYmaeraString () {
 		String returnString = "";
 
-		//returnString = returnString + "{ ";
 		returnString = returnString + children.get(0).toString() + "' = " + children.get(1).toString();
-		//returnString = returnString + " }";
 
 		return returnString;
 	}

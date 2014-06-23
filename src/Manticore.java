@@ -41,6 +41,9 @@ class Manticore {
 					System.out.println( continuousblocks );
 					System.out.println("=================================================================");
 
+					System.out.println("The variables that occur in this structure are:");
+					System.out.println( myParser.parsedStructure.getVariables() );
+
 
                 		} catch ( Exception e ) { 
 					System.out.println("Error running parser test loop.");

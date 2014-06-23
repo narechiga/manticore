@@ -16,16 +16,8 @@ public class RepetitionProgram extends HybridProgram {
 	
 
 	// String methods
-	public String toString() {
-		return "(repeat" + children.get(0).toString() + " )";
-	}
-
-	public String toInfix() {
+	public String toKeYmaeraString() {
 		return "(" + children.get(0).toString() + "*)";
-	}
-
-	public String toKeYmaera() {
-		return toInfix();
 	}
 
 

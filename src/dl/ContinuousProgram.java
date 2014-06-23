@@ -85,11 +85,7 @@ public class ContinuousProgram extends HybridProgram {
 	}
 
 	// S tring operations
-	public String toString() {
-		return toInfix();
-	}
-
-	public String toInfix() {
+	public String toKeYmaeraString() {
 		
 		String returnString = "{ ";
 
@@ -116,8 +112,5 @@ public class ContinuousProgram extends HybridProgram {
 		return returnString;
 	}
 
-	public String toKeYmaera() {
-		return toInfix();
-	}
 
 }

@@ -9,9 +9,10 @@ public class RealVariable extends Term {
 		children = null;
 	}
 
-	public String toString () {
+	public String toKeYmaeraString() {
 		return operator.toString();
 	}
+
 
 }
 
