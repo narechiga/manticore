@@ -17,7 +17,7 @@ public class SequenceProgram extends HybridProgram {
 
 	// String methods
 	public String toKeYmaeraString() {
-		return "( " + children.get(0).toString() + " ; " + children.get(1).toString() + " )";
+		return "( " + children.get(0).toKeYmaeraString() + " ; " + children.get(1).toKeYmaeraString() + " )";
 	}
 
 

@@ -924,7 +924,7 @@ term:
 			ArrayList<Term> args = new ArrayList<Term>();
 			args.add( (Term)$1 );
 			args.add( (Term)$3 );
-			$$ = new Term( "+", args );
+			$$ = new Term( new Operator("+", true), args );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:term PLUS term");
 			System.err.println( e );
@@ -936,7 +936,7 @@ term:
 			ArrayList<Term> args = new ArrayList<Term>();
 			args.add( (Term)$1 );
 			args.add( (Term)$3 );
-			$$ = new Term( "-", args );
+			$$ = new Term( new Operator("-", true), args );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:term MINUS term");
 			System.err.println( e );
@@ -948,7 +948,7 @@ term:
 			ArrayList<Term> args = new ArrayList<Term>();
 			args.add( (Term)$1 );
 			args.add( (Term)$3 );
-			$$ = new Term( "*", args );
+			$$ = new Term( new Operator("*", true), args );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:term MULTIPLY term");
 			System.err.println( e );
@@ -960,7 +960,7 @@ term:
 			ArrayList<Term> args = new ArrayList<Term>();
 			args.add( (Term)$1 );
 			args.add( (Term)$3 );
-			$$ = new Term( "/", args );
+			$$ = new Term( new Operator("/", true), args );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:term DIVIDE term");
 			System.err.println( e );
@@ -972,7 +972,7 @@ term:
 			ArrayList<Term> args = new ArrayList<Term>();
 			args.add( (Term)$1 );
 			args.add( (Term)$3 );
-			$$ = new Term( "^", args );
+			$$ = new Term( new Operator("^", true), args );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:term POWER tterm:term POWER term");
 			System.err.println( e );
@@ -984,7 +984,7 @@ term:
 			ArrayList<Term> args = new ArrayList<Term>();
 			args.add( new Real( "0" ) );
 			args.add( (Term)$2 );
-			$$ = new Term( "-", args );
+			$$ = new Term( new Operator("-", true), args );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:MINUS term");
 			System.err.println( e );

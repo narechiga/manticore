@@ -16,7 +16,7 @@ public class ChoiceProgram extends HybridProgram {
 	}
 
 	public String toKeYmaeraString() {
-		return "( " + children.get(0).toString() + " ++ " + children.get(1).toString() + " )";
+		return "( " + children.get(0).toKeYmaeraString() + " ++ " + children.get(1).toKeYmaeraString() + " )";
 	}
 
 	// Administrative

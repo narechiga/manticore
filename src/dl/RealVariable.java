@@ -10,7 +10,7 @@ public class RealVariable extends Term {
 	}
 
 	public String toKeYmaeraString() {
-		return operator.toString();
+		return operator.toKeYmaeraString();
 	}
 
 

@@ -100,11 +100,11 @@ public class ContinuousProgram extends HybridProgram {
 			if ( childIterator.hasNext() ) { // then this is an ode, not the doe
 
 				thisODE = (ExplicitODE)thisChild;
-				returnString = returnString + thisODE.toInfix() + ", ";
+				returnString = returnString + thisODE.toKeYmaeraString() + ", ";
 
 			} else { //then this is the doe
 				returnString = returnString.substring(0, returnString.length() -2 );
-				returnString = returnString + " & " + thisChild.toInfix();
+				returnString = returnString + " & " + thisChild.toKeYmaeraString(); // TODO: Write a toKeYmaeraString for logical formulas
 			}
 		}
 		returnString = returnString + " }";

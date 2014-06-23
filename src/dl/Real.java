@@ -1,4 +1,4 @@
-pkage manticore.dl;
+package manticore.dl;
 
 public class Real extends Term {
 
@@ -13,7 +13,7 @@ public class Real extends Term {
 	}
 
 	public String toKeYmaeraString() {
-		return this.operator.toString();
+		return this.operator.toKeYmaeraString();
 	}
 
 }

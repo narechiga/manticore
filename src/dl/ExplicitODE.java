@@ -37,7 +37,7 @@ public class ExplicitODE extends dLStructure {
 	public String toKeYmaeraString () {
 		String returnString = "";
 
-		returnString = returnString + children.get(0).toString() + "' = " + children.get(1).toString();
+		returnString = returnString + children.get(0).toKeYmaeraString() + "' = " + children.get(1).toKeYmaeraString();
 
 		return returnString;
 	}

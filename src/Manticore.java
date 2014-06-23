@@ -21,7 +21,8 @@ class Manticore {
                 		        YYParser myParser = new YYParser( myLexer );
                 		        myParser.parse();
 
-					System.out.println( "PARSED: " + myParser.parsedStructure.toString() );
+					System.out.println( "PARSED: " + myParser.parsedStructure.toKeYmaeraString() );
+					System.out.println("(keymaera string)");
 
 					if ( myParser.parsedStructure instanceof HybridProgram ) {
 						
@@ -65,7 +66,7 @@ class Manticore {
 			YYParser fileParser = new YYParser( fileLexer );
 
 			fileParser.parse();
-			System.out.println( "PARSED: " + fileParser.parsedStructure.toString() );
+			System.out.println( "PARSED: " + fileParser.parsedStructure.toKeYmaeraString() );
 			System.out.println("Continuous blocks================================================");
 			ArrayList<ContinuousProgram> continuousblocks = fileParser.parsedStructure.extractContinuousBlocks();
 			System.out.println("Continuous blocks found: " + continuousblocks.size() );
@@ -76,7 +77,7 @@ class Manticore {
 				System.out.println("_________________________________________________________________");
 				System.out.println("Continuous block:");
 
-				System.out.println( cbit.next().toInfix() );
+				System.out.println( cbit.next().toKeYmaeraString() );
 				System.out.println("_________________________________________________________________");
 			}
 

@@ -13,12 +13,8 @@ public class AssignmentProgram extends DiscreteProgram {
 		children.add( rightChild );
 	}
 
-//	public String toString() {
-//		return "( assign " + children.get(0).toString() + ", " + children.get(1).toString() +" )";
-//	}
-
 	public String toKeYmaeraString() {
-		return "( " + children.get(0).toString() + " := " + children.get(1).toString() +" )";
+		return "( " + children.get(0).toKeYmaeraString() + " := " + children.get(1).toKeYmaeraString() +" )";
 	}
 
 	// Administrative

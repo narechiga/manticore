@@ -17,7 +17,7 @@ public class RepetitionProgram extends HybridProgram {
 
 	// String methods
 	public String toKeYmaeraString() {
-		return "(" + children.get(0).toString() + "*)";
+		return "(" + children.get(0).toKeYmaeraString() + "*)";
 	}
 
 
