@@ -512,7 +512,7 @@ argumentdeclaration:
 dLformula:
 	TRUE { 
 		try {
-			$$ = new dLStructure( "true" );
+			$$ = new TrueFormula();
 		} catch ( Exception e ) {
 			System.err.println("Exception at location dLformula:TRUE");
 			System.err.println( e );
@@ -520,7 +520,7 @@ dLformula:
 	}
 	| FALSE	{ 
 		try {
-			$$ = new dLStructure( "false" );
+			$$ = new FalseFormula();
 		} catch ( Exception e ) {
 			System.err.println("Exception at location dLformula:FALSE");
 			System.err.println( e );
@@ -529,7 +529,7 @@ dLformula:
 	| comparison { 
 		//$$ = $1; 							
 		try {
-			$$ = (dLStructure)$1;
+			$$ = (ComparisonFormula)$1;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location dLformula:comparison");
 			System.err.println( e );
@@ -538,10 +538,11 @@ dLformula:
 	| dLformula AND dLformula { 
 		//$$ = "(and " + (String)$1 + ", " + (String)$3 + " )"; 	
 		try {
-			ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			args.add( (dLStructure)$1 );
-			args.add( (dLStructure)$3 );
-			$$ = new dLStructure( "&", args );
+			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
+			//args.add( (dLStructure)$1 );
+			//args.add( (dLStructure)$3 );
+			//$$ = new dLStructure( "&", args );
+			$$ = new AndFormula( (dLFormula)$1, (dLFormula)$3 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location dLformula:dLformula AND dLformula");
 			System.err.println( e );
@@ -550,10 +551,11 @@ dLformula:
 	| dLformula OR dLformula { 
 		//$$ = "(or " + (String)$1 + ", " + (String)$3 + " )"; 
 		try {
-			ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			args.add( (dLStructure)$1 );
-			args.add( (dLStructure)$3 );
-			$$ = new dLStructure( "or", args );
+			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
+			//args.add( (dLStructure)$1 );
+			//args.add( (dLStructure)$3 );
+			//$$ = new dLStructure( "or", args );
+			$$ = new OrFormula( (dLFormula)$1, (dLFormula)$3 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location dLformula:dLformula OR dLformula");
 			System.err.println( e );
@@ -562,9 +564,10 @@ dLformula:
 	| NOT dLformula	{ 
 		//$$ = "(not " + (String)$2 + " )"; 
 		try {
-			ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			args.add( (dLStructure)$2 );
-			$$ = new dLStructure( "not", args );
+			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
+			//args.add( (dLStructure)$2 );
+			//$$ = new dLStructure( "not", args );
+			$$ = new NotFormula( (dLFormula)$2 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location dLformula:NOT dLformula");
 			System.err.println( e );
@@ -573,7 +576,7 @@ dLformula:
 	| LPAREN dLformula RPAREN { 
 		//$$ = "( " + (String)$2 + ")";
 		try {
-			$$ = (dLStructure)$2;
+			$$ = (dLFormula)$2;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location dLformula:LPAREN dLformula RPAREN");
 			System.err.println( e );
@@ -582,10 +585,11 @@ dLformula:
 	| dLformula IMPLIES dLformula { 
 		//$$ = "(implies " + (String)$1 + ", " + (String)$3 + " )";
 		try {
-			ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			args.add( (dLStructure)$1 );
-			args.add( (dLStructure)$3 );
-			$$ = new dLStructure( "implies", args );
+			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
+			//args.add( (dLStructure)$1 );
+			//args.add( (dLStructure)$3 );
+			//$$ = new dLStructure( "implies", args );
+			$$ = new ImpliesFormula( (dLFormula)$1, (dLFormula)$3 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location dLformula:dLformula IMPLIES dLformula");
 			System.err.println( e );
@@ -594,10 +598,11 @@ dLformula:
 	| dLformula IFF dLformula { 
 		//$$ = "(iff " + (String)$1 + ", " + (String)$3 + " )"; 
 		try {
-			ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			args.add( (dLStructure)$1 );
-			args.add( (dLStructure)$3 );
-			$$ = new dLStructure( "iff", args );
+		//	ArrayList<dLStructure> args = new ArrayList<dLStructure>();
+		//	args.add( (dLStructure)$1 );
+		//	args.add( (dLStructure)$3 );
+		//	$$ = new dLStructure( "iff", args );
+			$$ = new IffFormula( (dLFormula)$1, (dLFormula)$3 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location dLformula:dLformula IFF dLformula");
 			System.err.println( e );
@@ -606,10 +611,11 @@ dLformula:
 	| FORALL IDENTIFIER SEMICOLON dLformula %prec QUANTIFIER { 
 		//$$ = "(forall " + (String)$2 + "; " + (String)$4 + " )";
 		try {
-			ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			args.add( new dLStructure( (String)$2 ) );
-			args.add( (dLStructure)$4 );
-			$$ = new dLStructure( "forall", args );
+			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
+			//args.add( new dLStructure( (String)$2 ) );
+			//args.add( (dLStructure)$4 );
+			//$$ = new dLStructure( "forall", args );
+			$$ = new ForAllFormula( new RealVariable( (String)$2), (dLFormula)$4 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location dLformula:FORALL IDENTIFIER SEMICOLON dLformula");
 			System.err.println( e );
@@ -618,10 +624,11 @@ dLformula:
 	| EXISTS IDENTIFIER SEMICOLON dLformula %prec QUANTIFIER { 
 		//$$ = "(exists " + (String)$2 + "; " + (String)$4 + " )";
 		try {
-			ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			args.add( new dLStructure( (String)$2 ) );
-			args.add( (dLStructure)$4 );
-			$$ = new dLStructure( "exists", args );
+			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
+			//args.add( new dLStructure( (String)$2 ) );
+			//args.add( (dLStructure)$4 );
+			//$$ = new dLStructure( "exists", args );
+			$$ = new ExistsFormula( new RealVariable( (String)$2 ), (dLFormula)$4 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location dLformula:EXISTS IDENTIFIER SEMICOLON dLformula");
 			System.err.println( e );
@@ -634,6 +641,7 @@ dLformula:
 			args.add( (HybridProgram)$2 );
 			args.add( (dLStructure)$4 );
 			$$ = new dLStructure( "[]", args );
+			$$ = new BoxModalityFormula( (HybridProgram)$2, (dLFormula)$4 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location OPENBOX:hybridprogram CLOSEBOX dLformula");
 			System.err.println( e );
@@ -642,10 +650,11 @@ dLformula:
 	| OPENDIAMOND hybridprogram CLOSEDIAMOND dLformula { 
 		//$$ = "(diamond (hp: " + (String)$2 + " ), (post: " + (String)$4 + " ) )";
 		try {
-			ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			args.add( (HybridProgram)$2 );
-			args.add( (dLStructure)$4 );
-			$$ = new dLStructure( "<>", args );
+			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
+			//args.add( (HybridProgram)$2 );
+			//args.add( (dLStructure)$4 );
+			//$$ = new dLStructure( "<>", args );
+			$$ = new BoxModalityFormula( (HybridProgram)$2, (dLFormula)$4 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location OPENDIAMOND hybridprogram CLOSEDIAMOND dLformula");
 			System.err.println( e );
@@ -856,10 +865,11 @@ comparison:
 	term INEQUALITY term { 
 		//$$ = "(" + (String)$2 +" "+ (String)$1 + ", " + (String)$3 + ")"; 
 		try {
-			ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			args.add( (dLStructure)$1 );
-			args.add( (dLStructure)$3 );
-			$$ = new dLStructure( (String)$2, args );
+			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
+			//args.add( (dLStructure)$1 );
+			//args.add( (dLStructure)$3 );
+			//$$ = new dLStructure( (String)$2, args );
+			$$ = new ComparisonFormula( new Operator( (String)$2 ), (Term)$1, (Term)$3 ) ;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location comparison:term INEQUALITY term");
 			System.err.println( e );
@@ -868,10 +878,11 @@ comparison:
 	| term EQUALS term {
 		//$$ = "(" + (String)$2 +" "+ (String)$1 + ", " + (String)$3 + ")"; 
 		try {
-			ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			args.add( (dLStructure)$1 );
-			args.add( (dLStructure)$3 );
-			$$ = new dLStructure( (String)$2, args );
+			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
+			//args.add( (dLStructure)$1 );
+			//args.add( (dLStructure)$3 );
+			//$$ = new dLStructure( (String)$2, args );
+			$$ = new ComparisonFormula( new Operator( (String)$2), (Term)$1, (Term)$3 ) ;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location comparison:term EQUALS term");
 			System.err.println( e );
