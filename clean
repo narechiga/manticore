@@ -1,0 +1,3 @@
+#!/usr/bin/perl
+
+`rm -rf bin/*; rm src/Lexer.java; rm src/YYParser.java; rm src/Lexer.java~`;
