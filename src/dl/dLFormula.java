@@ -10,7 +10,7 @@ public class dLFormula extends dLStructure {
 		return false;
 	}
 
-	public boolean isPrimitive() {
+	public boolean isPropositionalPrimitive() {
 		return false;
 	}
 

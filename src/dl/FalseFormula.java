@@ -15,7 +15,7 @@ public class FalseFormula extends dLFormula {
 		return true;
 	}
 
-	public boolean isPrimitive() {
+	public boolean isPropositionalPrimitive() {
 		return true;
 	}
 

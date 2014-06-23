@@ -96,6 +96,11 @@ public class dLStructure {
 		}
 	}
 
+	public String toKeYmaeraString() {
+		return null;
+	}
+
+
 
 
 	//public String toInfix() {
@@ -107,9 +112,5 @@ public class dLStructure {
 	//	}
 	//}
 
-
-	public String toKeYmaeraString() { // dumps output in KeYmaera format
-		return "to do";
-	}
 
 }

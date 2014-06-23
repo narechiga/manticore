@@ -32,8 +32,8 @@ public class ComparisonFormula extends dLFormula {
 		return true;
 	}
 
-	public boolean isModal() {
-		return false;
+	public boolean isPropositionalPrimitive() {
+		return true;
 	}
 
 }

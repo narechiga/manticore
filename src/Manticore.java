@@ -36,6 +36,15 @@ class Manticore {
 						
 					}
 
+					if ( myParser.parsedStructure instanceof dLFormula ) {
+						System.out.println("dL Formula Data==============================================");
+						dLFormula parsedFormula = (dLFormula)myParser.parsedStructure;
+						System.out.println("Is first order: " + parsedFormula.isFirstOrder());
+						System.out.println("Is modal: " + parsedFormula.isModal());
+						System.out.println("Is propositional primitive: " + parsedFormula.isPropositionalPrimitive());
+						System.out.println("=================================================================");
+					}
+
 					System.out.println("Continuous blocks================================================");
 					ArrayList<ContinuousProgram> continuousblocks = myParser.parsedStructure.extractContinuousBlocks();
 					System.out.println("Continuous blocks found: " + continuousblocks.size() );
