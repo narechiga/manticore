@@ -81,7 +81,7 @@
 %left NEGATIVE
 %left REALDECLARATION
 
-%type <String> input fullblock problemblock schemavarsblock rulesblock schematext varblock funblock functiondeclaration argumentdeclaration annotationblock
+%type <String> input fullblock problemblock schemavarsblock rulesblock schematext varblock funblock functiondeclaration argumentdeclaration annotationblock valuation
 %type <ArrayList<String>> vardeclaration varlist varinitlist
 %type <dLStructure> dLformula assignment test ode comparison
 %type <Term> term
@@ -94,9 +94,19 @@
 
 %%
 input: 
-	fullblock { 
+	dLformula OPENBRACE valuation CLOSEBRACE {
 		try {
-			$$ = (String)$1; System.out.println("full block"); //System.out.println($$); 
+			parsedStructure = (dLStructure)$1; // valuation has already been handled
+			$$ = (String)$3; 
+		} catch ( Exception e ) {
+			System.err.println("Exception at location input:dLformula OPENBRACE valuation CLOSEBRACE");
+			System.err.println( e );
+		}
+
+	}
+	| fullblock { 
+		try {
+			$$ = (String)$1; System.out.println("full block"); 
 		} catch ( Exception e ) {
 			System.err.println("Exception at location input:fullblock");
 			System.err.println( e );
@@ -104,7 +114,7 @@ input:
 	}
 	| funblock { 
 		try {
-			$$ = (String)$1; System.out.println("function block"); //System.out.println($$); 
+			$$ = (String)$1; System.out.println("function block");
 		} catch ( Exception e ) {
 			System.err.println("Exception at location input:funblock");
 			System.err.println( e );
@@ -112,7 +122,7 @@ input:
 	}
 	| varblock { 
 		try {
-			$$ = (String)$1; System.out.println("variable declaration block"); //System.out.println($$); 
+			$$ = (String)$1; System.out.println("variable declaration block");
 		} catch ( Exception e ) {
 			System.err.println("Exception at location input:varblock");
 			System.err.println( e );
@@ -120,7 +130,7 @@ input:
 	}
 	| schemavarsblock { 
 		try {
-			$$ = (String)$1; System.out.println("schema variables block"); //System.out.println($$); 
+			$$ = (String)$1; System.out.println("schema variables block"); 
 		} catch ( Exception e ) {
 			System.err.println("Exception at location input:schemavarsblock");
 			System.err.println( e );
@@ -129,7 +139,7 @@ input:
 	}
 	| rulesblock { 
 		try {
-			$$ = (String)$1; System.out.println("rules block"); //System.out.println($$); 
+			$$ = (String)$1; System.out.println("rules block"); 
 		} catch ( Exception e ) {
 			System.err.println("Exception at location input:rulesblock");
 			System.err.println( e );
@@ -138,7 +148,7 @@ input:
 	| dLformula { 
 		try {
 			System.out.println("Found: dLformula"); 
-			parsedStructure = (dLStructure)$1;	
+			parsedStructure = (dLFormula)$1;	
 		} catch ( Exception e ) {
 			System.err.println("Exception at location input:dLformula");
 			System.err.println( e );
@@ -167,6 +177,8 @@ input:
 	}
 ;
 
+
+/*==================== Block as it would occur in an input file ====================*/
 fullblock:
 	problemblock { 
 		try{
@@ -205,7 +217,7 @@ fullblock:
 problemblock:
 	PROBLEM OPENBRACE dLformula CLOSEBRACE { 
 		try {
-			parsedStructure = (dLStructure)$3;
+			parsedStructure = (dLFormula)$3;
 			$$ = "{\n" + ((dLStructure)$3).toString() + "\n}"; System.out.println( $$ );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location problemblock:PROBLEM OPENBRACE dLformula CLOSEBRACE");
@@ -214,7 +226,7 @@ problemblock:
 	}
 	| PROBLEM OPENBRACE varblock dLformula CLOSEBRACE { 
 		try {
-			parsedStructure = (dLStructure)$4;
+			parsedStructure = (dLFormula)$4;
 			$$ = "{\n" + (String)$3 + "\n" + ((dLStructure)$4).toString() + "\n}"; System.out.println($$);
 		} catch ( Exception e ) {
 			System.err.println("Exception at location problemblock:PROBLEM OPENBRACE varblock dLformula CLOSEBRACE");
@@ -223,6 +235,42 @@ problemblock:
 	}
 ;
 
+/*============================================================*/
+
+/*==================== Valuations, for command-line interface ====================*/
+valuation:
+	IDENTIFIER IMPLIES NUMBER {
+		try {
+			if ( this.valuation == null ) {
+				this.valuation = new HashMap<RealVariable,Real>();
+			}
+
+			this.valuation.put( new RealVariable( (String)$1 ), new Real( (String)$3 ) );
+			$$ = "(valuation " +  (String)$1 + "->" + (String)$3 + ")";
+			System.out.println("Found valuation for " + (String)$1 );
+
+		} catch ( Exception e ) {
+			System.err.println("Exception at location valuation:IDENTIFIER IMPLIES NUMBER");
+			System.err.println( e );
+		}
+		
+	}
+	| valuation COMMA IDENTIFIER IMPLIES NUMBER {
+		try{
+			if ( this.valuation == null ) {
+				this.valuation = new HashMap<RealVariable,Real>();
+			}
+			this.valuation.put( new RealVariable( (String)$3 ), new Real( (String)$5 ) );
+			$$ = (String)$1 + "\n" + "(valuation " +  (String)$3 + "->" + (String)$5 + ")";
+			System.out.println("Found valuation for " + (String)$3 );
+		} catch ( Exception e ) {
+			System.err.println("Exception at location valuation:valuation COMMA IDENTIFIER IMPLIES NUMBER");
+			System.err.println( e );
+		}
+	}
+;
+/*============================================================*/
+	
 
 /*==================== Annotations ====================*/
 annotationblock:
@@ -268,11 +316,11 @@ annotationlist:
 schemavarsblock:
 	SCHEMAVARIABLES OPENBRACE schematext CLOSEBRACE { 
 		try {
-			if ( parsedStructure == null ) {
-				parsedStructure = new dLStructure();
-			}
+			//if ( parsedStructure == null ) {
+			//	parsedStructure = new dLStructure();
+			//}
 			$$ = "(declare-schema-vars: \n" + (String)$3 + "\n)"; System.out.println( $$ );
-			parsedStructure.declaredSchemaVariables = (String)$3;
+			this.declaredSchemaVariables = (String)$3;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location schemavarsblock:SCHEMAVARIABLES OPENBRACE schematext CLOSEBRACE");
 			System.err.println( e );
@@ -283,12 +331,11 @@ schemavarsblock:
 rulesblock:
 	RULES OPENBRACE schematext CLOSEBRACE { 
 		try {
-			if ( parsedStructure == null ) {
-				parsedStructure = new dLStructure();
-			}
+			//if ( parsedStructure == null ) {
+			//	parsedStructure = new dLStructure();
+			//}
 			$$ = "(declare-rules: \n" + (String)$3 + "\n)"; System.out.println( $$ );
-			assert( parsedStructure != null );
-			parsedStructure.declaredRules = (String)$3;
+			this.declaredRules = (String)$3;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location rulesblock:RULES OPENBRACE schematext CLOSEBRACE");
 			System.err.println( e );
@@ -321,13 +368,12 @@ schematext:
 varblock:
 	OPENBOX vardeclaration CLOSEBOX { 
 		try {
-			if ( parsedStructure == null ) {
-				parsedStructure = new dLStructure();
-			}
-			parsedStructure.declaredProgramVariables = new ArrayList<String>();
-			//parsedStructure.declaredProgramVariables.addAll( (ArrayList<String>)$2 );
-			parsedStructure.declaredProgramVariables.addAll( $2 );
-			ArrayList<String> vars = (ArrayList<String>)parsedStructure.declaredProgramVariables;
+			//if ( parsedStructure == null ) {
+			//	parsedStructure = new dLStructure();
+			//}
+			this.declaredProgramVariables = new ArrayList<String>();
+			this.declaredProgramVariables.addAll( $2 );
+			ArrayList<String> vars = (ArrayList<String>)this.declaredProgramVariables;
 			$$ = vars.toString();
 		} catch ( Exception e ) {
 			System.err.println("Exception at location varblock:OPENBOX vardeclaration CLOSEBOX");
@@ -338,15 +384,15 @@ varblock:
 	| OPENBOX vardeclaration varinitlist CLOSEBOX { 
 		//$$ = "(declare-vars: \n" + (String)$2 + ")" + (String)$3; System.out.println( $$ );
 		try {
-			if ( parsedStructure == null ) {
-				parsedStructure = new dLStructure();
-			}
-			parsedStructure.declaredProgramVariables = (ArrayList<String>)$2;
-			parsedStructure.variableInitializations = (ArrayList<String>)$3;
+			//if ( parsedStructure == null ) {
+			//	parsedStructure = new dLStructure();
+			//}
+			this.declaredProgramVariables = (ArrayList<String>)$2;
+			this.variableInitializations = (ArrayList<String>)$3;
 
 			ArrayList<String> result = new ArrayList<String>();
-			result.addAll( parsedStructure.declaredProgramVariables );
-			result.addAll( parsedStructure.variableInitializations );
+			result.addAll( this.declaredProgramVariables );
+			result.addAll( this.variableInitializations );
 			$$ = result.toString();
 		} catch ( Exception e ) {
 			System.err.println("Exception at location varblock:OPENBOX vardeclaration varinitlist CLOSEBOX");
@@ -527,7 +573,6 @@ dLformula:
 		}
 	}
 	| comparison { 
-		//$$ = $1; 							
 		try {
 			$$ = (ComparisonFormula)$1;
 		} catch ( Exception e ) {
@@ -536,12 +581,7 @@ dLformula:
 		}
 	}
 	| dLformula AND dLformula { 
-		//$$ = "(and " + (String)$1 + ", " + (String)$3 + " )"; 	
 		try {
-			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			//args.add( (dLStructure)$1 );
-			//args.add( (dLStructure)$3 );
-			//$$ = new dLStructure( "&", args );
 			$$ = new AndFormula( (dLFormula)$1, (dLFormula)$3 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location dLformula:dLformula AND dLformula");
@@ -549,12 +589,7 @@ dLformula:
 		}
 	}
 	| dLformula OR dLformula { 
-		//$$ = "(or " + (String)$1 + ", " + (String)$3 + " )"; 
 		try {
-			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			//args.add( (dLStructure)$1 );
-			//args.add( (dLStructure)$3 );
-			//$$ = new dLStructure( "or", args );
 			$$ = new OrFormula( (dLFormula)$1, (dLFormula)$3 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location dLformula:dLformula OR dLformula");
@@ -562,11 +597,7 @@ dLformula:
 		}
 	}
 	| NOT dLformula	{ 
-		//$$ = "(not " + (String)$2 + " )"; 
 		try {
-			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			//args.add( (dLStructure)$2 );
-			//$$ = new dLStructure( "not", args );
 			$$ = new NotFormula( (dLFormula)$2 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location dLformula:NOT dLformula");
@@ -574,7 +605,6 @@ dLformula:
 		}
 	}
 	| LPAREN dLformula RPAREN { 
-		//$$ = "( " + (String)$2 + ")";
 		try {
 			$$ = (dLFormula)$2;
 		} catch ( Exception e ) {
@@ -583,12 +613,7 @@ dLformula:
 		}
 	}
 	| dLformula IMPLIES dLformula { 
-		//$$ = "(implies " + (String)$1 + ", " + (String)$3 + " )";
 		try {
-			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			//args.add( (dLStructure)$1 );
-			//args.add( (dLStructure)$3 );
-			//$$ = new dLStructure( "implies", args );
 			$$ = new ImpliesFormula( (dLFormula)$1, (dLFormula)$3 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location dLformula:dLformula IMPLIES dLformula");
@@ -596,12 +621,7 @@ dLformula:
 		}
 	}
 	| dLformula IFF dLformula { 
-		//$$ = "(iff " + (String)$1 + ", " + (String)$3 + " )"; 
 		try {
-		//	ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-		//	args.add( (dLStructure)$1 );
-		//	args.add( (dLStructure)$3 );
-		//	$$ = new dLStructure( "iff", args );
 			$$ = new IffFormula( (dLFormula)$1, (dLFormula)$3 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location dLformula:dLformula IFF dLformula");
@@ -609,12 +629,7 @@ dLformula:
 		}
 	}
 	| FORALL IDENTIFIER SEMICOLON dLformula %prec QUANTIFIER { 
-		//$$ = "(forall " + (String)$2 + "; " + (String)$4 + " )";
 		try {
-			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			//args.add( new dLStructure( (String)$2 ) );
-			//args.add( (dLStructure)$4 );
-			//$$ = new dLStructure( "forall", args );
 			$$ = new ForAllFormula( new RealVariable( (String)$2), (dLFormula)$4 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location dLformula:FORALL IDENTIFIER SEMICOLON dLformula");
@@ -622,12 +637,7 @@ dLformula:
 		}
 	}
 	| EXISTS IDENTIFIER SEMICOLON dLformula %prec QUANTIFIER { 
-		//$$ = "(exists " + (String)$2 + "; " + (String)$4 + " )";
 		try {
-			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			//args.add( new dLStructure( (String)$2 ) );
-			//args.add( (dLStructure)$4 );
-			//$$ = new dLStructure( "exists", args );
 			$$ = new ExistsFormula( new RealVariable( (String)$2 ), (dLFormula)$4 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location dLformula:EXISTS IDENTIFIER SEMICOLON dLformula");
@@ -635,12 +645,7 @@ dLformula:
 		}
 	}
 	| OPENBOX hybridprogram CLOSEBOX dLformula { 
-		//$$ = "(box (hp: " + (String)$2 + " ), (post: " + (String)$4 + " ) )"; 
 		try {
-			ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			args.add( (HybridProgram)$2 );
-			args.add( (dLStructure)$4 );
-			$$ = new dLStructure( "[]", args );
 			$$ = new BoxModalityFormula( (HybridProgram)$2, (dLFormula)$4 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location OPENBOX:hybridprogram CLOSEBOX dLformula");
@@ -648,12 +653,7 @@ dLformula:
 		}
 	}
 	| OPENDIAMOND hybridprogram CLOSEDIAMOND dLformula { 
-		//$$ = "(diamond (hp: " + (String)$2 + " ), (post: " + (String)$4 + " ) )";
 		try {
-			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			//args.add( (HybridProgram)$2 );
-			//args.add( (dLStructure)$4 );
-			//$$ = new dLStructure( "<>", args );
 			$$ = new BoxModalityFormula( (HybridProgram)$2, (dLFormula)$4 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location OPENDIAMOND hybridprogram CLOSEDIAMOND dLformula");
@@ -664,7 +664,6 @@ dLformula:
 
 hybridprogram:
 	odesystem { 
-		//$$ = (String)$1;
 		try {
 			$$ = (ContinuousProgram)$1;
 		} catch ( Exception e ) {
@@ -673,7 +672,6 @@ hybridprogram:
 		}
 	}
 	| test { 
-		//$$ = (String)$1;
 		try {
 			$$ = (TestProgram)$1;
 		} catch ( Exception e ) {
@@ -682,7 +680,6 @@ hybridprogram:
 		}
 	}
 	| assignment { 
-		//$$ = (String)$1;
 		try {
 			$$ = (AssignmentProgram)$1;
 		} catch ( Exception e ) {
@@ -691,12 +688,7 @@ hybridprogram:
 		}
 	}
 	| hybridprogram SEMICOLON hybridprogram { 
-		//$$ = "(sequence " + (String)$1 + ", " + (String)$3 + " )"; 
 		try {
-			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			//args.add( (dLStructure)$1 );
-			//args.add( (dLStructure)$3 );
-			//$$ = new dLStructure( "sequence", args );
 			$$ = new SequenceProgram( (HybridProgram)$1, (HybridProgram)$3 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location hybridprogram:hybridprogram SEMICOLON hybridprogram");
@@ -704,12 +696,7 @@ hybridprogram:
 		}
 	}
 	| hybridprogram CUP hybridprogram { 
-		//$$ = "(choice " + (String)$1 + ", " + (String)$3 + " )"; 
 		try {
-		//	ArrayList<HybridProgram> args = new ArrayList<HybridProgram>();
-		//	args.add( (HybridProgram)$1 );
-		//	args.add( (HybridProgram)$3 );
-		//	$$ = new HybridProgram( "choice", args );
 			$$ = new ChoiceProgram( (HybridProgram)$1, (HybridProgram)$3 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location hybridprogram:hybridprogram CUP hybridprogram");
@@ -717,11 +704,7 @@ hybridprogram:
 		}
 	}
 	| hybridprogram KLEENESTAR {
-		//$$ = "(repeat " + (String)$1 + " )";
 		try {
-			//ArrayList<HybridProgram> args = new ArrayList<HybridProgram>();
-			//args.add( (HybridProgram)$1 );
-			//$$ = new HybridProgram( "repeat", args );
 			$$ = new RepetitionProgram( (HybridProgram)$1 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location hybridprogram:hybridprogram KLEENESTAR");
@@ -729,7 +712,6 @@ hybridprogram:
 		}
 	}
 	| LPAREN hybridprogram RPAREN { 
-		//$$ = (String)$2;
 		try {
 			$$ = (HybridProgram)$2;
 		} catch ( Exception e ) {
@@ -741,12 +723,7 @@ hybridprogram:
 
 assignment:
 	IDENTIFIER ASSIGN RANDOM { 
-		//$$ = "(assign " + (String)$1 + ", " + (String)$3 + " )";
 		try {
-			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			//args.add( new dLStructure( (String)$1 ) );
-			//args.add( new dLStructure( "arbitrary" ) );
-			//$$ = new HybridProgram( ":=", args );
 			$$ = new AssignmentProgram( new RealVariable( (String)$1 ), new Term( "arbitrary" ) );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location assignment:IDENTIFIER ASSIGN RANDOM");
@@ -754,12 +731,7 @@ assignment:
 		}
 	}
 	| IDENTIFIER ASSIGN term { 
-		//$$ = "(assign " + (String)$1 + ", " + (String)$3 + " )";
 		try {
-			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			//args.add( new dLStructure( (String)$1 ));
-			//args.add( (dLStructure)$3 );
-			//$$ = new HybridProgram( ":=", args );
 			$$ = new AssignmentProgram( new RealVariable( (String)$1 ), (Term)$3 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location IDENTIFIER ASSIGN term");
@@ -771,11 +743,7 @@ assignment:
 
 test:
 	TEST dLformula { 
-		//$$ = "(test " + (String)$2 + " )";
 		try {
-			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			//args.add( (dLStructure)$2 );
-			//$$ = new dLStructure( "?", args );
 			$$ = new TestProgram( (dLStructure)$2 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location test:TEST dLformula");
@@ -786,13 +754,7 @@ test:
 
 odesystem:
 	OPENBRACE odelist CLOSEBRACE { 
-		//$$ = "(continuous " + "(odelist: " + (String)$2 + " )" + ", (domain: true ) )"; 
 		try {
-			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			//args.addAll( (ArrayList<dLStructure>)$2 );
-			//args.addAll( $2 );
-			//args.add( new dLStructure("true") );
-			//$$ = new dLStructure( "continuous", args );
 			$$ = new ContinuousProgram( (ArrayList<dLStructure>)$2 ); // Constructor appends "true" doe automaticaly
 		} catch ( Exception e ) {
 			System.err.println("Exception at location odesystem:OPENBRACE odelist CLOSEBRACE");
@@ -800,13 +762,7 @@ odesystem:
 		}
 	}
 	| OPENBRACE odelist AND dLformula CLOSEBRACE { 
-		//$$ = "(continuous " + "(odelist: " + (String)$2 + " )" + ", (domain: " + (String)$4 + " ) )"; 
 		try {
-			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			//args.addAll( (ArrayList<dLStructure>)$2 );
-			//args.addAll( $2 );
-			//args.add( (dLStructure)$4 );
-			//$$ = new dLStructure( "continuous", args );
 			$$ = new ContinuousProgram( (ArrayList<dLStructure>)$2, (dLStructure)$4 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location odesystem:OPENBRACE odelist AND dLformula CLOSEBRACE");
@@ -844,12 +800,7 @@ odelist:
 ;
 ode:
 	IDENTIFIER PRIME EQUALS term { 
-		//$$ = (String)$1 + "' = " + (String)$4;
 		try {
-			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			//args.add( new dLStructure( (String)$1) );
-			//args.add( (dLStructure)$4 );
-			//$$ = new dLStructure( "d/dt", args );
 			$$ = new ExplicitODE( new RealVariable( (String)$1 ), (Term)$4 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location ode:IDENTIFIER PRIME EQUALS term");
@@ -863,12 +814,7 @@ ode:
 
 comparison:
 	term INEQUALITY term { 
-		//$$ = "(" + (String)$2 +" "+ (String)$1 + ", " + (String)$3 + ")"; 
 		try {
-			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			//args.add( (dLStructure)$1 );
-			//args.add( (dLStructure)$3 );
-			//$$ = new dLStructure( (String)$2, args );
 			$$ = new ComparisonFormula( new Operator( (String)$2 ), (Term)$1, (Term)$3 ) ;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location comparison:term INEQUALITY term");
@@ -876,12 +822,7 @@ comparison:
 		}
 	}
 	| term EQUALS term {
-		//$$ = "(" + (String)$2 +" "+ (String)$1 + ", " + (String)$3 + ")"; 
 		try {
-			//ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			//args.add( (dLStructure)$1 );
-			//args.add( (dLStructure)$3 );
-			//$$ = new dLStructure( (String)$2, args );
 			$$ = new ComparisonFormula( new Operator( (String)$2), (Term)$1, (Term)$3 ) ;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location comparison:term EQUALS term");
@@ -895,14 +836,12 @@ term:
 	NUMBER { 
 		try {
 			$$ = new Real( (String)$1 );
-			//System.out.println( ((Term)$$).toString() );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:NUMBER");
 			System.err.println( e );
 		}
 	}
 	| IDENTIFIER LPAREN argumentlist RPAREN {
-		//$$ = "(" + (String)$1 + " " + (String)$3 + ")";
 		try {
 			$$ = new Term( new Operator( (String)$1 ), (ArrayList<Term>)$3 );
 		} catch ( Exception e ) {
@@ -911,17 +850,14 @@ term:
 		}
 	}
 	| IDENTIFIER { 
-		//$$ = (String)$1;
 		try {
 			$$ = new RealVariable( (String)$1 );
-	//		System.out.println( $$.toString() );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:IDENTIFIER");
 			System.err.println( e );
 		}
 	}
 	| LPAREN term RPAREN { 
-		//$$ = "("+ (String)$2 +")"; 					
 		try {
 			$$ = (Term)$2;
 		} catch ( Exception e ) {
@@ -930,7 +866,6 @@ term:
 		}
 	}
 	| term PLUS term { 
-		//$$ = "(+ " + (String)$1 + ", " + (String)$3+ " )";		
 		try {
 			ArrayList<Term> args = new ArrayList<Term>();
 			args.add( (Term)$1 );
@@ -942,7 +877,6 @@ term:
 		}
 	}
 	| term MINUS term { 
-		//$$ = "(- " + (String)$1 + ", " + (String)$3 + ")";
 		try {
 			ArrayList<Term> args = new ArrayList<Term>();
 			args.add( (Term)$1 );
@@ -954,7 +888,6 @@ term:
 		}
 	}
 	| term MULTIPLY term { 
-		//$$ = "(* " + (String)$1 + ", " + (String)$3 +")";
 		try {
 			ArrayList<Term> args = new ArrayList<Term>();
 			args.add( (Term)$1 );
@@ -966,7 +899,6 @@ term:
 		}
 	}
 	| term DIVIDE term { 
-		//$$ = "(/ " + (String)$1 + ", " + (String)$3 + ")";
 		try {
 			ArrayList<Term> args = new ArrayList<Term>();
 			args.add( (Term)$1 );
@@ -978,7 +910,6 @@ term:
 		}
 	}
 	| term POWER term { 
-		//$$ = "(^ " + (String)$1 + ", " + (String)$3 + ")";		
 		try {
 			ArrayList<Term> args = new ArrayList<Term>();
 			args.add( (Term)$1 );
@@ -990,7 +921,6 @@ term:
 		}
 	}
 	| MINUS term %prec NEGATIVE { 
-		//$$ = "(- 0, " + (String)$2 + " )";
 		try {
 			ArrayList<Term> args = new ArrayList<Term>();
 			args.add( new Real( "0" ) );
@@ -1008,7 +938,6 @@ argumentlist:
 		$$ = null;
 	}
 	| term	{ 
-		//$$ = (String)$1; System.out.println(" found arglist");					
 		try {
 			ArrayList<Term> args = new ArrayList<Term>();
 			args.add( (Term)$1 );
@@ -1019,7 +948,6 @@ argumentlist:
 		}
 	}
 	| argumentlist COMMA term { 
-		//$$ = (String)$1 + ", " + (String)$3; System.out.println("found arglist, multiple args");
 		try {
 			ArrayList<Term> args = new ArrayList<Term>();
 			args.addAll( (ArrayList<Term>)$1 );

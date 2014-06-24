@@ -16,16 +16,16 @@ public class ComparisonFormula extends dLFormula {
 		return (Operator)operator;
 	}
 
-	public Term lhs() {
+	public Term getLHS() {
 		return (Term)(children.get(0));
 	}
 
-	public Term rhs() {
+	public Term getRHS() {
 		return (Term)(children.get(1));
 	}
 
 	public String toKeYmaeraString () {
-		return "( " + lhs().toKeYmaeraString() + inequality().toKeYmaeraString() + rhs().toKeYmaeraString() + " )";
+		return "( " + getLHS().toKeYmaeraString() + inequality().toKeYmaeraString() + getRHS().toKeYmaeraString() + " )";
 	}
 
 	public boolean isFirstOrder() {

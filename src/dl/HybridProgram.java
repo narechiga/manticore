@@ -17,7 +17,7 @@ public class HybridProgram extends dLStructure {
 		return false;
 	}
 
-	public boolean isPrimitive() {
+	public boolean isProgramPrimitive() {
 		return false;
 	}
 

@@ -80,7 +80,7 @@ public class ContinuousProgram extends HybridProgram {
 		return false;
 	}
 
-	public boolean isPrimitive() {
+	public boolean isProgramPrimitive() {
 		return true;
 	}
 

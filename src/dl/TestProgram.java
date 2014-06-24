@@ -13,9 +13,13 @@ public class TestProgram extends DiscreteProgram {
 		children.add( onlyChild );
 	}
 
+	public dLFormula getFormula() {
+		return (dLFormula)(children.get(0));
+	}
+
 	// String methods
 	public String toKeYmaeraString() {
-		return "(? " + children.get(0).toKeYmaeraString() + " )";
+		return "(? " + getFormula().toKeYmaeraString() + " )";
 	}
 
 	// Administrative
@@ -23,7 +27,7 @@ public class TestProgram extends DiscreteProgram {
 		return true;
 	}
 
-	public boolean isPrimitive() {
+	public boolean isProgramPrimitive() {
 		return true;
 	}
 

@@ -23,7 +23,8 @@
 
 
 IdentifierName = [a-zA-Z_]+[a-z0-9A-Z_]*
-DecIntegerLiteral = 0 | [1-9][0-9]* 
+//DecIntegerLiteral = 0 | [1-9][0-9]* 
+Number = [-]? [0-9]+ \.*[0-9]*
 InequalityLiteral = < | > | <= | >= | \!=
 SchemaText = [^\{\}]+
 
@@ -215,7 +216,7 @@ Comment = {TraditionalComment} | {EndOfLineComment} | {DocumentationComment}
 		System.out.println("Lexer @ " + yytext() );
 		return EQUALS;
 	}
-	{DecIntegerLiteral} { 
+	{Number} { 
 		System.out.println("Lexer: NUMBER");
 		System.out.println("Lexer @ " + yytext() );
 		return NUMBER;

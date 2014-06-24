@@ -3,10 +3,12 @@
 `cd bin; rm -rf *`;
 `mkdir bin/manticore`;
 `mkdir bin/manticore/dl`;
+`mkdir bin/manticore/symbolicexecution`;
 `cd src; jflex Lexer.lex; bison YYParser.y`;
-`cd src; javac *.java dl/*.java;`;
+`cd src; javac *.java dl/*.java symbolicexecution/*.java`;
 `mv src/*.class bin;`;
 `mv src/dl/*.class bin/manticore/dl/`;
+`mv src/symbolicexecution/*.class bin/manticore/symbolicexecution/`;
 
 
 #@dlfiles = `ls src/dl/*.java`;

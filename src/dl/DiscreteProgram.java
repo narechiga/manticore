@@ -15,7 +15,7 @@ public class DiscreteProgram extends HybridProgram {
 		return false;
 	}
 
-	public boolean isPrimitive() {
+	public boolean isProgramPrimitive() {
 		// false in general, specific cases will override this
 		return false;
 	}

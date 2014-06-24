@@ -12,24 +12,24 @@ public class ForAllFormula extends dLFormula {
 		children.add( quantifiedFormula );
 	}
 
-	public RealVariable quantifiedVariable() {
+	public RealVariable getVariable() {
 		return (RealVariable)(children.get(0));
 	}
 
-	public dLFormula quantifiedFormula() {
+	public dLFormula getFormula() {
 		return (dLFormula)(children.get(1));
 	}
 
 	public String toKeYmaeraString () {
-		return "(\\forall R " + quantifiedVariable().toKeYmaeraString() + "; " + quantifiedFormula().toKeYmaeraString() +" )";
+		return "(\\forall R " + getVariable().toKeYmaeraString() + "; " + getFormula().toKeYmaeraString() +" )";
 	}
 
 	public boolean isFirstOrder() {
-		return quantifiedFormula().isFirstOrder();
+		return getFormula().isFirstOrder();
 	}
 	
 	public boolean isModal() {
-		return quantifiedFormula().isModal();
+		return getFormula().isModal();
 	}
 
 }

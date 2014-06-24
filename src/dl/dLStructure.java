@@ -7,13 +7,6 @@ public class dLStructure {
 	public Operator operator;
 	public List<dLStructure> children;
 
-	public String declaredFunctions;
-	public String declaredSchemaVariables;
-	public String declaredRules;
-	public List<String> declaredProgramVariables;
-	public List<String> variableInitializations;
-
-
 	public dLStructure() {
 		operator = null;
 		children = null;
@@ -36,8 +29,8 @@ public class dLStructure {
 	}
 
 
-	public ArrayList<RealVariable> getVariables () {
-		ArrayList<RealVariable> myVariables = new ArrayList<RealVariable>();
+	public Set<RealVariable> getVariables () {
+		Set<RealVariable> myVariables = new HashSet<RealVariable>();
 
 		if ( this instanceof RealVariable ) {
 			myVariables.add( (RealVariable)this );
@@ -92,25 +85,13 @@ public class dLStructure {
 			//return "(ground term: " + operator.toString() + " )";
 			return operator.toString();
 		} else {
-			return "(uninitialized)";
+			return "(uninitialized structure)";
 		}
 	}
 
 	public String toKeYmaeraString() {
 		return null;
 	}
-
-
-
-
-	//public String toInfix() {
-	//	
-	//	if ( (operator != null) && (children != null) && (children.size() == 2) ) {
-	//		return "("+ (children.get(0)).toInfix() + operator.toString() + (children.get(1)).toInfix() + " )";
-	//	} else {
-	//		return toPrefix();
-	//	}
-	//}
 
 
 }

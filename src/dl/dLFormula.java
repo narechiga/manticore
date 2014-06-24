@@ -14,4 +14,8 @@ public class dLFormula extends dLStructure {
 		return false;
 	}
 
+	public Operator getOperator() {
+		return this.operator;
+	}
+
 }

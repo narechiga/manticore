@@ -9,6 +9,18 @@ public class RealVariable extends Term {
 		children = null;
 	}
 
+	public boolean equals( Object otherObject ) {
+		if ( otherObject instanceof RealVariable ) {
+			return operator.equals( ((RealVariable)otherObject).operator );
+		} else {
+			return false;
+		}
+	}
+
+	public int hashCode() {
+		return operator.toString().hashCode();
+	}
+
 	public String toKeYmaeraString() {
 		return operator.toKeYmaeraString();
 	}

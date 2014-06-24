@@ -34,6 +34,20 @@ public class Operator {
 		this.infix = infix;
 	}
 
+	public boolean equals( Object otherObject ) {
+		if ( otherObject instanceof Operator ) {
+			return operator.equals( ((Operator)otherObject).operator );
+		} else {
+			return false;
+		}
+	}
+
+
+	public int hashCode() {
+		return operator.toString().hashCode();
+	}
+
+
 	public String toString() {
 		return operator;
 	}

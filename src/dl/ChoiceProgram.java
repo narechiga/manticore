@@ -6,17 +6,25 @@ public class ChoiceProgram extends HybridProgram {
 
 	//public ArrayList<HybridProgram> children;
 
-	public ChoiceProgram( HybridProgram leftChild, HybridProgram rightChild ) {
+	public ChoiceProgram( HybridProgram leftProgram, HybridProgram rightProgram ) {
 
 		this.operator = new Operator("choice");
 
 		this.children = new ArrayList<dLStructure>();
-		this.children.add( leftChild );
-		this.children.add( rightChild );
+		this.children.add( leftProgram );
+		this.children.add( rightProgram );
 	}
 
 	public String toKeYmaeraString() {
 		return "( " + children.get(0).toKeYmaeraString() + " ++ " + children.get(1).toKeYmaeraString() + " )";
+	}
+
+	public HybridProgram getLeftProgram() {
+		return (HybridProgram)(children.get(0));
+	}
+
+	public HybridProgram getRightProgram() {
+		return (HybridProgram)(children.get(1));
 	}
 
 	// Administrative
@@ -25,9 +33,7 @@ public class ChoiceProgram extends HybridProgram {
 	}
 
 	public boolean isPurelyDiscrete() {
-		HybridProgram leftChild = (HybridProgram)this.children.get(0);
-		HybridProgram rightChild = (HybridProgram)this.children.get(1);
-		return ( leftChild.isPurelyDiscrete() && rightChild.isPurelyDiscrete() );
+		return ( getLeftProgram().isPurelyDiscrete() && getRightProgram().isPurelyDiscrete() );
 	}
 
 	public boolean isHybrid() {
@@ -38,7 +44,7 @@ public class ChoiceProgram extends HybridProgram {
 		}
 	}
 
-	public boolean isPrimitive() {
+	public boolean isProgramPrimitive() {
 		return false;
 	}
 

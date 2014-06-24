@@ -5,7 +5,7 @@ import java.util.*;
 
 public class AssignmentProgram extends DiscreteProgram {
 
-	public AssignmentProgram( Term leftChild, Term rightChild ) {
+	public AssignmentProgram( RealVariable leftChild, Term rightChild ) {
 		operator = new Operator( "assign" );
 
 		children = new ArrayList<dLStructure>();
@@ -13,8 +13,16 @@ public class AssignmentProgram extends DiscreteProgram {
 		children.add( rightChild );
 	}
 
+	public RealVariable getLHS() {
+		return (RealVariable)children.get(0);
+	}
+
+	public Term getRHS() {
+		return (Term)children.get(1);
+	}
+
 	public String toKeYmaeraString() {
-		return "( " + children.get(0).toKeYmaeraString() + " := " + children.get(1).toKeYmaeraString() +" )";
+		return "( " + getLHS().toKeYmaeraString() + " := " + getRHS().toKeYmaeraString() +" )";
 	}
 
 	// Administrative
@@ -22,7 +30,7 @@ public class AssignmentProgram extends DiscreteProgram {
 		return true;
 	}
 
-	public boolean isPrimitive() {
+	public boolean isProgramPrimitive() {
 		return true;
 	}
 

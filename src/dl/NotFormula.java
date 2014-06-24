@@ -11,20 +11,20 @@ public class NotFormula extends dLFormula {
 		children.add( child );
 	}
 
-	public dLFormula child() {
+	public dLFormula getChild() {
 		return (dLFormula)(children.get(0));
 	}
 
 	public String toKeYmaeraString () {
-		return "(! " + child().toKeYmaeraString() + " )";
+		return "(! " + getChild().toKeYmaeraString() + " )";
 	}
 
 	public boolean isFirstOrder() {
-		return child().isFirstOrder();
+		return getChild().isFirstOrder();
 	}
 
 	public boolean isModal() {
-		return child().isModal();
+		return getChild().isModal();
 	}
 
 }

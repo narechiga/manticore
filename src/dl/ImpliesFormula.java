@@ -12,24 +12,24 @@ public class ImpliesFormula extends dLFormula {
 		children.add( succedent );
 	}
 
-	public dLFormula antecedent() {
+	public dLFormula getAntecedent() {
 		return (dLFormula)(children.get(0));
 	}
 
-	public dLFormula succedent() {
+	public dLFormula getSuccedent() {
 		return (dLFormula)(children.get(1));
 	}
 
 	public String toKeYmaeraString () {
-		return "( " + antecedent().toKeYmaeraString() + " -> " + succedent().toKeYmaeraString() + " )";
+		return "( " + getAntecedent().toKeYmaeraString() + " -> " + getSuccedent().toKeYmaeraString() + " )";
 	}
 
 	public boolean isFirstOrder() {
-		return (antecedent().isFirstOrder() && succedent().isFirstOrder() );
+		return (getAntecedent().isFirstOrder() && getSuccedent().isFirstOrder() );
 	}
 
 	public boolean isModal() {
-		return (antecedent().isModal() && succedent().isModal() );
+		return (getAntecedent().isModal() && getSuccedent().isModal() );
 	}
 
 }

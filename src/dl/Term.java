@@ -18,16 +18,9 @@ public class Term extends dLStructure {
 		this.children = new ArrayList<dLStructure>();
 		this.children.addAll( subterms );
 	}
-	
-	// Following two methods really only used for the "arbitrary" term, as in x := *
-	public Term ( Operator operator ) {
-		this.operator = operator;
-		this.children = null;
-	}
 
-	public Term ( String operator ) {
-		this.operator = new Operator( operator );
-		this.children = null;
+	public Operator getOperator() {
+		return this.operator;
 	}
 
 	public String toKeYmaeraString() {
@@ -59,7 +52,17 @@ public class Term extends dLStructure {
 		}
 
 		return returnString;
+	}
 
+	// Following two methods really only used for the "arbitrary" term, as in x := *
+	public Term ( Operator operator ) {
+		this.operator = operator;
+		this.children = null;
+	}
+
+	public Term ( String operator ) {
+		this.operator = new Operator( operator );
+		this.children = null;
 	}
 
 }

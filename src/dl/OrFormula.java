@@ -12,23 +12,23 @@ public class OrFormula extends dLFormula {
 		children.add( rightChild );
 	}
 
-	public dLFormula leftChild() {
+	public dLFormula getLeftChild() {
 		return (dLFormula)(children.get(0));
 	}
 
-	public dLFormula rightChild() {
+	public dLFormula getRightChild() {
 		return (dLFormula)(children.get(1));
 	}
 
 	public String toKeYmaeraString () {
-		return "( " + leftChild().toKeYmaeraString() + " | " + rightChild().toKeYmaeraString() + " )";
+		return "( " + getLeftChild().toKeYmaeraString() + " | " + getRightChild().toKeYmaeraString() + " )";
 	}
 
 	public boolean isFirstOrder() {
-		return (leftChild().isFirstOrder() && rightChild().isFirstOrder() );
+		return (getLeftChild().isFirstOrder() && getRightChild().isFirstOrder() );
 	}
 
 	public boolean isModal() {
-		return (leftChild().isModal() && rightChild().isModal() );
+		return (getLeftChild().isModal() && getRightChild().isModal() );
 	}
 }

@@ -6,13 +6,13 @@ public class SequenceProgram extends HybridProgram {
 
 //	ArrayList<HybridProgram> children;
 
-	public SequenceProgram( HybridProgram leftChild, HybridProgram rightChild ) {
+	public SequenceProgram( HybridProgram firstProgram, HybridProgram secondProgram ) {
 
 		this.operator = new Operator("sequence");
 
 		this.children = new ArrayList<dLStructure>();
-		this.children.add( leftChild );
-		this.children.add( rightChild );
+		this.children.add( firstProgram );
+		this.children.add( secondProgram );
 	}
 
 	// String methods
@@ -21,15 +21,21 @@ public class SequenceProgram extends HybridProgram {
 	}
 
 
+	public HybridProgram getFirstProgram() {
+		return (HybridProgram)(children.get(0));
+	}
+
+	public HybridProgram getSecondProgram() {
+		return (HybridProgram)(children.get(1));
+	}
+
 	// Administrative
 	public boolean isPurelyContinuous() {
 		return false;
 	}
 
 	public boolean isPurelyDiscrete() {
-		HybridProgram leftChild = (HybridProgram)children.get(0);
-		HybridProgram rightChild = (HybridProgram)children.get(1);
-		return ( leftChild.isPurelyDiscrete() && rightChild.isPurelyDiscrete() );
+		return ( getFirstProgram().isPurelyDiscrete() && getSecondProgram().isPurelyDiscrete() );
 	}
 
 	public boolean isHybrid() {
@@ -40,7 +46,7 @@ public class SequenceProgram extends HybridProgram {
 		}
 	}
 
-	public boolean isPrimitive() {
+	public boolean isProgramPrimitive() {
 		return false;
 	}
 

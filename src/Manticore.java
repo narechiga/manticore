@@ -6,60 +6,10 @@ class Manticore {
 
 	public static void main( String [] args ) {
 
-		System.out.println("This is Manticore, a strategy engine for the theorem prover KeYmaera");
+		System.out.println("This is Manticore, a strategy engine for the theorem prover KeYmaera\n");
 
 		if ( args.length < 1 ) {
-			System.out.println("No input file given, running parser test loop");
-	        	String input = null;
-                	Scanner in = new Scanner( System.in );
-			while (true) {
-                		try {
-                		        System.out.print("INPUT: ");
-                		        input = in.nextLine() + "\n";
-                		        StringReader inreader = new StringReader( input );
-                		        Lexer myLexer = new Lexer( inreader );
-                		        YYParser myParser = new YYParser( myLexer );
-                		        myParser.parse();
-
-					System.out.println( "PARSED: " + myParser.parsedStructure.toKeYmaeraString() );
-					System.out.println("(keymaera string)");
-
-					if ( myParser.parsedStructure instanceof HybridProgram ) {
-						
-						HybridProgram parsedProgram = (HybridProgram)myParser.parsedStructure;
-
-						System.out.println("Hybrid Program Data==============================================");
-						System.out.println("Is purely continuous: " + parsedProgram.isPurelyContinuous() );
-						System.out.println("Is purely discrete: " + parsedProgram.isPurelyDiscrete() );
-						System.out.println("Is hybrid: " + parsedProgram.isHybrid() );
-						System.out.println("=================================================================");
-						
-					}
-
-					if ( myParser.parsedStructure instanceof dLFormula ) {
-						System.out.println("dL Formula Data==============================================");
-						dLFormula parsedFormula = (dLFormula)myParser.parsedStructure;
-						System.out.println("Is first order: " + parsedFormula.isFirstOrder());
-						System.out.println("Is modal: " + parsedFormula.isModal());
-						System.out.println("Is propositional primitive: " + parsedFormula.isPropositionalPrimitive());
-						System.out.println("=================================================================");
-					}
-
-					System.out.println("Continuous blocks================================================");
-					ArrayList<ContinuousProgram> continuousblocks = myParser.parsedStructure.extractContinuousBlocks();
-					System.out.println("Continuous blocks found: " + continuousblocks.size() );
-					System.out.println( continuousblocks );
-					System.out.println("=================================================================");
-
-					System.out.println("The variables that occur in this structure are:");
-					System.out.println( myParser.parsedStructure.getVariables() );
-
-
-                		} catch ( Exception e ) { 
-					System.out.println("Error running parser test loop.");
-                		        System.err.println( e );
-                		}   
-			}
+			commandLine();
 		} else if ( args.length > 1 ) {
 			System.out.println("Too many arguments.");
 			System.exit(1);
@@ -157,5 +107,91 @@ class Manticore {
 		////my
 
 	} 
+
+	public static void commandLine() {
+		Scanner in = new Scanner( System.in );
+		while (true) {
+			try {
+			        System.out.print("\n::> ");
+				
+				if ( in.hasNext("parse") ){
+					in.skip("parse");
+					runParser( in.nextLine() + "\n" );
+				} else if ( in.hasNext("evaluate") ) {
+					in.skip("evaluate");
+					runEvaluate( in.nextLine() + "\n");
+			//	} else if ( in.hasNext("execute") ) {
+			//		in.skip("execute");
+				} else if ( in.hasNext("version") ) {
+					System.out.println("Manticore version 0");
+					in.nextLine();
+				} else {
+					runParser( in.nextLine() + "\n" );
+				}
+
+			} catch ( Exception e ) { 
+				System.out.println("Error running parser test loop.");
+			        System.err.println( e );
+				e.printStackTrace();
+			}   
+		}	
+	}
+
+	public static void runEvaluate( String input ) throws Exception {
+	        StringReader inreader = new StringReader( input );
+	        Lexer myLexer = new Lexer( inreader );
+	        YYParser myParser = new YYParser( myLexer );
+	        myParser.parse();
+
+		Interpretation interpretation = new NativeInterpretation();
+
+		if ( (myParser.parsedStructure instanceof dLFormula) && ( myParser.valuation != null ) ) {
+			System.out.println( "PARSED: " + myParser.parsedStructure.toKeYmaeraString() );
+			System.out.println("Valuation is: " + myParser.valuation.toString() );
+			System.out.println("Evaluated formula is: " + interpretation.evaluateFormula( (dLFormula)myParser.parsedStructure, myParser.valuation ) );
+		}
+	}
+
+	public static void runParser( String input ) throws Exception {
+	        StringReader inreader = new StringReader( input );
+	        Lexer myLexer = new Lexer( inreader );
+	        YYParser myParser = new YYParser( myLexer );
+	        myParser.parse();
+
+		System.out.println( "PARSED: " + myParser.parsedStructure.toKeYmaeraString() );
+
+		if ( myParser.parsedStructure instanceof HybridProgram ) {
+			
+			HybridProgram parsedProgram = (HybridProgram)myParser.parsedStructure;
+
+			System.out.println("Hybrid Program Data==============================================");
+			System.out.println("Is purely continuous: " + parsedProgram.isPurelyContinuous() );
+			System.out.println("Is purely discrete: " + parsedProgram.isPurelyDiscrete() );
+			System.out.println("Is hybrid: " + parsedProgram.isHybrid() );
+			System.out.println("Is program primitive: " + parsedProgram.isProgramPrimitive());
+			System.out.println("=================================================================");
+			
+		}
+
+		if ( myParser.parsedStructure instanceof dLFormula ) {
+			System.out.println("dL Formula Data==============================================");
+			dLFormula parsedFormula = (dLFormula)myParser.parsedStructure;
+			System.out.println("Is first order: " + parsedFormula.isFirstOrder());
+			System.out.println("Is modal: " + parsedFormula.isModal());
+			System.out.println("Is propositional primitive: " + parsedFormula.isPropositionalPrimitive());
+			System.out.println("=================================================================");
+		}
+
+		System.out.println("Continuous blocks================================================");
+		ArrayList<ContinuousProgram> continuousblocks = myParser.parsedStructure.extractContinuousBlocks();
+		System.out.println("Continuous blocks found: " + continuousblocks.size() );
+		System.out.println( continuousblocks );
+		System.out.println("=================================================================");
+
+		System.out.println("The variables that occur in this structure are:");
+		System.out.println( myParser.parsedStructure.getVariables() );
+					
+					
+	}
 
 }

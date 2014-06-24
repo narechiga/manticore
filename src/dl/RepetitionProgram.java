@@ -13,6 +13,10 @@ public class RepetitionProgram extends HybridProgram {
 		this.children = new ArrayList<dLStructure>();
 		this.children.add( onlyChild );
 	}
+
+	public HybridProgram getSubProgram() {
+		return (HybridProgram)(children.get(0));
+	}
 	
 
 	// String methods
@@ -27,8 +31,7 @@ public class RepetitionProgram extends HybridProgram {
 	}
 
 	public boolean isPurelyDiscrete() {
-		HybridProgram onlyChild = (HybridProgram)children.get(0);
-		return onlyChild.isPurelyDiscrete();
+		return getSubProgram().isPurelyDiscrete();
 	}
 
 	public boolean isHybrid() {
@@ -39,7 +42,7 @@ public class RepetitionProgram extends HybridProgram {
 		}
 	}
 
-	public boolean isPrimitive() {
+	public boolean isProgramPrimitive() {
 		return false;
 	}
 
