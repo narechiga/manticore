@@ -96,13 +96,21 @@
 input: 
 	dLformula OPENBRACE valuation CLOSEBRACE {
 		try {
-			parsedStructure = (dLStructure)$1; // valuation has already been handled
+			parsedStructure = (dLFormula)$1; // valuation has already been handled
 			$$ = (String)$3; 
 		} catch ( Exception e ) {
 			System.err.println("Exception at location input:dLformula OPENBRACE valuation CLOSEBRACE");
 			System.err.println( e );
 		}
-
+	}
+	| hybridprogram OPENBRACE valuation CLOSEBRACE {
+		try {
+			parsedStructure = (HybridProgram)$1; // valuation has already been handled
+			$$ = (String)$3; 
+		} catch ( Exception e ) {
+			System.err.println("Exception at location input:dLformula OPENBRACE valuation CLOSEBRACE");
+			System.err.println( e );
+		}
 	}
 	| fullblock { 
 		try {

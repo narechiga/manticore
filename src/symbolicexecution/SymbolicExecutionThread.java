@@ -6,20 +6,33 @@ import java.util.*;
 public class SymbolicExecutionThread {
 
 	HybridProgram program;
-	ArrayList<HashMap<RealVariable,Real>> currentStateValuations; // TODO: support more than just concrete real return values
+	public ArrayList<HashMap<RealVariable,Real>> currentStateValuations; // TODO: support more than just concrete real return values
 	Interpretation interpretation;
 
-	public SymbolicExecutionThread ( HybridProgram program, ArrayList<HashMap<RealVariable,Real>> initialValuations ) {
+	public SymbolicExecutionThread ( HybridProgram program, 
+					ArrayList<HashMap<RealVariable,Real>> initialValuations, 
+					Interpretation interpretation ) {
 		this.program = program;
 		this.currentStateValuations = initialValuations;
 
-		this.interpretation = new NativeInterpretation();
+		this.interpretation = interpretation;
+	}
+
+	public SymbolicExecutionThread ( HybridProgram program, 
+					HashMap<RealVariable,Real> initialValuation, 
+					Interpretation interpretation ) {
+		this.program = program;
+		this.currentStateValuations = new ArrayList<HashMap<RealVariable,Real>>();
+		currentStateValuations.add( initialValuation );
+
+		this.interpretation = interpretation;
 	}
 
 	public void runDiscreteSteps() throws Exception {
 
 		if ( currentStateValuations == null ) { 
 			// Nothing to be done here
+			throw new Exception( "yay!" );
 		} else if ( program instanceof AssignmentProgram ) {
 			runAssignmentProgram( (AssignmentProgram)program );
 		} else if ( program instanceof TestProgram ) {
@@ -73,13 +86,13 @@ public class SymbolicExecutionThread {
 
 	protected void runSequenceProgram( SequenceProgram program ) throws Exception {
 		// Run first step
-		SymbolicExecutionThread subthread1 = new SymbolicExecutionThread( program.getFirstProgram(), currentStateValuations );
+		SymbolicExecutionThread subthread1 = new SymbolicExecutionThread( program.getFirstProgram(), currentStateValuations, interpretation );
 		
 		subthread1.runDiscreteSteps();
 		currentStateValuations = subthread1.currentStateValuations;
 
 		// Run second step
-		SymbolicExecutionThread subthread2 = new SymbolicExecutionThread( program.getSecondProgram(), currentStateValuations);
+		SymbolicExecutionThread subthread2 = new SymbolicExecutionThread( program.getSecondProgram(), currentStateValuations, interpretation );
 
 		subthread2.runDiscreteSteps();
 		currentStateValuations = subthread2.currentStateValuations;
@@ -87,20 +100,28 @@ public class SymbolicExecutionThread {
 
 	protected void runChoiceProgram( ChoiceProgram program ) throws Exception {
 		// Run left program
-		SymbolicExecutionThread subthread1 = new SymbolicExecutionThread( program.getLeftProgram(), currentStateValuations );
+		SymbolicExecutionThread subthread1 = new SymbolicExecutionThread( program.getLeftProgram(), currentStateValuations, interpretation );
 
+		System.out.println("I");
+		System.out.println("Initial state: " + currentStateValuations.toString() );
 		subthread1.runDiscreteSteps();
-		currentStateValuations = subthread1.currentStateValuations; //Replace our old state values with the new state values
+		//Replace our old state values with the new state values
+		currentStateValuations = subthread1.currentStateValuations; 
+		System.out.println("A");
+		System.out.println("After running left program: " + currentStateValuations.toString() );
+
 
 		// Run right program
-		SymbolicExecutionThread subthread2 = new SymbolicExecutionThread( program.getRightProgram(), currentStateValuations);
+		SymbolicExecutionThread subthread2 = new SymbolicExecutionThread( program.getRightProgram(), currentStateValuations, interpretation );
 
 		subthread2.runDiscreteSteps();
 		currentStateValuations.addAll(subthread2.currentStateValuations);
+		System.out.println("A2");
+		System.out.println("After running right program: " + currentStateValuations.toString() );
 	}
 
 	public void runRepetitionProgram( RepetitionProgram program ) throws Exception {
-		SymbolicExecutionThread subthread = new SymbolicExecutionThread( program.getSubProgram(), currentStateValuations );
+		SymbolicExecutionThread subthread = new SymbolicExecutionThread( program.getSubProgram(), currentStateValuations, interpretation );
 
 		subthread.runDiscreteSteps();
 		currentStateValuations.addAll( subthread.currentStateValuations );

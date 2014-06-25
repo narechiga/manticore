@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.*;
 import manticore.dl.*;
+import manticore.symbolicexecution.*;
 
 class Manticore {
 
@@ -108,11 +109,12 @@ class Manticore {
 
 	} 
 
+	/*==================== Command line interface ====================*/
 	public static void commandLine() {
 		Scanner in = new Scanner( System.in );
 		while (true) {
 			try {
-			        System.out.print("\n::> ");
+			        System.out.print("\n::M::>> ");
 				
 				if ( in.hasNext("parse") ){
 					in.skip("parse");
@@ -120,8 +122,9 @@ class Manticore {
 				} else if ( in.hasNext("evaluate") ) {
 					in.skip("evaluate");
 					runEvaluate( in.nextLine() + "\n");
-			//	} else if ( in.hasNext("execute") ) {
-			//		in.skip("execute");
+				} else if ( in.hasNext("execute") ) {
+					in.skip("execute");
+					runExecute( in.nextLine() + "\n");
 				} else if ( in.hasNext("version") ) {
 					System.out.println("Manticore version 0");
 					in.nextLine();
@@ -135,6 +138,24 @@ class Manticore {
 				e.printStackTrace();
 			}   
 		}	
+	}
+
+	public static void runExecute ( String input ) throws Exception {
+	        StringReader inreader = new StringReader( input );
+	        Lexer myLexer = new Lexer( inreader );
+	        YYParser myParser = new YYParser( myLexer );
+	        myParser.parse();
+
+		Interpretation interpretation = new NativeInterpretation();
+
+		if ( (myParser.parsedStructure instanceof HybridProgram) && ( myParser.valuation != null ) ) {
+			System.out.println( "PARSED: " + myParser.parsedStructure.toKeYmaeraString() );
+			System.out.println("Valuation is: " + myParser.valuation.toString() );
+			SymbolicExecutionThread myThread = new SymbolicExecutionThread( (HybridProgram)(myParser.parsedStructure), myParser.valuation, interpretation );
+			myThread.runDiscreteSteps();
+			System.out.println("Result of execution is: " + myThread.currentStateValuations.toString() );
+		}
+
 	}
 
 	public static void runEvaluate( String input ) throws Exception {
