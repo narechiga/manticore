@@ -25,13 +25,13 @@ public class NativeInterpretation implements Interpretation {
 	public NativeInterpretation () {
 	}
 	
-	public Double evaluateTerm( Term thisTerm, HashMap<RealVariable, Real> valuation) throws Exception {
-		Double result = null;
+	public Real evaluateTerm( Term thisTerm, Valuation valuation) throws Exception {
+		Real result = null;
 		
 		if ( thisTerm instanceof Real ) {
 
 			try {
-				result = Double.parseDouble( thisTerm.getOperator().toString() );
+				result = (Real)thisTerm;
 			} catch ( Exception e ) {
 				System.err.println("Exception encountered in ( thisTerm instanceof Real )");
 				System.err.println(e);
@@ -41,7 +41,7 @@ public class NativeInterpretation implements Interpretation {
 		} else if ( thisTerm instanceof RealVariable ) {
 
 			try {
-				result = Double.parseDouble((valuation.get( (RealVariable)thisTerm )).getOperator().toString());
+				result = (valuation.get( (RealVariable)thisTerm ));
 
 			} catch ( Exception e ) {
 				System.err.println("Exception encountered in ( thisTerm instanceof RealVariable )");
@@ -52,7 +52,8 @@ public class NativeInterpretation implements Interpretation {
 		} else if ( thisTerm.operator.equals( addition ) ) {
 
 			try {
-				result = evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ) + evaluateTerm( (Term)(thisTerm.children.get(1)), valuation );
+				result = Real.add(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ),
+						evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
 			} catch ( Exception e ) {
 				System.err.println("Exception encountered in ( thisTerm.operator.equals( addition ) )");
 				System.err.println(e);
@@ -62,7 +63,8 @@ public class NativeInterpretation implements Interpretation {
 		} else if ( thisTerm.operator.equals( subtraction ) ) {
 
 			try {
-				result = evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ) - evaluateTerm( (Term)(thisTerm.children.get(1)), valuation );
+				result = Real.subtract(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ),
+						evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
 			} catch ( Exception e ) {
 				System.err.println("Exception encountered in ( thisTerm.operator.equals( subtraction ) )");
 				System.err.println(e);
@@ -72,7 +74,8 @@ public class NativeInterpretation implements Interpretation {
 		} else if ( thisTerm.operator.equals( multiplication ) ) {
 
 			try {
-				result = evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ) * evaluateTerm( (Term)(thisTerm.children.get(1)), valuation );
+				result = Real.multiply(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ),
+						evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
 			} catch ( Exception e ) {
 				System.err.println("Exception encountered in ( thisTerm.operator.equals( multiplication ) )");
 				System.err.println(e);
@@ -82,7 +85,8 @@ public class NativeInterpretation implements Interpretation {
 		} else if ( thisTerm.operator.equals( division ) ) {
 
 			try {
-				result = evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ) / evaluateTerm( (Term)(thisTerm.children.get(1)), valuation );
+				result = Real.divide(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ),
+						evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
 			} catch ( Exception e ) {
 				System.err.println("Exception encountered in ( thisTerm.operator.equals( division ) )");
 				System.err.println(e);
@@ -92,7 +96,8 @@ public class NativeInterpretation implements Interpretation {
 		} else if ( thisTerm.operator.equals( power ) ) {
 
 			try {
-				result = Math.pow(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ), evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+				result = Real.power(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ), 
+					evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
 			} catch ( Exception e ) {
 				System.err.println("Exception encountered in ( thisTerm.operator.equals( power ) )");
 				System.err.println(e);
@@ -100,13 +105,15 @@ public class NativeInterpretation implements Interpretation {
 			}
 
 		} else {
-			throw new Exception("This arithmetic operator is not implemented in the native interpretation: " + thisTerm.getOperator().toString() );
+			throw new Exception(
+				"This arithmetic operator is not implemented in the native interpretation: "
+				+ thisTerm.getOperator().toString() );
 		}
 
 		return result;
 	}
 
-	public Boolean evaluateFormula( dLFormula thisFormula, HashMap<RealVariable, Real> valuation ) throws Exception {
+	public Boolean evaluateFormula( dLFormula thisFormula, Valuation valuation ) throws Exception {
 
 		if ( thisFormula instanceof TrueFormula ) {
 			return true;
@@ -114,33 +121,47 @@ public class NativeInterpretation implements Interpretation {
 			return false;
 		} else if ( thisFormula instanceof ComparisonFormula ) {
 
-		/***/	if ( thisFormula.getOperator().equals( gt ) ) {
-		/***/		return ( evaluateTerm( ((ComparisonFormula)thisFormula).getLHS(), valuation ) > evaluateTerm( ((ComparisonFormula)thisFormula).getRHS(), valuation ) );
-		/***/	} else if ( thisFormula.getOperator().equals( ge ) ) {
-		/***/		return ( evaluateTerm( ((ComparisonFormula)thisFormula).getLHS(), valuation ) >= evaluateTerm( ((ComparisonFormula)thisFormula).getRHS(), valuation ) );
-		/***/	}else if ( thisFormula.getOperator().equals( lt ) ) {
-		/***/		return ( evaluateTerm( ((ComparisonFormula)thisFormula).getLHS(), valuation ) < evaluateTerm( ((ComparisonFormula)thisFormula).getRHS(), valuation ) );
-		/***/	}else if ( thisFormula.getOperator().equals( le ) ) {
-		/***/		return ( evaluateTerm( ((ComparisonFormula)thisFormula).getLHS(), valuation ) <= evaluateTerm( ((ComparisonFormula)thisFormula).getRHS(), valuation ) );
-		/***/	}else if ( thisFormula.getOperator().equals( eq ) ) {
-		/***/		return ( evaluateTerm( ((ComparisonFormula)thisFormula).getLHS(), valuation ) == evaluateTerm( ((ComparisonFormula)thisFormula).getRHS(), valuation ) );
-		/***/	} else {
-		/***/		throw new Exception("This comparison operator is not implemented in the native interpretation: " + thisFormula.getOperator() );
-		/***/	}
+		/**/	if ( thisFormula.getOperator().equals( gt ) ) {
+		/**/		return ( (evaluateTerm( ((ComparisonFormula)thisFormula).getLHS(), valuation ).toDouble())
+		/**/   		> (evaluateTerm( ((ComparisonFormula)thisFormula).getRHS(), valuation ) ).toDouble());
+		/**/	} else if ( thisFormula.getOperator().equals( ge ) ) {
+		/**/		return ( (evaluateTerm( ((ComparisonFormula)thisFormula).getLHS(), valuation ).toDouble()) 
+		/**/   		>= (evaluateTerm( ((ComparisonFormula)thisFormula).getRHS(), valuation ) ).toDouble());
+		/**/	}else if ( thisFormula.getOperator().equals( lt ) ) {
+		/**/		return ( (evaluateTerm( ((ComparisonFormula)thisFormula).getLHS(), valuation ).toDouble())
+		/**/   		< (evaluateTerm( ((ComparisonFormula)thisFormula).getRHS(), valuation ) ).toDouble());
+		/**/	}else if ( thisFormula.getOperator().equals( le ) ) {
+		/**/		return ( (evaluateTerm( ((ComparisonFormula)thisFormula).getLHS(), valuation ).toDouble())
+		/**/   		<= (evaluateTerm( ((ComparisonFormula)thisFormula).getRHS(), valuation ) ).toDouble());
+		/**/	}else if ( thisFormula.getOperator().equals( eq ) ) {
+		/**/		return ( (evaluateTerm( ((ComparisonFormula)thisFormula).getLHS(), valuation ).toDouble())
+		/**/   		== (evaluateTerm( ((ComparisonFormula)thisFormula).getRHS(), valuation ) ).toDouble());
+		/**/	} else {
+		/**/		throw new Exception(
+		/**/   		"This comparison operator is not implemented in the native interpretation: " 
+		/**/   		+ thisFormula.getOperator() );
+		/**/	}
 
 		} else if ( thisFormula instanceof NotFormula ) {
 			return (! evaluateFormula( ((NotFormula)thisFormula).getChild(), valuation ) );
 		} else if ( thisFormula instanceof AndFormula ) {
-			return (evaluateFormula( ((AndFormula)thisFormula).getLeftChild(), valuation ) && evaluateFormula( ((AndFormula)thisFormula).getRightChild(), valuation ));
+			return (evaluateFormula( ((AndFormula)thisFormula).getLeftChild(), valuation ) 
+				&& evaluateFormula( ((AndFormula)thisFormula).getRightChild(), valuation ));
 		} else if ( thisFormula instanceof OrFormula ) {
-			return (evaluateFormula( ((OrFormula)thisFormula).getLeftChild(), valuation ) || evaluateFormula( ((OrFormula)thisFormula).getRightChild(), valuation ));
+			return (evaluateFormula( ((OrFormula)thisFormula).getLeftChild(), valuation ) 
+				|| evaluateFormula( ((OrFormula)thisFormula).getRightChild(), valuation ));
 		} else if ( thisFormula instanceof ImpliesFormula ) {
-			return ( (! evaluateFormula( ((ImpliesFormula)thisFormula).getAntecedent(), valuation )) || evaluateFormula( ((ImpliesFormula)thisFormula).getSuccedent(), valuation ) );
+			return ( (! evaluateFormula( ((ImpliesFormula)thisFormula).getAntecedent(), valuation )) 
+				|| evaluateFormula( ((ImpliesFormula)thisFormula).getSuccedent(), valuation ) );
 		} else if ( thisFormula instanceof IffFormula ) {
-			return ( ( (! evaluateFormula( ((IffFormula)thisFormula).getAntecedent(), valuation )) || evaluateFormula( ((IffFormula)thisFormula).getSuccedent(), valuation ) )
-				&& ( (! evaluateFormula( ((IffFormula)thisFormula).getSuccedent(), valuation )) || evaluateFormula( ((IffFormula)thisFormula).getAntecedent(), valuation ) ) );
+			return ( ( (! evaluateFormula( ((IffFormula)thisFormula).getAntecedent(), valuation )) 
+					|| evaluateFormula( ((IffFormula)thisFormula).getSuccedent(), valuation ) )
+				&& ( (! evaluateFormula( ((IffFormula)thisFormula).getSuccedent(), valuation )) 
+					|| evaluateFormula( ((IffFormula)thisFormula).getAntecedent(), valuation ) ) );
 		} else {
-			throw new Exception("This logical operator is not implemented in the native interpretation: " + thisFormula.getOperator() );
+			throw new Exception(
+				"This logical operator is not implemented in the native interpretation: " 
+				+ thisFormula.getOperator() );
 		}
 
 	}

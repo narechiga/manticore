@@ -3,9 +3,9 @@ package manticore.dl;
 
 import java.util.*;
 
-public class AssignmentProgram extends DiscreteProgram {
+public class ConcreteAssignmentProgram extends DiscreteProgram {
 
-	public AssignmentProgram( RealVariable leftChild, Term rightChild ) {
+	public ConcreteAssignmentProgram( RealVariable leftChild, Term rightChild ) {
 		operator = new Operator( "assign" );
 
 		children = new ArrayList<dLStructure>();

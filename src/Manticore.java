@@ -111,10 +111,13 @@ class Manticore {
 
 	/*==================== Command line interface ====================*/
 	public static void commandLine() {
-		Scanner in = new Scanner( System.in );
+		Scanner commandScanner = new Scanner( System.in );
 		while (true) {
 			try {
-			        System.out.print("\n::M::>> ");
+			        System.out.print("\nmanticore:> ");
+				String input = commandScanner.nextLine();
+				input = input.trim();
+				Scanner in = new Scanner( input );
 				
 				if ( in.hasNext("parse") ){
 					in.skip("parse");
@@ -122,9 +125,12 @@ class Manticore {
 				} else if ( in.hasNext("evaluate") ) {
 					in.skip("evaluate");
 					runEvaluate( in.nextLine() + "\n");
-				} else if ( in.hasNext("execute") ) {
-					in.skip("execute");
-					runExecute( in.nextLine() + "\n");
+				} else if ( in.hasNext("simulate") ) {
+					in.skip("simulate");
+					runSimulate( in.nextLine() + "\n");
+				//} else if ( in.hasNext("execute") ) {
+				//	in.skip("execute");
+				//	runExecute( in.nextLine() + "\n");
 				} else if ( in.hasNext("version") ) {
 					System.out.println("Manticore version 0");
 					in.nextLine();
@@ -140,7 +146,7 @@ class Manticore {
 		}	
 	}
 
-	public static void runExecute ( String input ) throws Exception {
+	public static void runSimulate ( String input ) throws Exception {
 	        StringReader inreader = new StringReader( input );
 	        Lexer myLexer = new Lexer( inreader );
 	        YYParser myParser = new YYParser( myLexer );
@@ -151,12 +157,36 @@ class Manticore {
 		if ( (myParser.parsedStructure instanceof HybridProgram) && ( myParser.valuation != null ) ) {
 			System.out.println( "PARSED: " + myParser.parsedStructure.toKeYmaeraString() );
 			System.out.println("Valuation is: " + myParser.valuation.toString() );
-			SymbolicExecutionThread myThread = new SymbolicExecutionThread( (HybridProgram)(myParser.parsedStructure), myParser.valuation, interpretation );
-			myThread.runDiscreteSteps();
-			System.out.println("Result of execution is: " + myThread.currentStateValuations.toString() );
+
+			ValuationList initialState = new ValuationList();
+			initialState.add( myParser.valuation );
+			SymbolicExecutionEngine engine = new SymbolicExecutionEngine( interpretation );
+			ValuationList valList = engine.runDiscreteSteps( (HybridProgram)myParser.parsedStructure,
+									initialState );
+			System.out.println("Result of discrete execution is: " + valList.toString() );
 		}
 
 	}
+
+	//public static void runExecute ( String input ) throws Exception {
+	//        StringReader inreader = new StringReader( input );
+	//        Lexer myLexer = new Lexer( inreader );
+	//        YYParser myParser = new YYParser( myLexer );
+	//        myParser.parse();
+
+	//	Interpretation interpretation = new NativeInterpretation();
+
+	//	if ( (myParser.parsedStructure instanceof HybridProgram) && ( myParser.valuation != null ) ) {
+	//		ValuationList result;
+	//		System.out.println( "PARSED: " + myParser.parsedStructure.toKeYmaeraString() );
+	//		System.out.println("Valuation is: " + myParser.valuation.toString() );
+
+	//		SymbolicExecutionEngine engine = new SymbolicExecutionEngine( interpretation );
+	//		result = engine.runDiscreteSteps ((HybridProgram) myParser.);
+	//		System.out.println("Result of discrete execution is: " + result.toString() );
+	//	}
+
+	//}
 
 	public static void runEvaluate( String input ) throws Exception {
 	        StringReader inreader = new StringReader( input );
@@ -169,7 +199,8 @@ class Manticore {
 		if ( (myParser.parsedStructure instanceof dLFormula) && ( myParser.valuation != null ) ) {
 			System.out.println( "PARSED: " + myParser.parsedStructure.toKeYmaeraString() );
 			System.out.println("Valuation is: " + myParser.valuation.toString() );
-			System.out.println("Evaluated formula is: " + interpretation.evaluateFormula( (dLFormula)myParser.parsedStructure, myParser.valuation ) );
+			System.out.println("Evaluated formula is: " 
+				+ interpretation.evaluateFormula( (dLFormula)myParser.parsedStructure, myParser.valuation ) );
 		}
 	}
 

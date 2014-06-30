@@ -22,12 +22,12 @@ public class ExplicitODE extends dLStructure {
 
 	}
 
-	public dLStructure lhs() {
-		return children.get(0);
+	public RealVariable getLHS() {
+		return (RealVariable)(children.get(0));
 	}
 
-	public dLStructure rhs() {
-		return children.get(1);
+	public Term getRHS() {
+		return (Term)(children.get(1));
 	}
 
 	public String toInfix() {
@@ -37,7 +37,7 @@ public class ExplicitODE extends dLStructure {
 	public String toKeYmaeraString () {
 		String returnString = "";
 
-		returnString = returnString + children.get(0).toKeYmaeraString() + "' = " + children.get(1).toKeYmaeraString();
+		returnString = returnString + getLHS().toKeYmaeraString() + "' = " + getRHS().toKeYmaeraString();
 
 		return returnString;
 	}

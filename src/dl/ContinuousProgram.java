@@ -5,7 +5,7 @@ import java.util.*;
 public class ContinuousProgram extends HybridProgram {
 
 	// constructor with DOE
-	public ContinuousProgram ( List<dLStructure> odeList, dLStructure doe ) {
+	public ContinuousProgram ( List<dLStructure> odeList, dLFormula doe ) {
 		this.operator = new Operator("continuous-evolution");
 		this.children = odeList;
 
@@ -19,13 +19,24 @@ public class ContinuousProgram extends HybridProgram {
 		this.children = odeList;
 
 		// Guarantee: Must always have a doe, even if it's just "true"
-		this.children.add( new dLStructure( "true" ) );
+		this.children.add( new TrueFormula() );
 	}
 
 	// Operations on ODE List
-	public ExplicitODE getODEs () {
-		// TODO
-		return null;
+	public ArrayList<ExplicitODE> getODEs () {
+
+		ArrayList<ExplicitODE> odeList = new ArrayList<ExplicitODE>();
+
+		Iterator<dLStructure> childIterator = children.iterator();
+		dLStructure thisChild;
+		while ( childIterator.hasNext() ) {
+			thisChild = childIterator.next();
+			if ( thisChild instanceof ExplicitODE) {
+				odeList.add( (ExplicitODE)thisChild );
+			}
+		}
+
+		return odeList;
 	}
 
 	public ExplicitODE getODE( int index ) {
@@ -46,17 +57,17 @@ public class ContinuousProgram extends HybridProgram {
 
 
 	// Operations on DOE
-	public dLStructure getDOE() {
+	public dLFormula getDOE() {
 		int doeIndex = children.size() - 1;
 
-		if ( doeIndex >= 0 ) {
-			return children.get(doeIndex);
+		if ( children.get(doeIndex) instanceof dLFormula ) {
+			return ((dLFormula)children.get(doeIndex));
 		} else {
 			return null;
 		}
 	}
 
-	public void setDOE ( dLStructure doe ) {
+	public void setDOE ( dLFormula doe ) {
 		int doeIndex = children.size();
 
 		// Assume: Must always have a doe, even if it's just "true"
@@ -104,7 +115,7 @@ public class ContinuousProgram extends HybridProgram {
 
 			} else { //then this is the doe
 				returnString = returnString.substring(0, returnString.length() -2 );
-				returnString = returnString + " & " + thisChild.toKeYmaeraString(); // TODO: Write a toKeYmaeraString for logical formulas
+				returnString = returnString + " & " + getDOE().toKeYmaeraString(); // TODO: Write a toKeYmaeraString for logical formulas
 			}
 		}
 		returnString = returnString + " }";

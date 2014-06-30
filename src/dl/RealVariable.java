@@ -25,6 +25,11 @@ public class RealVariable extends Term {
 		return operator.toKeYmaeraString();
 	}
 
+	public RealVariable clone() {
+		return new RealVariable( this.operator.toString() );
+		
+	}
+
 
 }
 

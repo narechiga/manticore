@@ -83,7 +83,12 @@
 
 %type <String> input fullblock problemblock schemavarsblock rulesblock schematext varblock funblock functiondeclaration argumentdeclaration annotationblock valuation
 %type <ArrayList<String>> vardeclaration varlist varinitlist
-%type <dLStructure> dLformula assignment test ode comparison
+%type <ExplicitODE> ode
+%type <dLFormula> dLformula 
+%type <ConcreteAssignmentProgram> concreteassignment 
+%type <ArbitraryAssignmentProgram> arbitraryassignment 
+%type <TestProgram> test
+%type <ComparisonFormula> comparison
 %type <Term> term
 %type <HybridProgram> hybridprogram
 %type <ContinuousProgram> odesystem
@@ -250,7 +255,7 @@ valuation:
 	IDENTIFIER IMPLIES NUMBER {
 		try {
 			if ( this.valuation == null ) {
-				this.valuation = new HashMap<RealVariable,Real>();
+				this.valuation = new Valuation();
 			}
 
 			this.valuation.put( new RealVariable( (String)$1 ), new Real( (String)$3 ) );
@@ -266,7 +271,7 @@ valuation:
 	| valuation COMMA IDENTIFIER IMPLIES NUMBER {
 		try{
 			if ( this.valuation == null ) {
-				this.valuation = new HashMap<RealVariable,Real>();
+				this.valuation = new Valuation();
 			}
 			this.valuation.put( new RealVariable( (String)$3 ), new Real( (String)$5 ) );
 			$$ = (String)$1 + "\n" + "(valuation " +  (String)$3 + "->" + (String)$5 + ")";
@@ -687,11 +692,19 @@ hybridprogram:
 			System.err.println( e );
 		}
 	}
-	| assignment { 
+	| concreteassignment { 
 		try {
-			$$ = (AssignmentProgram)$1;
+			$$ = (ConcreteAssignmentProgram)$1;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location hybridprogram:assignment");
+			System.err.println("Exception at location hybridprogram:concreteassignment");
+			System.err.println( e );
+		}
+	}
+	| arbitraryassignment { 
+		try {
+			$$ = (ArbitraryAssignmentProgram)$1;
+		} catch ( Exception e ) {
+			System.err.println("Exception at location hybridprogram:arbitraryassignment");
 			System.err.println( e );
 		}
 	}
@@ -729,24 +742,26 @@ hybridprogram:
 	}
 ;
 
-assignment:
-	IDENTIFIER ASSIGN RANDOM { 
+concreteassignment:
+	IDENTIFIER ASSIGN term { 
 		try {
-			$$ = new AssignmentProgram( new RealVariable( (String)$1 ), new Term( "arbitrary" ) );
+			$$ = new ConcreteAssignmentProgram( new RealVariable( (String)$1 ), (Term)$3 );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location assignment:IDENTIFIER ASSIGN RANDOM");
-			System.err.println( e );
-		}
-	}
-	| IDENTIFIER ASSIGN term { 
-		try {
-			$$ = new AssignmentProgram( new RealVariable( (String)$1 ), (Term)$3 );
-		} catch ( Exception e ) {
-			System.err.println("Exception at location IDENTIFIER ASSIGN term");
+			System.err.println("Exception at location concreteassignment:IDENTIFIER ASSIGN term");
 			System.err.println( e );
 		}
 	}
 ;
+
+arbitraryassignment:
+	IDENTIFIER ASSIGN RANDOM { 
+		try {
+			$$ = new ArbitraryAssignmentProgram( new RealVariable( (String)$1 ) );
+		} catch ( Exception e ) {
+			System.err.println("Exception at location arbitraryassignment:IDENTIFIER ASSIGN RANDOM");
+			System.err.println( e );
+		}
+	}
 
 
 test:
@@ -771,7 +786,7 @@ odesystem:
 	}
 	| OPENBRACE odelist AND dLformula CLOSEBRACE { 
 		try {
-			$$ = new ContinuousProgram( (ArrayList<dLStructure>)$2, (dLStructure)$4 );
+			$$ = new ContinuousProgram( (ArrayList<dLStructure>)$2, (dLFormula)$4 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location odesystem:OPENBRACE odelist AND dLformula CLOSEBRACE");
 			System.err.println( e );

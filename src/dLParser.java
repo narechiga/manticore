@@ -6,7 +6,7 @@ class dLParser {
 	dLStructure parsedStructure;
 
 	// for when "evaluate" is called from the command line
-	HashMap<RealVariable, Real> valuation;
+	Valuation valuation;
 
 	// for reading  a file with user annotations
 	List<dLStructure> annotations;

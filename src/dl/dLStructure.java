@@ -82,7 +82,6 @@ public class dLStructure {
 		if ( (operator != null) && (children != null) ) {
 			return "(" + operator.toString() + " " + children.toString() + " )";
 		} else if ( (operator != null) && (children == null) ) {
-			//return "(ground term: " + operator.toString() + " )";
 			return operator.toString();
 		} else {
 			return "(uninitialized structure)";
