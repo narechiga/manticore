@@ -73,6 +73,27 @@ public class dLStructure {
 
 	}
 
+	public HybridProgram extractHybridProgram() {
+		HybridProgram myProgram = null;
+
+		if ( getClass().equals( HybridProgram.class ) ) {
+			return (HybridProgram)this;
+		} else if ( children!= null ) {
+
+			Iterator<dLStructure> childrenIterator = children.iterator();
+			dLStructure thisChild;
+			while ( childrenIterator.hasNext() ) {
+				thisChild = childrenIterator.next();
+
+				if ( thisChild.extractHybridProgram() != null ) {
+					myProgram = thisChild.extractHybridProgram();
+				}
+			}
+		}
+		return myProgram;
+	}
+
+
 	// String operations
 	//public String toString() {
 	//	return toInfix();

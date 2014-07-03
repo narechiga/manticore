@@ -217,7 +217,7 @@ class Manticore {
 		}
 	}
 
-	public static void runParser( String input ) throws Exception {
+	public static dLStructure runParser( String input ) throws Exception {
 	        StringReader inreader = new StringReader( input );
 	        Lexer myLexer = new Lexer( inreader );
 	        YYParser myParser = new YYParser( myLexer );
@@ -255,6 +255,8 @@ class Manticore {
 
 		System.out.println("The variables that occur in this structure are:");
 		System.out.println( myParser.parsedStructure.getVariables() );
+
+		return myParser.parsedStructure;
 					
 					
 	}
