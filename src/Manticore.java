@@ -1,7 +1,9 @@
 import java.io.*;
 import java.util.*;
+
 import manticore.dl.*;
 import manticore.symbolicexecution.*;
+import manticore.matlabsimulationkit.*;
 
 class Manticore {
 
@@ -9,7 +11,7 @@ class Manticore {
 
 	public static void main( String [] args ) {
 
-		System.out.println("This is Manticore, a strategy engine for the theorem prover KeYmaera\n");
+		System.out.println("This is Manticore, a strategy engine for the theorem prover KeYmaera");
 
 		if ( args.length < 1 ) {
 			commandLine();
@@ -45,6 +47,23 @@ class Manticore {
 
 			System.out.println("With annotations: " + fileParser.annotations);
 
+			System.out.println("Writing to dynsys.m file...");
+			MatlabSimulationKit.generateDynsysFile( fileParser.parsedStructure.extractFirstHybridProgram() );
+			System.out.println("Writing to problemstatement.m file...");
+			MatlabSimulationKit.generateProblemStatementFile( fileParser.declaredProgramVariables, 1, 1 );
+
+			// Run devil run!
+			ProcessBuilder builder = new ProcessBuilder("matlab", "-nodesktop", "-nosplash",
+							"< manticore/matlabsimulationkit/run.m");
+			builder.redirectErrorStream(true);
+			Process process = builder.start();
+			InputStream stdout = process.getInputStream();
+			BufferedReader reader = new BufferedReader (new InputStreamReader(stdout));
+
+			String line;
+			while ((line = reader.readLine()) != null) {
+				System.out.println ("Matlab output: " + line);
+			}
 
 		} catch ( Exception e ) {
 			System.err.println( e );
@@ -147,6 +166,38 @@ class Manticore {
 			}   
 		}	
 	}
+
+//	public static String runSimulate ( HybridProgram program, String valuationString ) throws Exception {
+//
+//		ValuationList valList = null;
+//
+//	        StringReader valuationReader = new StringReader( valuationString );
+//	        Lexer valuationLexer = new Lexer( valuationReader );
+//	        YYParser valuationParser = new YYParser( valuationLexer );
+//	        valuationParser.parse();
+//
+//		Interpretation interpretation = new NativeInterpretation();
+//
+//		if (  valuationParser.valuation != null ) ) {
+//
+//			ValuationList initialState = new ValuationList();
+//			initialState.add( myParser.valuation );
+//			NativeExecutionEngine engine = new NativeExecutionEngine( interpretation );
+//			valList = engine.runDiscreteSteps( (HybridProgram)myParser.parsedStructure,
+//									initialState );
+//			if ( debug ) {
+//				System.out.println( "PARSED: " + myParser.parsedStructure.toKeYmaeraString() );
+//				System.out.println("Valuation is: " + myParser.valuation.toString() );
+//				System.out.println("Result of discrete execution is: " + valList.toString() );
+//			}
+//
+//		}
+//
+//		Valuation toReturn = valList.get(0);		
+//		return toReturn.toString();
+//
+//	}
+
 
 	public static String runSimulate ( String input ) throws Exception {
 
@@ -251,6 +302,9 @@ class Manticore {
 		ArrayList<ContinuousProgram> continuousblocks = myParser.parsedStructure.extractContinuousBlocks();
 		System.out.println("Continuous blocks found: " + continuousblocks.size() );
 		System.out.println( continuousblocks );
+		System.out.println("=================================================================");
+		System.out.println("First program================================================");
+		System.out.println( myParser.parsedStructure.extractFirstHybridProgram() );
 		System.out.println("=================================================================");
 
 		System.out.println("The variables that occur in this structure are:");

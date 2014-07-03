@@ -73,10 +73,10 @@ public class dLStructure {
 
 	}
 
-	public HybridProgram extractHybridProgram() {
+	public HybridProgram extractFirstHybridProgram() {
 		HybridProgram myProgram = null;
 
-		if ( getClass().equals( HybridProgram.class ) ) {
+		if ( this instanceof HybridProgram ) {
 			return (HybridProgram)this;
 		} else if ( children!= null ) {
 
@@ -85,19 +85,15 @@ public class dLStructure {
 			while ( childrenIterator.hasNext() ) {
 				thisChild = childrenIterator.next();
 
-				if ( thisChild.extractHybridProgram() != null ) {
-					myProgram = thisChild.extractHybridProgram();
+				if ( thisChild.extractFirstHybridProgram() != null ) {
+					myProgram = thisChild.extractFirstHybridProgram();
 				}
 			}
 		}
+
 		return myProgram;
 	}
 
-
-	// String operations
-	//public String toString() {
-	//	return toInfix();
-	//}
 
 	public String toString() {
 		if ( (operator != null) && (children != null) ) {

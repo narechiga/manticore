@@ -9,13 +9,13 @@ class dLParser {
 	Valuation valuation;
 
 	// for reading  a file with user annotations
-	List<dLStructure> annotations;
+	List<dLFormula> annotations;
 
 	// Assorted fields of an input file
 	public String declaredFunctions;
 	public String declaredSchemaVariables;
 	public String declaredRules;
-	public List<String> declaredProgramVariables;
+	public ArrayList<RealVariable> declaredProgramVariables;
 	public List<String> variableInitializations;
 
 

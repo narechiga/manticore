@@ -82,7 +82,8 @@
 %left REALDECLARATION
 
 %type <String> input fullblock problemblock schemavarsblock rulesblock schematext varblock funblock functiondeclaration argumentdeclaration annotationblock valuation
-%type <ArrayList<String>> vardeclaration varlist varinitlist
+%type <ArrayList<String>> varinitlist
+%type <ArrayList<RealVariable>> varlist vardeclaration
 %type <ExplicitODE> ode
 %type <dLFormula> dLformula 
 %type <ConcreteAssignmentProgram> concreteassignment 
@@ -92,14 +93,23 @@
 %type <Term> term
 %type <HybridProgram> hybridprogram
 %type <ContinuousProgram> odesystem
-%type <ArrayList<dLStructure>> odelist annotationlist
+%type <ArrayList<dLStructure>> odelist 
+%type <ArrayList<dLFormula>> annotationlist
 %type <ArrayList<Term>> argumentlist
 
 %type <String> EXTERNAL FUNCTIONS RULES SCHEMAVARIABLES SCHEMATEXT PROBLEM ASSIGN PRIME OPENBRACE CLOSEBRACE EQUALS TEST CUP RANDOM REALDECLARATION OPENBOX CLOSEBOX OPENDIAMOND CLOSEDIAMOND NUMBER IDENTIFIER PLUS MINUS MULTIPLY DIVIDE POWER NEWLINE INEQUALITY LPAREN RPAREN SEMICOLON COMMA AND OR NOT IMPLIES IFF FORALL EXISTS TRUE FALSE 
 
 %%
 input: 
-	dLformula OPENBRACE valuation CLOSEBRACE {
+	valuation {
+		try {
+			$$ = (String)$1;
+		} catch ( Exception e ) {
+			System.err.println("Exception at location input:valuation");
+			System.err.println( e );
+		}
+	}
+	| dLformula OPENBRACE valuation CLOSEBRACE {
 		try {
 			parsedStructure = (dLFormula)$1; // valuation has already been handled
 			$$ = (String)$3; 
@@ -287,7 +297,7 @@ valuation:
 annotationblock:
 	ANNOTATION OPENBRACE annotationlist CLOSEBRACE {
 		try {
-			this.annotations = (ArrayList<dLStructure>)$3;
+			this.annotations = (ArrayList<dLFormula>)$3;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location annotationblock:ANNOTATION OPENBRACE annotationlist CLOSEBRACE");
 			System.err.println( e );
@@ -298,8 +308,8 @@ annotationblock:
 annotationlist:
 	dLformula SEMICOLON {
 		try {
-			ArrayList<dLStructure> annot = new ArrayList<dLStructure>();
-			annot.add( (dLStructure)$1 );
+			ArrayList<dLFormula> annot = new ArrayList<dLFormula>();
+			annot.add( (dLFormula)$1 );
 			$$ = annot;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location annotationlist:dLformula SEMICOLON");
@@ -308,9 +318,9 @@ annotationlist:
 	}
 	| annotationlist dLformula SEMICOLON {
 		try {
-			ArrayList<dLStructure> annot = new ArrayList<dLStructure>();
-			annot.addAll( (ArrayList<dLStructure>)$1 );
-			annot.add( (dLStructure)$2 );
+			ArrayList<dLFormula> annot = new ArrayList<dLFormula>();
+			annot.addAll( (ArrayList<dLFormula>)$1 );
+			annot.add( (dLFormula)$2 );
 			$$ = annot;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location annotationlist:annotationlist dLformula SEMICOLON");
@@ -382,10 +392,9 @@ varblock:
 			//if ( parsedStructure == null ) {
 			//	parsedStructure = new dLStructure();
 			//}
-			this.declaredProgramVariables = new ArrayList<String>();
-			this.declaredProgramVariables.addAll( $2 );
-			ArrayList<String> vars = (ArrayList<String>)this.declaredProgramVariables;
-			$$ = vars.toString();
+			this.declaredProgramVariables = new ArrayList<RealVariable>();
+			this.declaredProgramVariables.addAll( (ArrayList<RealVariable>)$2 );
+			$$ = this.declaredProgramVariables.toString();
 		} catch ( Exception e ) {
 			System.err.println("Exception at location varblock:OPENBOX vardeclaration CLOSEBOX");
 			System.err.println( e );
@@ -398,11 +407,11 @@ varblock:
 			//if ( parsedStructure == null ) {
 			//	parsedStructure = new dLStructure();
 			//}
-			this.declaredProgramVariables = (ArrayList<String>)$2;
+			this.declaredProgramVariables = (ArrayList<RealVariable>)$2;
 			this.variableInitializations = (ArrayList<String>)$3;
 
 			ArrayList<String> result = new ArrayList<String>();
-			result.addAll( this.declaredProgramVariables );
+			//result.addAll( this.declaredProgramVariables );
 			result.addAll( this.variableInitializations );
 			$$ = result.toString();
 		} catch ( Exception e ) {
@@ -416,7 +425,7 @@ varblock:
 vardeclaration:
 	REALDECLARATION varlist SEMICOLON { 
 		try {
-			$$ = (ArrayList<String>)$2;
+			$$ = (ArrayList<RealVariable>)$2;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location vardeclaration:REALDECLARATION varlist SEMICOLON");
 			System.err.println( e );
@@ -425,8 +434,8 @@ vardeclaration:
 	| vardeclaration REALDECLARATION varlist SEMICOLON { 
 		//$$ = "\t(declare-real " + (String)$2 + " )\n"  + (String)$4;
 		try {
-			ArrayList<String> vars = $1;
-			vars.add( (String)$4 );
+			ArrayList<RealVariable> vars = $1;
+			vars.add( new RealVariable( (String)$4 ) );
 			$$ = vars;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location vardeclaration:vardeclaration REALDECLARATION varlist SEMICOLON");
@@ -437,10 +446,9 @@ vardeclaration:
 
 varlist:
 	IDENTIFIER { 
-		//$$ = "\t(declare-real " + (String)$1 + " )\n";
 		try {
-			ArrayList<String> vars = new ArrayList<String>();
-			vars.add( (String)$1 );
+			ArrayList<RealVariable> vars = new ArrayList<RealVariable>();
+			vars.add( new RealVariable( (String)$1 ) );
 			$$ = vars;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location varlist:IDENTIFIER");
@@ -448,11 +456,9 @@ varlist:
 		}
 	}
 	| varlist COMMA IDENTIFIER { 
-		//$$ = "\t(declare-real " + (String)$1 + " )\n" + (String)$3;
 		try {
-			ArrayList<String> vars = new ArrayList<String>();
-			vars.addAll( (ArrayList<String>)$1 );
-			vars.add( (String)$3 );
+			ArrayList<RealVariable> vars  = (ArrayList<RealVariable>)$1 ;
+			vars.add( new RealVariable( (String)$3 ) );
 			$$ = vars;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location varlist:varlist COMMA IDENTIFIER");
@@ -463,7 +469,6 @@ varlist:
 	
 varinitlist:
 	IDENTIFIER ASSIGN term SEMICOLON { 
-		//$$ = "\t(init: " + (String)$1 + ", " + (String)$3 + " )\n";
 		try {
 			ArrayList<String> init = new ArrayList<String>();
 			dLStructure myTerm = (dLStructure)$3;
