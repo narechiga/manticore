@@ -5,6 +5,8 @@ import manticore.symbolicexecution.*;
 
 class Manticore {
 
+	static boolean debug = false;
+
 	public static void main( String [] args ) {
 
 		System.out.println("This is Manticore, a strategy engine for the theorem prover KeYmaera\n");
@@ -146,7 +148,10 @@ class Manticore {
 		}	
 	}
 
-	public static void runSimulate ( String input ) throws Exception {
+	public static String runSimulate ( String input ) throws Exception {
+
+		ValuationList valList = null;
+
 	        StringReader inreader = new StringReader( input );
 	        Lexer myLexer = new Lexer( inreader );
 	        YYParser myParser = new YYParser( myLexer );
@@ -155,18 +160,26 @@ class Manticore {
 		Interpretation interpretation = new NativeInterpretation();
 
 		if ( (myParser.parsedStructure instanceof HybridProgram) && ( myParser.valuation != null ) ) {
-			System.out.println( "PARSED: " + myParser.parsedStructure.toKeYmaeraString() );
-			System.out.println("Valuation is: " + myParser.valuation.toString() );
 
 			ValuationList initialState = new ValuationList();
 			initialState.add( myParser.valuation );
-			SymbolicExecutionEngine engine = new SymbolicExecutionEngine( interpretation );
-			ValuationList valList = engine.runDiscreteSteps( (HybridProgram)myParser.parsedStructure,
+			NativeExecutionEngine engine = new NativeExecutionEngine( interpretation );
+			valList = engine.runDiscreteSteps( (HybridProgram)myParser.parsedStructure,
 									initialState );
-			System.out.println("Result of discrete execution is: " + valList.toString() );
+			if ( debug ) {
+				System.out.println( "PARSED: " + myParser.parsedStructure.toKeYmaeraString() );
+				System.out.println("Valuation is: " + myParser.valuation.toString() );
+				System.out.println("Result of discrete execution is: " + valList.toString() );
+			}
+
 		}
 
+		Valuation toReturn = valList.get(0);		
+		return toReturn.toString();
+
 	}
+
+	
 
 	//public static void runExecute ( String input ) throws Exception {
 	//        StringReader inreader = new StringReader( input );
@@ -181,7 +194,7 @@ class Manticore {
 	//		System.out.println( "PARSED: " + myParser.parsedStructure.toKeYmaeraString() );
 	//		System.out.println("Valuation is: " + myParser.valuation.toString() );
 
-	//		SymbolicExecutionEngine engine = new SymbolicExecutionEngine( interpretation );
+	//		NativeExecutionEngine engine = new NativeExecutionEngine( interpretation );
 	//		result = engine.runDiscreteSteps ((HybridProgram) myParser.);
 	//		System.out.println("Result of discrete execution is: " + result.toString() );
 	//	}

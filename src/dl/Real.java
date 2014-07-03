@@ -82,5 +82,13 @@ public class Real extends Term {
 		return new Real( result.toString() );
 	}
 
+	public static Real max( Real a, Real b ) {
+		Double aDouble = new Double( a.getOperator().toString() );
+		Double bDouble = new Double( b.getOperator().toString() );
+
+		Double result = Math.min(aDouble,bDouble);
+		return new Real( result.toString() );
+	}
+
 }
 

@@ -260,7 +260,6 @@ valuation:
 
 			this.valuation.put( new RealVariable( (String)$1 ), new Real( (String)$3 ) );
 			$$ = "(valuation " +  (String)$1 + "->" + (String)$3 + ")";
-			System.out.println("Found valuation for " + (String)$1 );
 
 		} catch ( Exception e ) {
 			System.err.println("Exception at location valuation:IDENTIFIER IMPLIES NUMBER");
@@ -275,7 +274,6 @@ valuation:
 			}
 			this.valuation.put( new RealVariable( (String)$3 ), new Real( (String)$5 ) );
 			$$ = (String)$1 + "\n" + "(valuation " +  (String)$3 + "->" + (String)$5 + ")";
-			System.out.println("Found valuation for " + (String)$3 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location valuation:valuation COMMA IDENTIFIER IMPLIES NUMBER");
 			System.err.println( e );
