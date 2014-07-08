@@ -54,6 +54,40 @@ public class Term extends dLStructure {
 		return returnString;
 	}
 
+	//public boolean equals( Object otherObject ) { // This is too restrictive, because does not allow for commutativity
+
+	//	if ( !(otherObject instanceof Term ) ) {
+	//		return false;
+	//	}
+
+	//	Term otherTerm = (Term)otherObject;
+	//	if ( !(this.operator.equals( otherTerm.operator ) ) ) {
+	//		return false;
+	//	}
+
+	//	Iterator<dLStructure> myChildIterator = this.children.iterator();
+	//	Iterator<dLStructure> otherChildIterator = otherTerm.children.iterator();
+
+	//	boolean result = true; //will be anded with the condition that each child must be equal, then returned
+	//	Term myChild; Term otherChild;
+	//	// Look at the constructor, and note that all the children of terms are terms.
+	//	// Then all the typecasts below should succeed.
+	//	while ( myChildIterator.hasNext() ) {
+
+	//		if ( otherChildIterator.hasNext() ) {
+
+	//			myChild = (Term)(myChildIterator.next());
+	//			otherChild = (Term)(otherChildIterator.next());
+	//			
+	//			result = result && myChild.equals( otherChild );
+
+	//		} else {
+	//			return false; // because then they are not the same size, cannot be equal!
+	//		}
+	//	}
+	//}
+
+
 	// Following two methods really only used for the "arbitrary" term, as in x := *
 	public Term ( Operator operator ) {
 		this.operator = operator;

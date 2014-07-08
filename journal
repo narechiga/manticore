@@ -11,3 +11,19 @@ provides an annotation in the form of a ball in the state space of some given ra
 and throw an error if this is not the case.
 
 Then for a more "sampling" oriented approach I can perhaps support more general things.
+
+7-8-014
+=======
+
+:: Morning
+Wrote a quick and dirty "equals" method for Term. Probably could be written to be cleaner in the future.
+Also, probably some refactoring to do away with "dLStructure" is in order, because it is annoying to
+have to cast all the children of Term to Term, since they are just in an array of dLStructures
+
+1:56 pm: Abandoned the "equals" method. Equals needs to be applied on a per-operator basis to allow
+for commutativity and so on. I'll do that later with some templating. Next thing to do is to strengthen
+the proof generator.
+Done> Clean out the settings printing function
+Next> Think about how to do things better here
+
+
