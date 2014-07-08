@@ -5,16 +5,10 @@ import java.util.regex.*;
 
 class ProofGenerator {
 
-	int nodeNumber;
-	/* Its fields consist of the settings */
-	/* etc, TODO */
+	int nodeNumber; // Which KeYmaera likes, for some reason that I do not fully undrestand
 
-	/* Constructor with no arguments uses "default" settings */
 	public ProofGenerator() {
 		this.nodeNumber = 1;
-	}
-
-	private void loadSettings() {
 	}
 
 	/* Write the partial proof file */
@@ -32,7 +26,7 @@ class ProofGenerator {
 			System.out.println("Will print partial proof file to: " + outputFilename );
 			PrintWriter proofWriter = new PrintWriter( outputFilename );
 
-			printSettings( proofWriter );
+			//printSettings( proofWriter );
 			copyProblemStatement( inputScanner, proofWriter );
 			
 			applyPreprocessingRules( inputFilename, proofWriter );
@@ -157,10 +151,36 @@ class ProofGenerator {
 	// TODO: Add in declarations of barrier certs, hybrid cuts, and so on
 	public void copyProblemStatement( Scanner inputScanner, PrintWriter proofWriter ){
 		String thisString = "";
+		boolean skipThis = false;
+		Pattern annotationStartPattern = Pattern.compile(Pattern.quote("\\annotations"));
+		Pattern annotationEndPattern = Pattern.compile(Pattern.quote("}"));
+
 		while( inputScanner.hasNextLine() ) {
 			thisString = inputScanner.nextLine();
-			proofWriter.println( thisString  );
-			System.out.println("Copying string: "+thisString);
+
+			// Skip annotations!
+			Matcher annotationStartMatcher	=	annotationStartPattern.matcher( thisString );
+			Matcher annotationEndMatcher	=	annotationEndPattern.matcher( thisString );
+			if ( annotationStartMatcher.find() ) {
+				skipThis = true;
+			}
+
+
+			// Copy stuff
+			if ( !skipThis ) {
+				proofWriter.println( thisString  );
+				System.out.println("Copying string: "+thisString);
+			} else {
+				System.out.println("Skipping string: "+thisString);
+
+			}
+
+			// Stop skipping after annotation
+			if ( annotationEndMatcher.find() ) {
+				skipThis = false;
+			}
+
+			
 		}
 	}
 
@@ -291,7 +311,7 @@ class ProofGenerator {
 		proofWriter.println("[DLOptions]FOStrategy=LAZY");
 		proofWriter.println("[ReduceOptions]rlqepnf=DEFAULT");
 		proofWriter.println("[DLOptions]applyLocalReduce=OFF");
-		proofWriter.println("[DLOptions]quantifierEliminator=SMT");
+		proofWriter.println("[DLOptions]quantifierEliminator=Mathematica");
 		proofWriter.println("\"");
 		proofWriter.println("}");
 	}

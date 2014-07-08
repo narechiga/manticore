@@ -24,14 +24,14 @@
 %token CLOSEBRACE
 %token EQUALS
 %token TEST
+%token KLEENESTAR
 %token CUP
 %token RANDOM
 %token REALDECLARATION
-/*%token KLEENESTAR*/
 
 
 /* precedence for hybrid program operators */
-%right KLEENESTAR
+%left KLEENESTAR
 %right SEMICOLON CUP
 
 
@@ -81,7 +81,7 @@
 %left NEGATIVE
 %left REALDECLARATION
 
-%type <String> input fullblock problemblock schemavarsblock rulesblock schematext varblock funblock functiondeclaration argumentdeclaration annotationblock valuation
+/*%type <String> input fullblock problemblock schemavarsblock rulesblock schematext varblock funblock functiondeclaration argumentdeclaration annotationblock valuation
 %type <ArrayList<String>> varinitlist
 %type <ArrayList<RealVariable>> varlist vardeclaration
 %type <ExplicitODE> ode
@@ -97,7 +97,8 @@
 %type <ArrayList<dLFormula>> annotationlist
 %type <ArrayList<Term>> argumentlist
 
-%type <String> EXTERNAL FUNCTIONS RULES SCHEMAVARIABLES SCHEMATEXT PROBLEM ASSIGN PRIME OPENBRACE CLOSEBRACE EQUALS TEST CUP RANDOM REALDECLARATION OPENBOX CLOSEBOX OPENDIAMOND CLOSEDIAMOND NUMBER IDENTIFIER PLUS MINUS MULTIPLY DIVIDE POWER NEWLINE INEQUALITY LPAREN RPAREN SEMICOLON COMMA AND OR NOT IMPLIES IFF FORALL EXISTS TRUE FALSE 
+%type <String> EXTERNAL FUNCTIONS RULES SCHEMAVARIABLES SCHEMATEXT PROBLEM ASSIGN PRIME OPENBRACE CLOSEBRACE EQUALS TEST CUP ASTERISK REALDECLARATION OPENBOX CLOSEBOX OPENDIAMOND CLOSEDIAMOND NUMBER IDENTIFIER PLUS MINUS ASTERISK DIVIDE POWER NEWLINE INEQUALITY LPAREN RPAREN SEMICOLON COMMA AND OR NOT IMPLIES IFF FORALL EXISTS TRUE FALSE 
+*/
 
 %%
 input: 
@@ -197,6 +198,7 @@ input:
 	} 
 	| error {
 		System.err.println("Parser: I'm confused, throwing error");
+		System.exit(1);
 	}
 ;
 
@@ -224,6 +226,22 @@ fullblock:
 			$$ = (String)$1 + (String)$2 + (String)$3 + (String)$4;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location fullblock:funblock schemavarsblock rulesblock problemblock");
+			System.err.println( e );
+		}
+	}
+	| schemavarsblock rulesblock funblock problemblock { 
+		try{
+			$$ = (String)$1 + (String)$2 + (String)$3 + (String)$4;
+		} catch ( Exception e ) {
+			System.err.println("Exception at location fullblock:schemavarsblock rulesblock funblock problemblock");
+			System.err.println( e );
+		}
+	}
+	| schemavarsblock rulesblock problemblock { 
+		try{
+			$$ = (String)$1 + (String)$2 + (String)$3;
+		} catch ( Exception e ) {
+			System.err.println("Exception at location fullblock:schemavarsblock rulesblock problemblock");
 			System.err.println( e );
 		}
 	}
@@ -434,8 +452,8 @@ vardeclaration:
 	| vardeclaration REALDECLARATION varlist SEMICOLON { 
 		//$$ = "\t(declare-real " + (String)$2 + " )\n"  + (String)$4;
 		try {
-			ArrayList<RealVariable> vars = $1;
-			vars.add( new RealVariable( (String)$4 ) );
+			ArrayList<RealVariable> vars = (ArrayList<RealVariable>)$1;
+			vars.addAll( (ArrayList<RealVariable>)$3 );
 			$$ = vars;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location vardeclaration:vardeclaration REALDECLARATION varlist SEMICOLON");
@@ -731,7 +749,7 @@ hybridprogram:
 		try {
 			$$ = new RepetitionProgram( (HybridProgram)$1 );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location hybridprogram:hybridprogram KLEENESTAR");
+			System.err.println("Exception at location hybridprogram:hybridprogram ASTERISK");
 			System.err.println( e );
 		}
 	}
@@ -761,7 +779,7 @@ arbitraryassignment:
 		try {
 			$$ = new ArbitraryAssignmentProgram( new RealVariable( (String)$1 ) );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location arbitraryassignment:IDENTIFIER ASSIGN RANDOM");
+			System.err.println("Exception at location arbitraryassignment:IDENTIFIER ASSIGN ASTERISK");
 			System.err.println( e );
 		}
 	}
@@ -920,7 +938,7 @@ term:
 			args.add( (Term)$3 );
 			$$ = new Term( new Operator("*", true), args );
 		} catch ( Exception e ) {
-			System.err.println("Exception at location term:term MULTIPLY term");
+			System.err.println("Exception at location term:term ASTERISK term");
 			System.err.println( e );
 		}
 	}

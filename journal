@@ -1,0 +1,13 @@
+7-7-2014
+========
+
+:: Morning
+Decided to keep a more detailed record of how things evolve.
+
+I have a (mostly) working candidate generator. The main thing that is missing
+is parsing the user annotations. I am thinking that for the simulation driven 
+invariant search, perhaps the best thing to do is to simply expect that the user
+provides an annotation in the form of a ball in the state space of some given radius,
+and throw an error if this is not the case.
+
+Then for a more "sampling" oriented approach I can perhaps support more general things.

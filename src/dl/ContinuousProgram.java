@@ -22,6 +22,20 @@ public class ContinuousProgram extends HybridProgram {
 		this.children.add( new TrueFormula() );
 	}
 
+	public ArrayList<RealVariable> getContinuousVariables() {
+
+		ArrayList<RealVariable> myVariables = new ArrayList<RealVariable>();
+
+		ArrayList<ExplicitODE> myODEs= this.getODEs();
+		Iterator<ExplicitODE> odeIterator = myODEs.iterator();
+		
+		while ( odeIterator.hasNext() ) {
+			myVariables.add( odeIterator.next().getLHS() );
+		}
+
+		return myVariables;
+	}
+
 	// Operations on ODE List
 	public ArrayList<ExplicitODE> getODEs () {
 

@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.*;
+import java.util.regex.*;
 
 import manticore.dl.*;
 import manticore.symbolicexecution.*;
@@ -37,11 +38,15 @@ class Manticore {
 
 			Iterator<ContinuousProgram> cbit = continuousblocks.iterator();
 
+			ContinuousProgram thisBlock;
 			while ( cbit.hasNext() ) {
+				thisBlock = cbit.next();
+
 				System.out.println("_________________________________________________________________");
 				System.out.println("Continuous block:");
-
-				System.out.println( cbit.next().toKeYmaeraString() );
+				System.out.println( thisBlock.toKeYmaeraString() );
+				System.out.println("With continuous variables: ");
+				System.out.println( thisBlock.getContinuousVariables() );
 				System.out.println("_________________________________________________________________");
 			}
 
@@ -50,9 +55,11 @@ class Manticore {
 			System.out.println("Writing to dynsys.m file...");
 			MatlabSimulationKit.generateDynsysFile( fileParser.parsedStructure.extractFirstHybridProgram() );
 			System.out.println("Writing to problemstatement.m file...");
-			MatlabSimulationKit.generateProblemStatementFile( fileParser.declaredProgramVariables, 1, 1 );
+			MatlabSimulationKit.generateProblemStatementFile( fileParser.declaredProgramVariables, 
+										fileParser.annotations,
+										1);
 
-			// Run devil run!
+			// Run, devil run!
 			ProcessBuilder builder = new ProcessBuilder("matlab", "-nodesktop", "-nosplash",
 							"< manticore/matlabsimulationkit/run.m");
 			builder.redirectErrorStream(true);
@@ -60,10 +67,39 @@ class Manticore {
 			InputStream stdout = process.getInputStream();
 			BufferedReader reader = new BufferedReader (new InputStreamReader(stdout));
 
+
+			
+			String lyapunovCandidate = "";
+			double levelset = 0;
 			String line;
+			Pattern lyapunovCandidatePattern = Pattern.compile("V = (.+)");
+			Pattern levelsetPattern = Pattern.compile("Optimized levelset size: (\\d+.?\\d*)");
 			while ((line = reader.readLine()) != null) {
-				System.out.println ("Matlab output: " + line);
+				if ( debug ) {
+					System.out.println ("Matlab output: " + line);
+				}
+
+				Matcher lyapunovCandidateMatcher = lyapunovCandidatePattern.matcher( line );
+				Matcher levelsetMatcher = levelsetPattern.matcher( line );
+
+				if ( lyapunovCandidateMatcher.find() ) {
+					lyapunovCandidate = lyapunovCandidateMatcher.group(1);
+
+					lyapunovCandidate = lyapunovCandidate.replace("V = ", "");
+					lyapunovCandidate = lyapunovCandidate.replace(">","");
+				}
+
+				if ( levelsetMatcher.find() ) {
+					levelset = Double.parseDouble(levelsetMatcher.group(1));
+				}
 			}
+
+			System.out.println("Lyapunov candidate: " + lyapunovCandidate );
+			System.out.println("Level: " + levelset );
+
+			System.out.println("Generating partial proof file...");
+			ProofGenerator myPG = new ProofGenerator();
+			myPG.applyFirstCut( lyapunovCandidate + " < " + levelset, args[0]);
 
 		} catch ( Exception e ) {
 			System.err.println( e );
@@ -217,7 +253,7 @@ class Manticore {
 			NativeExecutionEngine engine = new NativeExecutionEngine( interpretation );
 			valList = engine.runDiscreteSteps( (HybridProgram)myParser.parsedStructure,
 									initialState );
-			if ( debug ) {
+			if ( true ) {
 				System.out.println( "PARSED: " + myParser.parsedStructure.toKeYmaeraString() );
 				System.out.println("Valuation is: " + myParser.valuation.toString() );
 				System.out.println("Result of discrete execution is: " + valList.toString() );
@@ -273,6 +309,11 @@ class Manticore {
 	        Lexer myLexer = new Lexer( inreader );
 	        YYParser myParser = new YYParser( myLexer );
 	        myParser.parse();
+
+		if ( myParser.parsedStructure == null ) {
+			System.out.println("Parsed structure is null");
+			return null;
+		}
 
 		System.out.println( "PARSED: " + myParser.parsedStructure.toKeYmaeraString() );
 

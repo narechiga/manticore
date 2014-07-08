@@ -87,7 +87,7 @@ Comment = {TraditionalComment} | {EndOfLineComment} | {DocumentationComment}
 		}
 		return PROBLEM;
 	}
-	"\\annotation" {
+	"\\annotations" {
 		if ( debug ) {
 			System.out.println("Lexer: ANNOTATION");
 			System.out.println("Lexer @ " + yytext() );

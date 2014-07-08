@@ -9,7 +9,7 @@ class dLParser {
 	Valuation valuation;
 
 	// for reading  a file with user annotations
-	List<dLFormula> annotations;
+	ArrayList<dLFormula> annotations;
 
 	// Assorted fields of an input file
 	public String declaredFunctions;

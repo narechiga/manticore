@@ -49,9 +49,26 @@ public class MatlabSimulationKit {
 
 	}
 
-	public static void generateProblemStatementFile( ArrayList<RealVariable> varList, int templateDegree, double radius ) 
-			throws Exception {
-		
+	public static void generateProblemStatementFile( ArrayList<RealVariable> varList, 
+							ArrayList<dLFormula> annotations,
+							int templateDegree ) throws Exception {
+
+		// First, sort out the annotations
+		if ( annotations.size() != 1 ) {
+			throw new Exception( "MatlabSimulationKit only supports annotations lists of length 1, found length: "
+						+ annotations.size() );
+		}
+		System.out.println("TODO: I should support multiple continuous blocks and multiple annotations!");
+
+		if ( !(annotations.get(0) instanceof ComparisonFormula) ) {
+			throw new Exception( "MatlabSimulationKit only supports annotations that are comparisons." );
+		}
+
+		System.out.println("TODO: I assume a hypersphere annotation is given but I don't check the format!");
+		ComparisonFormula hypersphere = (ComparisonFormula)(annotations.get(0));
+		double radius = ((Real)hypersphere.getRHS()).toDouble();
+
+		// Now write the file
 		PrintWriter probFile = new PrintWriter("manticore/matlabsimulationkit/problemstatement.m");
 
 		Date date = new Date();

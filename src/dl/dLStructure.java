@@ -60,9 +60,6 @@ public class dLStructure {
 			while ( childrenIterator.hasNext() ) {
 				thisChild = childrenIterator.next();
 
-				//if ( thisChild instanceof ContinuousProgram ) {
-				//	continuousBlocks.add( (ContinuousProgram)thisChild );
-				//} else 
 				if ( thisChild.children != null ) { 
 					continuousBlocks.addAll( thisChild.extractContinuousBlocks() );
 				}
