@@ -23,6 +23,20 @@ public class Term extends dLStructure {
 		return this.operator;
 	}
 
+	public ArrayList<Term> getSubTerms() {
+		ArrayList<Term> subTerms = new ArrayList<Term>();
+		Iterator<dLStructure> subTermIterator = children.iterator();
+
+		while ( subTermIterator.hasNext() ) {
+			// This can be done safely because all the children of a term will be terms,
+			// see constructor
+			subTerms.add( (Term)subTermIterator.next() );
+		}
+
+		return subTerms;
+	}
+
+
 	public String toKeYmaeraString() {
 
 		String returnString = "";
@@ -32,7 +46,7 @@ public class Term extends dLStructure {
 			if ( children != null ) {
 				Iterator<dLStructure> childIterator = children.iterator();
 				while ( childIterator.hasNext() ) {
-					returnString = returnString + childIterator.next().toKeYmaeraString();
+					returnString = returnString + " " + childIterator.next().toKeYmaeraString();
 				}
 			}
 			returnString = returnString + " )";

@@ -55,9 +55,7 @@ class Manticore {
 			System.out.println("Writing to dynsys.m file...");
 			MatlabSimulationKit.generateDynsysFile( fileParser.parsedStructure.extractFirstHybridProgram() );
 			System.out.println("Writing to problemstatement.m file...");
-			MatlabSimulationKit.generateProblemStatementFile( fileParser.declaredProgramVariables, 
-										fileParser.annotations,
-										1);
+			MatlabSimulationKit.generateProblemStatementFile( fileParser.annotations, 1);
 
 			// Run, devil run!
 			ProcessBuilder builder = new ProcessBuilder("matlab", "-nodesktop", "-nosplash",
@@ -70,12 +68,12 @@ class Manticore {
 
 			
 			String lyapunovCandidate = "";
-			double levelset = 0;
+			Double levelset = 0.0;
 			String line;
 			Pattern lyapunovCandidatePattern = Pattern.compile("V = (.+)");
 			Pattern levelsetPattern = Pattern.compile("Optimized levelset size: (\\d+.?\\d*)");
 			while ((line = reader.readLine()) != null) {
-				if ( debug ) {
+				if ( true ) {
 					System.out.println ("Matlab output: " + line);
 				}
 
@@ -99,7 +97,14 @@ class Manticore {
 
 			System.out.println("Generating partial proof file...");
 			ProofGenerator myPG = new ProofGenerator();
-			myPG.applyFirstCut( lyapunovCandidate + " < " + levelset, args[0]);
+
+			ComparisonFormula invariant = new ComparisonFormula(new Operator("<"),
+								(Term)runParser( lyapunovCandidate ),
+								new Real( levelset.toString() ) );
+			AndFormula finvcut = new AndFormula( invariant, 
+						MatlabSimulationKit.getNonBallPortion( fileParser.annotations.get(0) ) );
+
+			myPG.applyFirstCut( finvcut.toKeYmaeraString(), args[0] );
 
 		} catch ( Exception e ) {
 			System.err.println( e );

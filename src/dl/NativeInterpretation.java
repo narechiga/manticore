@@ -30,6 +30,8 @@ public class NativeInterpretation implements Interpretation {
 	protected final Operator sqrt = new Operator("sqrt");
 	protected final Operator tangent = new Operator("tan");
 	protected final Operator hyptangent = new Operator("tanh");
+	protected final Operator Sine = new Operator("Sin");
+	protected final Operator Cosine = new Operator("Cos");
 
 	//Comparison operators
 	protected final Operator gt = new Operator(">");
@@ -260,6 +262,22 @@ public class NativeInterpretation implements Interpretation {
 				System.err.println("Exception encountered evaluating rule for operator :: hyptangent ::");
 				e.printStackTrace();
 			}
+		} else if ( thisTerm.operator.equals( Sine ) ) {
+			try {
+				doubleResult = Math.sin( (evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ) ).toDouble() );
+				result = new Real( doubleResult.toString() );
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered evaluating rule for operator :: Sine ::");
+				e.printStackTrace();
+			}
+		} else if ( thisTerm.operator.equals( Cosine ) ) {
+			try {
+				doubleResult = Math.cos( (evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ) ).toDouble() );
+				result = new Real( doubleResult.toString() );
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered evaluating rule for operator :: Cosine ::");
+				e.printStackTrace();
+			}
 		} else {
 			throw new Exception("This arithemtic operator is not implemented in the native interpretation: " + thisTerm.getOperator().toString() );
 		}
@@ -300,11 +318,11 @@ public class NativeInterpretation implements Interpretation {
 		} else if ( thisFormula instanceof NotFormula ) {
 			return (! evaluateFormula( ((NotFormula)thisFormula).getChild(), valuation ) );
 		} else if ( thisFormula instanceof AndFormula ) {
-			return (evaluateFormula( ((AndFormula)thisFormula).getLeftChild(), valuation ) 
-				&& evaluateFormula( ((AndFormula)thisFormula).getRightChild(), valuation ));
+			return (evaluateFormula( ((AndFormula)thisFormula).getLHS(), valuation ) 
+				&& evaluateFormula( ((AndFormula)thisFormula).getRHS(), valuation ));
 		} else if ( thisFormula instanceof OrFormula ) {
-			return (evaluateFormula( ((OrFormula)thisFormula).getLeftChild(), valuation ) 
-				|| evaluateFormula( ((OrFormula)thisFormula).getRightChild(), valuation ));
+			return (evaluateFormula( ((OrFormula)thisFormula).getLHS(), valuation ) 
+				|| evaluateFormula( ((OrFormula)thisFormula).getRHS(), valuation ));
 		} else if ( thisFormula instanceof ImpliesFormula ) {
 			return ( (! evaluateFormula( ((ImpliesFormula)thisFormula).getAntecedent(), valuation )) 
 				|| evaluateFormula( ((ImpliesFormula)thisFormula).getSuccedent(), valuation ) );

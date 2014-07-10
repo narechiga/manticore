@@ -6,6 +6,9 @@ import manticore.dl.*;
 
 public class MatlabSimulationKit {
 
+	public static Operator lt = new Operator("<");
+	public static Operator le = new Operator("<=");
+	public static Operator ball = new Operator("ball");
 
 	public static void generateDynsysFile( HybridProgram program ) throws Exception {
 
@@ -49,24 +52,150 @@ public class MatlabSimulationKit {
 
 	}
 
-	public static void generateProblemStatementFile( ArrayList<RealVariable> varList, 
-							ArrayList<dLFormula> annotations,
+	public static double getBallRadius( dLFormula annotation ) throws Exception { 
+		// defaults to a radius of one if there is no ball constraint
+
+		double radius = 1; // A reasonable default search radius,
+				// and also the multiplicative identity--so use multiplication for recursion
+		
+		if ( isBall( annotation ) ) {
+			radius =  ((Real)((ComparisonFormula)annotation).getRHS()).toDouble();
+			
+		} else if ( !(annotation.isPropositionalPrimitive() ) ) {
+			radius = radius * getBallRadius( ((AndFormula)annotation).getLHS() ) 
+							* getBallRadius( ((AndFormula)annotation).getRHS() );
+
+		} else {
+			radius = 1;
+		}
+
+		return radius;
+
+	}
+
+	public static ArrayList<RealVariable> getBallVariables( dLFormula annotation ) throws Exception { 
+
+		ArrayList<RealVariable> varList = new ArrayList<RealVariable>();
+		
+		if ( isBall( annotation ) ) {
+
+			// Figure out if each subterm is a RealVariable, otherwise throw an exception
+			ArrayList<Term> termList =  ((ComparisonFormula)annotation).getLHS().getSubTerms();
+			Iterator<Term> termIterator = termList.iterator();
+			Term thisTerm;
+			while ( termIterator.hasNext() ) {
+				thisTerm = termIterator.next();
+				if ( thisTerm instanceof RealVariable ) {
+					varList.add( (RealVariable)thisTerm );
+				} else {
+					throw new Exception("Unsupported argument to ball function: "
+							+ thisTerm.toKeYmaeraString() );
+				}
+			}
+				
+			
+		} else if ( !(annotation.isPropositionalPrimitive() ) ) {
+			varList.addAll( getBallVariables( ((AndFormula)annotation).getLHS() ) ); 
+			varList.addAll( getBallVariables( ((AndFormula)annotation).getRHS() ) ); 
+
+		} else {
+			//do nothing, return empty list
+		}
+
+		return varList;
+
+	}
+
+	public static dLFormula getNonBallPortion( dLFormula annotation ) throws Exception {
+		//dLFormula nonBallPortion;
+
+		if ( !isPureConjunction( annotation ) ) {
+			throw new Exception("MatlabSimulationKit currently only supports conjunctive annotations");
+		}
+		
+		if ( isBall( annotation ) ) {
+			return new TrueFormula();
+		} else if ( !(containsBall( annotation )) ) {
+			return annotation;
+		} else if ( containsBall( ((AndFormula)annotation).getLHS() ) 
+				&& !containsBall( ((AndFormula)annotation).getRHS() ) ) {
+			return new AndFormula( getNonBallPortion( ((AndFormula)annotation).getLHS() ), 
+						((AndFormula)annotation).getRHS() );
+		} else if ( (!containsBall( ((AndFormula)annotation).getLHS())) 
+				&& containsBall( ((AndFormula)annotation).getRHS()) ) {
+			return new AndFormula( ((AndFormula)annotation).getLHS(), 
+						getNonBallPortion( ((AndFormula)annotation).getRHS()) );
+		} else {
+			throw new Exception("Found exception while trying to getNonBallPortion of annotation: " 
+				+ annotation.toKeYmaeraString() );
+		}
+
+
+	}
+
+	public static boolean isPureConjunction( dLFormula annotation ) {
+		
+		if ( annotation.isPropositionalPrimitive() ) {
+			return true; //dummy base case
+		} else if ( annotation instanceof AndFormula
+				&& isPureConjunction( ((AndFormula)annotation).getLHS() )
+				&& isPureConjunction( ((AndFormula)annotation).getRHS() )
+				) {
+			return true; 
+		} else {
+			return false;
+		}
+	}
+
+	public static boolean containsBall( dLFormula annotation ) {
+		if ( isBall(annotation) ) {
+			return true;
+		} else if ( annotation.isPropositionalPrimitive() ) {
+			return false;
+		} else {
+			return ( containsBall(((AndFormula)annotation).getLHS()) 
+				|| containsBall(((AndFormula)annotation).getRHS()) );
+		}
+	}
+
+	public static boolean isBall( dLFormula annotation ) {
+
+
+		if ( (annotation instanceof ComparisonFormula)
+			&& ( annotation.operator.equals( lt ) || annotation.operator.equals( le ) )
+			&& ( ((ComparisonFormula)annotation).getLHS().operator.equals( ball ) )
+			&& ( ((ComparisonFormula)annotation).getRHS() instanceof Real )
+			 ) {
+
+			System.out.println("Found ball with radius: " 
+					+ ((ComparisonFormula)annotation).getRHS().toKeYmaeraString());
+			return true;
+
+		} else {
+			return false;
+		}
+	}
+
+	public static void generateProblemStatementFile( ArrayList<dLFormula> annotations,
 							int templateDegree ) throws Exception {
 
 		// First, sort out the annotations
+		System.out.println("INFO: MatlabSimulationKit currently only supports conjunctive annotations");
 		if ( annotations.size() != 1 ) {
-			throw new Exception( "MatlabSimulationKit only supports annotations lists of length 1, found length: "
-						+ annotations.size() );
+			throw new Exception( 
+				"MatlabSimulationKit (currently) only supports annotations lists of length 1, found length: "
+				+ annotations.size() );
 		}
+		dLFormula annotation = annotations.get(0);
+
 		System.out.println("TODO: I should support multiple continuous blocks and multiple annotations!");
 
-		if ( !(annotations.get(0) instanceof ComparisonFormula) ) {
-			throw new Exception( "MatlabSimulationKit only supports annotations that are comparisons." );
+		if ( !(containsBall(annotation)) ) {
+			throw new Exception( "Annotation does not contain a ball to search for an invariant: " 
+				+ annotation.toKeYmaeraString() );
 		}
 
-		System.out.println("TODO: I assume a hypersphere annotation is given but I don't check the format!");
-		ComparisonFormula hypersphere = (ComparisonFormula)(annotations.get(0));
-		double radius = ((Real)hypersphere.getRHS()).toDouble();
+		double radius = getBallRadius( annotation );
 
 		// Now write the file
 		PrintWriter probFile = new PrintWriter("manticore/matlabsimulationkit/problemstatement.m");
@@ -75,6 +204,7 @@ public class MatlabSimulationKit {
 		probFile.println("% Automatically generated on " + date.toString() + "\n" );	
 
 		// Form state variable list
+		ArrayList<RealVariable> varList = getBallVariables( annotation );
 		String varListString = "";
 		Iterator<RealVariable> varIterator = varList.iterator();
 		while ( varIterator.hasNext() ) {

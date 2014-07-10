@@ -196,6 +196,15 @@ input:
 			System.err.println( e );
 		}
 	} 
+	| term {
+		try {
+			$$ = ((Term)$1).toKeYmaeraString();
+			parsedStructure = (Term)$1;
+		} catch ( Exception e ) {
+			System.err.println("Exception at location input:annotationblock");
+			System.err.println( e );
+		}
+	}
 	| error {
 		System.err.println("Parser: I'm confused, throwing error");
 		System.exit(1);

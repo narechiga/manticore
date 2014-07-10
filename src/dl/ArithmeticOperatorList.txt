@@ -22,3 +22,5 @@ hypsine		sinh	1	Math.sinh	prefix
 sqrt		sqrt	1	Math.sqrt	prefix
 tangent		tan	1	Math.tan	prefix
 hyptangent	tanh	1	Math.tanh	prefix
+Sine		Sin	1	Math.sin	prefix
+Cosine		Cos	1	Math.cos	prefix

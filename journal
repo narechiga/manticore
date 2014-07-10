@@ -24,6 +24,7 @@ have to cast all the children of Term to Term, since they are just in an array o
 for commutativity and so on. I'll do that later with some templating. Next thing to do is to strengthen
 the proof generator.
 Done> Clean out the settings printing function
-Next> Think about how to do things better here
+Next> Support annotations that are a conjunction of a hypersphere with other conditions, to allow
+for the previous use of mode variables to specifiy modes of a hybrid automaton
 
 

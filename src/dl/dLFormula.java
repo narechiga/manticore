@@ -18,4 +18,7 @@ public class dLFormula extends dLStructure {
 		return this.operator;
 	}
 
+	//public dLFormula autoCast() {
+
+
 }

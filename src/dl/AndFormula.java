@@ -12,24 +12,24 @@ public class AndFormula extends dLFormula {
 		children.add( rightChild );
 	}
 
-	public dLFormula getLeftChild() {
+	public dLFormula getLHS() {
 		return (dLFormula)(children.get(0));
 	}
 
-	public dLFormula getRightChild() {
+	public dLFormula getRHS() {
 		return (dLFormula)(children.get(1));
 	}
 
 	public String toKeYmaeraString () {
-		return "( " + getLeftChild().toKeYmaeraString() + " & " + getRightChild().toKeYmaeraString() + " )";
+		return "( " + getLHS().toKeYmaeraString() + " & " + getRHS().toKeYmaeraString() + " )";
 	}
 
 	public boolean isFirstOrder() {
-		return (getLeftChild().isFirstOrder() && getRightChild().isFirstOrder() );
+		return (getLHS().isFirstOrder() && getRHS().isFirstOrder() );
 	}
 
 	public boolean isModal() {
-		return (getLeftChild().isModal() && getRightChild().isModal() );
+		return (getLHS().isModal() && getRHS().isModal() );
 	}
 
 }

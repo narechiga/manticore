@@ -6,6 +6,7 @@ import java.util.regex.*;
 class ProofGenerator {
 
 	int nodeNumber; // Which KeYmaera likes, for some reason that I do not fully understand
+	int numberOfDeclarations = 0;
 
 	public ProofGenerator() {
 		this.nodeNumber = 1;
@@ -26,7 +27,6 @@ class ProofGenerator {
 			System.out.println("Will print partial proof file to: " + outputFilename );
 			PrintWriter proofWriter = new PrintWriter( outputFilename );
 
-			//printSettings( proofWriter );
 			copyProblemStatement( inputScanner, proofWriter );
 			
 			applyPreprocessingRules( inputFilename, proofWriter );
@@ -40,11 +40,46 @@ class ProofGenerator {
 	}
 
 	public void applyHCut( String hybridInvariant, PrintWriter proofWriter ) {
-		proofWriter.println("(rule \"HybridCut\" (formula \"2\") (inst \"#hybridinvariant="+hybridInvariant+"\") (userinteraction) (nodenum \""+nodeNumber+"\"))");
-		this.nodeNumber = this.nodeNumber + 1;
+		proofWriter.println("(rule \"HybridCut\" (formula \"2\") (inst \"#hybridinvariant="
+					+hybridInvariant+"\"))");
+
+		proofWriter.println("(branch \" Invariant holds\"");
+		for ( int i = 0; i < numberOfDeclarations - 1; i++ ) {
+			proofWriter.println("\t(rule \"all_right\" (formula \"2\") )");
+			this.nodeNumber = this.nodeNumber + 1;
+			proofWriter.println("\t(builtin \"Update Simplification\" (formula \"2\") )");
+		}
+		//Apparently, the last one does not require an accompanying "Update simplification".
+		proofWriter.println("\t(rule \"all_right\" (formula \"2\") )");
+		proofWriter.println("\t(rule \"imp_right\" (formula \"2\") )");
+
+		proofWriter.println(")");
+
+		proofWriter.println("(branch \" Invariant implies safety\"");
+
+		for ( int i = 0; i < numberOfDeclarations - 1; i++ ) {
+			proofWriter.println("\t(rule \"all_right\" (formula \"2\") )");
+			this.nodeNumber = this.nodeNumber + 1;
+			proofWriter.println("\t(builtin \"Update Simplification\" (formula \"2\"))");
+		}
+		//Apparently, the last one does not require an accompanying "Update simplification".
+		proofWriter.println("\t(rule \"all_right\" (formula \"2\") )");
+		proofWriter.println("(rule \"imp_right\" (formula \"2\") )");
+
+		// Totally worth it when it works!
+		proofWriter.println("(builtin \"Eliminate Universal Quantifiers\" (quantifierEliminator \"Mathematica\") )");
+		proofWriter.println(")");
+
+		proofWriter.println("(branch \" Remaining states are safe\"");
+		proofWriter.println("\t(builtin \"Update Simplification\" (formula \"1\"))");
+		proofWriter.println("\t(rule \"simplify_form\" (formula \"1\") )");
+		proofWriter.println(")");
+
 	}
 
 	public void applyPreprocessingRules( String inputFilename, PrintWriter proofWriter ) {
+		System.out.println("TODO: ProofWriter should have access to parser data, to make better decisions");
+		System.out.println("TODO: For that matter, a full-on representation of the proof tree might be in order");
 		try{
 		File inputFile = new File( inputFilename );
 		Scanner inputScanner = new Scanner( inputFile );
@@ -77,7 +112,7 @@ class ProofGenerator {
 		Matcher assignmentMatcher; Matcher preambleEndMatcher;
 
 		String thisString = "";
-		int numberOfDeclarations = 0;
+		//int numberOfDeclarations = 0; Already declared as global above
 		int numberOfAssignments = 0;
 
 		while ( inputScanner.hasNextLine() ){
@@ -126,22 +161,20 @@ class ProofGenerator {
 
 
 		proofWriter.println("\\proof{");
-		proofWriter.println("(branch \"dummy ID\"");
+		proofWriter.println("(branch \"root\"");
 		for ( int i = 0; i < numberOfDeclarations; i++ ) {
-			proofWriter.println("(rule \"modality_split_right\" (formula \"1\") (userinteraction) (nodenum \"" +nodeNumber+"\"))");
-			this.nodeNumber = this.nodeNumber + 1;
-			proofWriter.println("(rule \"eliminate_variable_decl\" (formula \"1\") (userinteraction) (nodenum \""+nodeNumber+"\"))");
-			this.nodeNumber = this.nodeNumber + 1;
+			proofWriter.println("(rule \"modality_split_right\" (formula \"1\"))");
+			proofWriter.println("(rule \"eliminate_variable_decl\" (formula \"1\"))");
 		}
 
+		//// Get the last one
+		//proofWriter.println("(rule \"eliminate_variable_decl\" (formula \"1\"))");
+
 		for ( int i = 0; i < numberOfAssignments; i++ ) {
-			proofWriter.println("(rule \"modality_split_right\" (formula \"1\") (userinteraction) (nodenum \"" +nodeNumber+"\"))");
-			this.nodeNumber = this.nodeNumber + 1;
-			proofWriter.println("(rule \"assignment_to_update_right\" (formula \"1\") (userinteraction) (nodenum \""+nodeNumber+"\"))");
-			this.nodeNumber = this.nodeNumber + 1;
+			proofWriter.println("(rule \"modality_split_right\" (formula \"1\") )"); 
+			proofWriter.println( "(rule \"assignment_to_update_right\" (formula \"1\"))");
 		}
-		proofWriter.println("(rule \"imp_right\" (formula \"1\") (userinteraction) (nodenum \""+nodeNumber+"\"))");
-		this.nodeNumber = this.nodeNumber + 1;
+		proofWriter.println("(rule \"imp_right\" (formula \"1\") )");
 
 		} catch ( Exception ex ) {
 			ex.printStackTrace();
