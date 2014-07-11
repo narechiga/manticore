@@ -1,3 +1,5 @@
+package manticore.dl;
+
 
 %%
 
@@ -49,12 +51,6 @@ Comment = {TraditionalComment} | {EndOfLineComment} | {DocumentationComment}
 	{WhiteSpace} { 
 		if ( debug ) {
 			System.out.println("Lexer: space");
-			System.out.println("Lexer @ " + yytext() );
-		}
-	}
-	{LineTerminator} {
-		if ( debug ) {
-			System.out.println("Lexer: newline");
 			System.out.println("Lexer @ " + yytext() );
 		}
 	}
@@ -111,6 +107,50 @@ Comment = {TraditionalComment} | {EndOfLineComment} | {DocumentationComment}
 		}
 		yybegin( SCHEMAS ); return RULES;
 	}
+	// EITool files
+	"\\statevariables" {
+		if ( debug ) {
+			System.out.println("Lexer: STATEVARIABLES");
+			System.out.println("Lexer @ " + yytext() );
+		}
+		return STATEVARIABLES;
+	}
+	"\\eiparameters" {
+		if ( debug ) {
+			System.out.println("Lexer: EIPARAMETERS");
+			System.out.println("Lexer @ " + yytext() );
+		}
+		return EIPARAMETERS;
+	}
+	"\\envelope" {
+		if ( debug ) {
+			System.out.println("Lexer: ENVELOPE");
+			System.out.println("Lexer @ " + yytext() );
+		}
+		return ENVELOPE;
+	}
+	"\\invariant" {
+		if ( debug ) {
+			System.out.println("Lexer: INVARIANT");
+			System.out.println("Lexer @ " + yytext() );
+		}
+		return INVARIANT;
+	}
+	"\\robustparameters" {
+		if ( debug ) {
+			System.out.println("Lexer: ROBUSTPARAMETERS");
+			System.out.println("Lexer @ " + yytext() );
+		}
+		return ROBUSTPARAMETERS;
+	}
+	"\\controllaw" {
+		if ( debug ) {
+			System.out.println("Lexer: CONTROLLAW");
+			System.out.println("Lexer @ " + yytext() );
+		}
+		return CONTROLLAW;
+	}
+	
 	
 	"R" { 
 		if ( debug ) {

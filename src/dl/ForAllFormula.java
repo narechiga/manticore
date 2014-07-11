@@ -24,6 +24,10 @@ public class ForAllFormula extends dLFormula {
 		return "(\\forall R " + getVariable().toKeYmaeraString() + "; " + getFormula().toKeYmaeraString() +" )";
 	}
 
+	public String toMathematicaString () {
+		return "ForAll[ " + getVariable().toMathematicaString() + ", " + getFormula().toMathematicaString() +" ]";
+	}
+
 	public boolean isFirstOrder() {
 		return getFormula().isFirstOrder();
 	}
@@ -31,5 +35,6 @@ public class ForAllFormula extends dLFormula {
 	public boolean isModal() {
 		return getFormula().isModal();
 	}
-
 }
+
+

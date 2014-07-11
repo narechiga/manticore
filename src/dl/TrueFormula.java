@@ -10,6 +10,11 @@ public class TrueFormula extends dLFormula {
 	public String toKeYmaeraString () {
 		return "true";
 	}
+	
+	public String toMathematicaString () {
+		return "True";
+	}
+
 
 	public boolean isFirstOrder() {
 		return true;

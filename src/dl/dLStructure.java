@@ -106,5 +106,9 @@ public class dLStructure {
 		return null;
 	}
 
+	public String toMathematicaString() {
+		return null;
+	}
+
 
 }

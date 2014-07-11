@@ -11,6 +11,10 @@ public class FalseFormula extends dLFormula {
 		return "false";
 	}
 
+	public String toMathematicaString () {
+		return "False";
+	}
+
 	public boolean isFirstOrder() {
 		return true;
 	}

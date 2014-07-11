@@ -68,6 +68,10 @@ public class Term extends dLStructure {
 		return returnString;
 	}
 
+	public String toMathematicaString() {
+		return toKeYmaeraString();
+	}
+
 	//public boolean equals( Object otherObject ) { // This is too restrictive, because does not allow for commutativity
 
 	//	if ( !(otherObject instanceof Term ) ) {

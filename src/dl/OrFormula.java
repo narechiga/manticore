@@ -24,6 +24,10 @@ public class OrFormula extends dLFormula {
 		return "( " + getLHS().toKeYmaeraString() + " | " + getRHS().toKeYmaeraString() + " )";
 	}
 
+	public String toMathematicaString () {
+		return "( " + getLHS().toMathematicaString() + " || " + getRHS().toMathematicaString() + " )";
+	}
+
 	public boolean isFirstOrder() {
 		return (getLHS().isFirstOrder() && getRHS().isFirstOrder() );
 	}

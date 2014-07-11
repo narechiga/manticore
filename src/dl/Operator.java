@@ -56,4 +56,8 @@ public class Operator {
 		return operator;
 	}
 
+	public String toMathematicaString() {
+		return operator;
+	}
+
 }

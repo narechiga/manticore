@@ -19,6 +19,10 @@ public class NotFormula extends dLFormula {
 		return "(! " + getChild().toKeYmaeraString() + " )";
 	}
 
+	public String toMathematicaString () {
+		return "Not[ " + getChild().toMathematicaString() + " ]";
+	}
+
 	public boolean isFirstOrder() {
 		return getChild().isFirstOrder();
 	}

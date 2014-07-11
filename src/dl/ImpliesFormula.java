@@ -21,7 +21,7 @@ public class ImpliesFormula extends dLFormula {
 	}
 
 	public String toKeYmaeraString () {
-		return "( " + getAntecedent().toKeYmaeraString() + " -> " + getSuccedent().toKeYmaeraString() + " )";
+		return "Implies[ " + getAntecedent().toKeYmaeraString() + ", " + getSuccedent().toKeYmaeraString() + " ]";
 	}
 
 	public boolean isFirstOrder() {

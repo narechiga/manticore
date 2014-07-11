@@ -5,9 +5,13 @@
 `mkdir bin/manticore/dl`;
 `mkdir bin/manticore/symbolicexecution`;
 `mkdir bin/manticore/matlabsimulationkit`;
-`cd src; jflex Lexer.lex; bison YYParser.y`;
+
+# Compile
+`cd src/dl; jflex Lexer.lex; bison YYParser.y`;
 `cd src/dl; ./GenerateNativeInterpretation`;
 `cd src; javac *.java dl/*.java symbolicexecution/*.java matlabsimulationkit/*.java`;
+
+# Organize
 `cp src/matlabsimulationkit/*.m bin/manticore/matlabsimulationkit/`;
 `mv src/*.class bin;`;
 `mv src/dl/*.class bin/manticore/dl/`;

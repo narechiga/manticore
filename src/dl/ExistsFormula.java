@@ -24,6 +24,10 @@ public class ExistsFormula extends dLFormula {
 		return "(\\exists R " + getVariable().toKeYmaeraString() + "; " + getFormula().toKeYmaeraString() +" )";
 	}
 
+	public String toMathematicaString () {
+		return "Exists[ " + getVariable().toMathematicaString() + ", " + getFormula().toMathematicaString() +" ]";
+	}
+
 	public boolean isFirstOrder() {
 		return getFormula().isFirstOrder();
 	}

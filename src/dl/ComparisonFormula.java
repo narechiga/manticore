@@ -25,7 +25,18 @@ public class ComparisonFormula extends dLFormula {
 	}
 
 	public String toKeYmaeraString () {
-		return "( " + getLHS().toKeYmaeraString() + inequality().toKeYmaeraString() + getRHS().toKeYmaeraString() + " )";
+		return "( " + getLHS().toKeYmaeraString() + inequality().toKeYmaeraString() 
+				+ getRHS().toKeYmaeraString() + " )";
+	}
+
+	public String toMathematicaString () {
+		if ( inequality().equals( new Operator("=") ) ) {
+			return "( " + getLHS().toMathematicaString() + "=="
+					+ getRHS().toMathematicaString() + " )";
+		} else {
+			return "( " + getLHS().toMathematicaString() + inequality().toMathematicaString() 
+					+ getRHS().toMathematicaString() + " )";
+		}
 	}
 
 	public boolean isFirstOrder() {

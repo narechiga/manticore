@@ -1,13 +1,14 @@
 
 %{
 	import java.util.*;
-	import manticore.dl.*;
 
 	@SuppressWarnings({"unchecked"})
 %}
 
 %language "Java"
+%define package manticore.dl
 %define extends {dLParser}
+%define public
 
 %token EXTERNAL
 %token FUNCTIONS
@@ -16,6 +17,13 @@
 %token SCHEMATEXT
 %token PROBLEM
 %token ANNOTATION
+
+%token STATEVARIABLES
+%token EIPARAMETERS
+%token ENVELOPE
+%token INVARIANT
+%token ROBUSTPARAMETERS
+%token CONTROLLAW
 
 /* Hybrid programs */
 %token ASSIGN
@@ -81,7 +89,7 @@
 %left NEGATIVE
 %left REALDECLARATION
 
-/*%type <String> input fullblock problemblock schemavarsblock rulesblock schematext varblock funblock functiondeclaration argumentdeclaration annotationblock valuation
+/*%type <String> input keymaerablock problemblock schemavarsblock rulesblock schematext varblock funblock functiondeclaration argumentdeclaration annotationblock valuation
 %type <ArrayList<String>> varinitlist
 %type <ArrayList<RealVariable>> varlist vardeclaration
 %type <ExplicitODE> ode
@@ -128,11 +136,11 @@ input:
 			System.err.println( e );
 		}
 	}
-	| fullblock { 
+	| keymaerablock { 
 		try {
 			$$ = (String)$1; System.out.println("full block"); 
 		} catch ( Exception e ) {
-			System.err.println("Exception at location input:fullblock");
+			System.err.println("Exception at location input:keymaerablock");
 			System.err.println( e );
 		}
 	}
@@ -201,7 +209,15 @@ input:
 			$$ = ((Term)$1).toKeYmaeraString();
 			parsedStructure = (Term)$1;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location input:annotationblock");
+			System.err.println("Exception at location input:term");
+			System.err.println( e );
+		}
+	}
+	| eitoolblock {
+		try {
+			$$ = "Sucessfully parsed EITool input file";	
+		} catch ( Exception e ) {
+			System.err.println("Exception at location input:eitoolblock");
 			System.err.println( e );
 		}
 	}
@@ -212,13 +228,13 @@ input:
 ;
 
 
-/*==================== Block as it would occur in an input file ====================*/
-fullblock:
+/*==================== Block as it would occur in a KeYmaera input file ====================*/
+keymaerablock:
 	problemblock { 
 		try{
 			$$ = (String)$1;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location fullblock:problemblock");
+			System.err.println("Exception at location keymaerablock:problemblock");
 			System.err.println( e );
 		}
 	}
@@ -226,7 +242,7 @@ fullblock:
 		try{
 			$$ = (String)$1 + (String)$2;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location fullblock:funblock problemblock");
+			System.err.println("Exception at location keymaerablock:funblock problemblock");
 			System.err.println( e );
 		}
 	}
@@ -234,7 +250,7 @@ fullblock:
 		try{
 			$$ = (String)$1 + (String)$2 + (String)$3 + (String)$4;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location fullblock:funblock schemavarsblock rulesblock problemblock");
+			System.err.println("Exception at location keymaerablock:funblock schemavarsblock rulesblock problemblock");
 			System.err.println( e );
 		}
 	}
@@ -242,7 +258,7 @@ fullblock:
 		try{
 			$$ = (String)$1 + (String)$2 + (String)$3 + (String)$4;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location fullblock:schemavarsblock rulesblock funblock problemblock");
+			System.err.println("Exception at location keymaerablock:schemavarsblock rulesblock funblock problemblock");
 			System.err.println( e );
 		}
 	}
@@ -250,15 +266,15 @@ fullblock:
 		try{
 			$$ = (String)$1 + (String)$2 + (String)$3;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location fullblock:schemavarsblock rulesblock problemblock");
+			System.err.println("Exception at location keymaerablock:schemavarsblock rulesblock problemblock");
 			System.err.println( e );
 		}
 	}
-	| annotationblock fullblock {
+	| annotationblock keymaerablock {
 		try{
 			$$ = (String)$1 + (String)$2;
 		} catch ( Exception e ) {
-			System.err.println("Exception at location annotationblock:fullblock");
+			System.err.println("Exception at location annotationblock:keymaerablock");
 			System.err.println( e );
 		}
 	}
@@ -284,6 +300,64 @@ problemblock:
 		}
 	}
 ;
+
+/*============================================================*/
+/*==================== Input file for EITool ====================*/
+eitoolblock: statevarblock eiparameterblock envelopeblock invariantblock robustparameterblock controllawblock;
+
+statevarblock: STATEVARIABLES OPENBRACE varlist CLOSEBRACE {
+	try {
+		statevariables = (ArrayList<RealVariable>)$3;
+	} catch ( Exception e ) {
+		System.err.println("Exception at location statevarblock: STATEVARIABLES OPENBRACE varlist CLOSEBRACE");
+		System.err.println( e );
+	}
+}
+
+eiparameterblock: EIPARAMETERS OPENBRACE varlist CLOSEBRACE {
+	try {
+		eiparameters = (ArrayList<RealVariable>)$3;
+	} catch ( Exception e ) {
+		System.err.println("Exception at location eiparameterblock: EIPARAMETERS OPENBRACE varlist CLOSEBRACE");
+		System.err.println( e );
+	}
+}
+
+
+envelopeblock: ENVELOPE OPENBRACE dLformula CLOSEBRACE {
+	try {
+		envelope = (dLFormula)$3;
+	} catch ( Exception e ) {
+		System.err.println("Exception at location envelopeblock: ENVELOPE OPENBRACE dLformula CLOSEBRACE");
+		System.err.println( e );
+	}
+}
+invariantblock: INVARIANT OPENBRACE dLformula CLOSEBRACE {
+	try {
+		invariant = (dLFormula)$3;
+	} catch ( Exception e ) {
+		System.err.println("Exception at location invariantblock: INVARIANT OPENBRACE dLformula CLOSEBRACE");
+		System.err.println( e );
+	}
+}
+robustparameterblock: ROBUSTPARAMETERS OPENBRACE dLformula CLOSEBRACE {
+	try {
+		robustparameters = (dLFormula)$3;
+	} catch ( Exception e ) {
+		System.err.println("Exception at location robustparametersblock: ROBUSTPARAMETERS OPENBRACE dLformula CLOSEBRACE");
+		System.err.println( e );
+	}
+}
+controllawblock: CONTROLLAW OPENBRACE dLformula CLOSEBRACE {
+	try {
+		controllaw = (dLFormula)$3;
+	} catch ( Exception e ) {
+		System.err.println("Exception at location controllawblock: CONTROLLAW OPENBRACE dLformula CLOSEBRACE");
+		System.err.println( e );
+	}
+}
+
+
 
 /*============================================================*/
 

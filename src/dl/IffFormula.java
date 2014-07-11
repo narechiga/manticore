@@ -24,6 +24,11 @@ public class IffFormula extends dLFormula {
 		return "( " + getAntecedent().toKeYmaeraString() + " <-> " + getSuccedent().toKeYmaeraString() + " )";
 	}
 
+	public String toMathematicaString () {
+		return "Equivalent[ " + getAntecedent().toMathematicaString() 
+				+ ", " + getSuccedent().toMathematicaString() + " ]";
+	}
+
 	public boolean isFirstOrder() {
 		return (getAntecedent().isFirstOrder() && getSuccedent().isFirstOrder() );
 	}
