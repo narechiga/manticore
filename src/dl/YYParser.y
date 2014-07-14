@@ -364,17 +364,17 @@ robustparameterblock: ROBUSTPARAMETERS OPENBRACE dLformula CLOSEBRACE {
 		System.err.println( e );
 	}
 }
-controllawblock: CONTROLLAW OPENBRACE dLformula CLOSEBRACE {
+controllawblock: CONTROLLAW OPENBRACE concreteassignment CLOSEBRACE {
 	try {
-		controllaw = (dLFormula)$3;
+		control = (ConcreteAssignmentProgram)$3;
 	} catch ( Exception e ) {
 		System.err.println("Exception at location controllawblock: CONTROLLAW OPENBRACE dLformula CLOSEBRACE");
 		System.err.println( e );
 	}
 }
-controltemplateblock: CONTROLTEMPLATE OPENBRACE dLformula CLOSEBRACE {
+controltemplateblock: CONTROLTEMPLATE OPENBRACE concreteassignment CLOSEBRACE {
 	try {
-		controllaw = (dLFormula)$3;
+		control = (ConcreteAssignmentProgram)$3;
 	} catch ( Exception e ) {
 		System.err.println("Exception at location controltemplateblock: CONTROLTEMPLATE OPENBRACE dLformula CLOSEBRACE");
 		System.err.println( e );

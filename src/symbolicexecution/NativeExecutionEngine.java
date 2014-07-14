@@ -5,15 +5,32 @@ import java.util.*;
 
 public class NativeExecutionEngine {
 
+	//Determine behavior of star operator
+	int maxIterations;
+	int iteration;
+	
+
 	Interpretation interpretation;
 
+
 	public NativeExecutionEngine ( Interpretation interpretation ) {
-
 		this.interpretation = interpretation;
+		this.iteration = 0;
+		this.maxIterations = 10; // Default
+	}
 
+	public NativeExecutionEngine ( Interpretation interpretation, int maxIterations ) {
+		this.interpretation = interpretation;
+		this.iteration = 0;
+		this.maxIterations = 10; // Default
 	}
 
 	public ValuationList runDiscreteSteps( HybridProgram program, ValuationList valuations ) throws Exception {
+
+		if ( this.iteration == this.maxIterations ) {
+			return valuations;
+		}
+
 		ValuationList returnValuations;
 
 		if ( program instanceof ConcreteAssignmentProgram ) {
@@ -86,6 +103,9 @@ public class NativeExecutionEngine {
 						+ valuations.size());
 		}
 
+		// We should kill the process, so pretend that max iterations have been reached
+		this.iteration = this.maxIterations;
+
 		ArrayList<ExplicitODE> odeList = program.getODEs();
 		Iterator<ExplicitODE> odeIterator = odeList.iterator();
 
@@ -119,11 +139,11 @@ public class NativeExecutionEngine {
 
 		// Run first step
 		returnValuations = runDiscreteSteps( program.getFirstProgram(), valuations );
-		System.out.println("After sequence subthread 1: " + returnValuations );
+		//System.out.println("After sequence subthread 1: " + returnValuations );
 
 		// Run second step
 		returnValuations = runDiscreteSteps( program.getSecondProgram(), returnValuations );
-		System.out.println("After sequence subthread 2: " + returnValuations );
+		//System.out.println("After sequence subthread 2: " + returnValuations );
 
 		return returnValuations;
 	}
@@ -133,15 +153,15 @@ public class NativeExecutionEngine {
 
 		ValuationList returnValuations;
 	
-		System.out.println( "Initial states for choice program: " + valuations );
+		//System.out.println( "Initial states for choice program: " + valuations );
 		// Run left program
 		returnValuations = runDiscreteSteps( program.getLeftProgram(), valuations );
-		System.out.println("After choice subthread 1: " + returnValuations );
+		//System.out.println("After choice subthread 1: " + returnValuations );
 		
 		// Run right program
-		System.out.println( "Starting choice subthread 2 with: " + valuations );
+		//System.out.println( "Starting choice subthread 2 with: " + valuations );
 		returnValuations.addAll( runDiscreteSteps( program.getRightProgram(), valuations ) );
-		System.out.println("After choice subthread 2: " + returnValuations );
+		//System.out.println("After choice subthread 2: " + returnValuations );
 
 		return returnValuations;
 	}
@@ -149,8 +169,9 @@ public class NativeExecutionEngine {
 	public ValuationList runRepetitionProgram( RepetitionProgram program,
 							ValuationList valuations ) throws Exception {
 
-		return runDiscreteSteps( program.getSubProgram(), valuations );
-
+		this.iteration = this.iteration + 1;
+		SequenceProgram iterate = new SequenceProgram( program.getSubProgram(), program );
+		return runDiscreteSteps( iterate, valuations );
 	}
 
 	public boolean evaluateFormula( dLFormula formula, Valuation valuation ) throws Exception {

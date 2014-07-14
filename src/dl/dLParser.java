@@ -20,13 +20,13 @@ public class dLParser {
 	public List<String> variableInitializations;
 
 	// For EITool
-	boolean synthesis; //whether a synthesis or verification task is desired
+	public boolean synthesis; //whether a synthesis or verification task is desired
 	public ArrayList<RealVariable> statevariables;
 	public ArrayList<RealVariable> eiparameters;
 	public dLFormula envelope;
 	public dLFormula invariant;
 	public dLFormula robustparameters;
-	public dLFormula controllaw;
+	public ConcreteAssignmentProgram control;
 
 
 }

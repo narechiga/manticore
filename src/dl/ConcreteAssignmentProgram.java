@@ -25,6 +25,10 @@ public class ConcreteAssignmentProgram extends DiscreteProgram {
 		return "( " + getLHS().toKeYmaeraString() + " := " + getRHS().toKeYmaeraString() +" )";
 	}
 
+	public String toMathematicaString() {
+		return "( " + getLHS().toMathematicaString() + " = " + getRHS().toMathematicaString() +" )";
+	}
+
 	// Administrative
 	public boolean isPurelyDiscrete() {
 		return true;
