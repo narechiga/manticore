@@ -24,6 +24,7 @@
 %token INVARIANT
 %token ROBUSTPARAMETERS
 %token CONTROLLAW
+%token CONTROLTEMPLATE
 
 /* Hybrid programs */
 %token ASSIGN
