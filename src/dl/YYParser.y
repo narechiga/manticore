@@ -303,8 +303,23 @@ problemblock:
 
 /*============================================================*/
 /*==================== Input file for EITool ====================*/
-eitoolblock: statevarblock eiparameterblock envelopeblock invariantblock robustparameterblock controllawblock;
-
+eitoolblock: statevarblock eiparameterblock envelopeblock invariantblock robustparameterblock controllawblock {
+		try {
+			synthesis = false;
+		} catch ( Exception e ) {
+			System.err.println("Exception at location eitoolblock: statevarblock eiparameterblock envelopeblock invariantblock robustparameterblock controllawblock");
+			System.err.println( e );
+		}
+	}
+	| statevarblock eiparameterblock envelopeblock invariantblock robustparameterblock controltemplateblock {
+		try {
+			synthesis = true;
+		} catch ( Exception e ) {
+			System.err.println("Exception at location eitoolblock: statevarblock eiparameterblock envelopeblock invariantblock robustparameterblock controltemplateblock");
+			System.err.println( e );
+		}
+	}
+;
 statevarblock: STATEVARIABLES OPENBRACE varlist CLOSEBRACE {
 	try {
 		statevariables = (ArrayList<RealVariable>)$3;
@@ -353,6 +368,14 @@ controllawblock: CONTROLLAW OPENBRACE dLformula CLOSEBRACE {
 		controllaw = (dLFormula)$3;
 	} catch ( Exception e ) {
 		System.err.println("Exception at location controllawblock: CONTROLLAW OPENBRACE dLformula CLOSEBRACE");
+		System.err.println( e );
+	}
+}
+controltemplateblock: CONTROLTEMPLATE OPENBRACE dLformula CLOSEBRACE {
+	try {
+		controllaw = (dLFormula)$3;
+	} catch ( Exception e ) {
+		System.err.println("Exception at location controltemplateblock: CONTROLTEMPLATE OPENBRACE dLformula CLOSEBRACE");
 		System.err.println( e );
 	}
 }

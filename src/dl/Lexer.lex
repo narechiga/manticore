@@ -150,6 +150,13 @@ Comment = {TraditionalComment} | {EndOfLineComment} | {DocumentationComment}
 		}
 		return CONTROLLAW;
 	}
+	"\\controltemplate" {
+		if ( debug ) {
+			System.out.println("Lexer: CONTROLTEMPLATE");
+			System.out.println("Lexer @ " + yytext() );
+		}
+		return CONTROLTEMPLATE;
+	}
 	
 	
 	"R" { 
