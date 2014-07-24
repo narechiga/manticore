@@ -28,7 +28,7 @@ public class NotFormula extends dLFormula {
 	}
 
 	public String todRealString () {
-		return "(not " + getChild().todRealString() + " )\n";
+		return "(not " + getChild().todRealString() + " )";
 	}
 
 	public boolean isFirstOrder() {
