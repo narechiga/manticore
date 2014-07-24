@@ -19,8 +19,16 @@ public class NotFormula extends dLFormula {
 		return "(! " + getChild().toKeYmaeraString() + " )";
 	}
 
+	public String toManticoreString () {
+		return "(! " + getChild().toManticoreString() + " )";
+	}
+
 	public String toMathematicaString () {
 		return "Not[ " + getChild().toMathematicaString() + " ]";
+	}
+
+	public String todRealString () {
+		return "(not " + getChild().todRealString() + " )\n";
 	}
 
 	public boolean isFirstOrder() {
@@ -30,5 +38,13 @@ public class NotFormula extends dLFormula {
 	public boolean isModal() {
 		return getChild().isModal();
 	}
+
+        public boolean isStatic() {
+                return getChild().isStatic(); 
+        }
+
+        public boolean isQuantifierFree() {
+                return getChild().isQuantifierFree();
+        }	
 
 }

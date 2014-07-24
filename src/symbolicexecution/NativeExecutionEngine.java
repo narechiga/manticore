@@ -83,11 +83,11 @@ public class NativeExecutionEngine {
 
 		Valuation thisValuation;
 		while ( valuationIterator.hasNext() ) {
-
 			thisValuation = valuationIterator.next();
-			if ( evaluateFormula( program.getFormula(), thisValuation ) == true ) {
+
+			if ( evaluateFormula( program.getFormula(), thisValuation ) ) {
 			    returnValuations.add( thisValuation.clone() );
-			}
+			} 
 
 		}
 
@@ -155,12 +155,12 @@ public class NativeExecutionEngine {
 	
 		//System.out.println( "Initial states for choice program: " + valuations );
 		// Run left program
-		returnValuations = runDiscreteSteps( program.getLeftProgram(), valuations );
+		returnValuations = runDiscreteSteps( program.getLHS(), valuations );
 		//System.out.println("After choice subthread 1: " + returnValuations );
 		
 		// Run right program
 		//System.out.println( "Starting choice subthread 2 with: " + valuations );
-		returnValuations.addAll( runDiscreteSteps( program.getRightProgram(), valuations ) );
+		returnValuations.addAll( runDiscreteSteps( program.getRHS(), valuations ) );
 		//System.out.println("After choice subthread 2: " + returnValuations );
 
 		return returnValuations;
@@ -170,7 +170,7 @@ public class NativeExecutionEngine {
 							ValuationList valuations ) throws Exception {
 
 		this.iteration = this.iteration + 1;
-		SequenceProgram iterate = new SequenceProgram( program.getSubProgram(), program );
+		SequenceProgram iterate = new SequenceProgram( program.getChild(), program );
 		return runDiscreteSteps( iterate, valuations );
 	}
 

@@ -22,6 +22,10 @@ public class TestProgram extends DiscreteProgram {
 		return "(? " + getFormula().toKeYmaeraString() + " )";
 	}
 
+	public String toManticoreString() {
+		return "(? " + getFormula().toManticoreString() + " )";
+	}
+
 	// Administrative
 	public boolean isPurelyDiscrete() {
 		return true;
@@ -29,6 +33,10 @@ public class TestProgram extends DiscreteProgram {
 
 	public boolean isProgramPrimitive() {
 		return true;
+	}
+
+	public boolean isQuantifierFree() {
+		return getFormula().isQuantifierFree();
 	}
 
 }

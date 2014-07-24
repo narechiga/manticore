@@ -11,8 +11,16 @@ public class TrueFormula extends dLFormula {
 		return "true";
 	}
 	
+	public String toManticoreString () {
+		return "true";
+	}
+
 	public String toMathematicaString () {
 		return "True";
+	}
+
+	public String todRealString () {
+		return "true";
 	}
 
 
@@ -23,6 +31,14 @@ public class TrueFormula extends dLFormula {
 	public boolean isPropositionalPrimitive() {
 		return true;
 	}
+
+        public boolean isStatic() {
+		return true;	
+        }
+
+        public boolean isQuantifierFree() {
+		return true;
+        }
 
 
 }

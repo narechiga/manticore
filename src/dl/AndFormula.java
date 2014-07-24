@@ -24,8 +24,31 @@ public class AndFormula extends dLFormula {
 		return "( " + getLHS().toKeYmaeraString() + " & " + getRHS().toKeYmaeraString() + " )";
 	}
 
+	public String toManticoreString () {
+		return "( " + getLHS().toManticoreString() + " & " + getRHS().toManticoreString() + " )";
+	}
+
 	public String toMathematicaString () {
 		return "( " + getLHS().toMathematicaString() + " && " + getRHS().toMathematicaString() + " )";
+	}
+    
+	public String todRealString () {
+
+		String returnString = "";
+
+		if ( this.getLHS().isPropositionalPrimitive() ) {
+			returnString = returnString + "(assert " + getLHS().todRealString() + " )\n";
+		} else {
+			returnString = returnString + getLHS().todRealString() + "\n";
+		}
+
+		if ( this.getRHS().isPropositionalPrimitive() ) {
+			returnString = returnString + "(assert " + getRHS().todRealString() + " )\n";
+		} else {
+			returnString = returnString + getRHS().todRealString() + "\n";
+		}
+
+		return returnString;
 	}
 
 	public boolean isFirstOrder() {
@@ -34,6 +57,14 @@ public class AndFormula extends dLFormula {
 
 	public boolean isModal() {
 		return (getLHS().isModal() && getRHS().isModal() );
+	}
+
+	public boolean isStatic() {
+		return (getLHS().isStatic() && getRHS().isStatic());
+	}
+
+	public boolean isQuantifierFree() {
+		return (getLHS().isQuantifierFree() && getRHS().isQuantifierFree());
 	}
 
 }

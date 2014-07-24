@@ -10,7 +10,7 @@ public class MatlabSimulationKit {
 	public static Operator le = new Operator("<=");
 	public static Operator ball = new Operator("ball");
 
-	public static void generateDynsysFile( HybridProgram program ) throws Exception {
+	public static void generateDynsysFile( HybridProgram program, dLFormula annotation ) throws Exception {
 
 		PrintWriter dynsysFile = new PrintWriter("manticore/matlabsimulationkit/dynsys.m");
 		
@@ -25,11 +25,23 @@ public class MatlabSimulationKit {
 		dynsysFile.println(			"\t\t\tvaluation = sprintf('%s, x%i -> %g', valuation, i, x(i));");
 		dynsysFile.println(		"\n\t\tend"								);
 		dynsysFile.println(	"\tend"										);
+
+		// Constraints on discrete variables
+		String nonBallValuationPortion = buildValuationFragment( getNonBallPortion( annotation ) );
+		if ( nonBallValuationPortion != null ) {
+			dynsysFile.println(	"\tvaluation = sprintf('%s, " + 
+						nonBallValuationPortion
+						+ "', valuation);");
+		}
+
 		dynsysFile.println(	"\tvaluation = sprintf('%s }', valuation);"					);
+		//debug
+		dynsysFile.println("fprintf(valuation);");
+
 		dynsysFile.print(	"\tvalstring = char(Manticore.runSimulate(sprintf('"				);
 
 		try{ 
-			String programString = program.toKeYmaeraString();
+			String programString = program.toManticoreString();
 			programString = programString.replace("'", "''");
 			dynsysFile.print(		programString							);
 		} catch (Exception e) {
@@ -37,20 +49,64 @@ public class MatlabSimulationKit {
 			dynsysFile.flush();
 		}
 
-		dynsysFile.print(	"%s', valuation)));\n"								);
-		dynsysFile.println(	"\tcommas = strfind( valstring, ',');"						);
-		dynsysFile.println(	"\tdxdt = [];"									);
-		dynsysFile.println(	"\tfor i = 1:length(x)"								);
-		dynsysFile.println(		"\t\tthisderivativestart = strfind(valstring, sprintf('_dx%idt_=', i ));");
-		dynsysFile.println(		"\t\tinit = thisderivativestart + length(num2str(i)) + 7;"		);
-		dynsysFile.println(		"\t\tdxdt(i) = str2num(valstring(init:commas(i)));"			);
-		dynsysFile.println(	"\tend\n"									);
-		dynsysFile.println(	"\tdxdt = transpose(dxdt);"							);
+		dynsysFile.print(" %s', valuation)));\n"								);
+		dynsysFile.println("\tcommas = strfind( valstring, ',');\t"						);
 
-		dynsysFile.println("end");
+		dynsysFile.print("\tcommas = [commas, strfind( valstring, '}') ];\n");
+		dynsysFile.print("\td = [];\n");
+		dynsysFile.print("\tfor i = 1:length(x)\n");
+		dynsysFile.print("\t\td(i) = strfind(valstring, sprintf('_dx%idt_=', i ));\n");
+		dynsysFile.print("\t\td(i) = d(i) + length(num2str(i)) + 7;\n");
+		dynsysFile.print("\tend\n");
+		dynsysFile.print("\tds = sort(d);\n");
+
+		dynsysFile.print("\tdxdt = [];\n");
+		dynsysFile.print("\tfor i = 1:length(x)\n");
+		dynsysFile.print("\t\tdxdt(i) = str2num(valstring(d(i):commas(find(ds == d(i))))  );\n");
+		dynsysFile.print("\tend\n");
+
+
+
+		dynsysFile.println("\tdxdt = transpose(dxdt);\n"							);
+
+		dynsysFile.println("end\n");
 		dynsysFile.close();
 
 	}
+
+	public static String buildValuationFragment( dLFormula annotation ) throws Exception {
+		System.out.println("INFO: buildValuationFragment currently only supports conjunctions of equalities");
+		if ( !isPureConjunction( annotation ) ) {
+			throw new Exception("buildValuationFragment currently only supports CONJUNCTIONS of equalities");
+		}
+
+		if ( annotation instanceof TrueFormula ) {
+			return null;
+		} else if ( annotation.isPropositionalPrimitive() ) {
+			if ( annotation.operator.equals( new Operator("=") ) ) {
+				return ((ComparisonFormula)annotation).getLHS().toManticoreString() + " -> " 
+					+ ((ComparisonFormula)annotation).getRHS().toManticoreString();
+			} else {
+				System.out.println("Found a propositional primitive that wasn't equality:"
+					+ annotation.toManticoreString() );
+				throw new Exception("buildValuationFragment currently only supports conjunctions of EQUALITIES");
+			}
+		} else {
+			String lhs = buildValuationFragment( ((AndFormula)annotation).getLHS() ) ;
+			String rhs = buildValuationFragment( ((AndFormula)annotation).getRHS() ) ;
+
+			if ( lhs == null && rhs == null ) {
+				return null;
+			} else if ( lhs == null ) {
+				return rhs;
+			} else if ( rhs == null ) {
+				return lhs;
+			} else {
+				return lhs + ", " + rhs;
+			}
+		}
+	}
+
 
 	public static double getBallRadius( dLFormula annotation ) throws Exception { 
 		// defaults to a radius of one if there is no ball constraint
@@ -89,7 +145,7 @@ public class MatlabSimulationKit {
 					varList.add( (RealVariable)thisTerm );
 				} else {
 					throw new Exception("Unsupported argument to ball function: "
-							+ thisTerm.toKeYmaeraString() );
+							+ thisTerm.toManticoreString() );
 				}
 			}
 				
@@ -127,7 +183,7 @@ public class MatlabSimulationKit {
 						getNonBallPortion( ((AndFormula)annotation).getRHS()) );
 		} else {
 			throw new Exception("Found exception while trying to getNonBallPortion of annotation: " 
-				+ annotation.toKeYmaeraString() );
+				+ annotation.toManticoreString() );
 		}
 
 
@@ -168,7 +224,7 @@ public class MatlabSimulationKit {
 			 ) {
 
 			System.out.println("Found ball with radius: " 
-					+ ((ComparisonFormula)annotation).getRHS().toKeYmaeraString());
+					+ ((ComparisonFormula)annotation).getRHS().toManticoreString());
 			return true;
 
 		} else {
@@ -192,7 +248,7 @@ public class MatlabSimulationKit {
 
 		if ( !(containsBall(annotation)) ) {
 			throw new Exception( "Annotation does not contain a ball to search for an invariant: " 
-				+ annotation.toKeYmaeraString() );
+				+ annotation.toManticoreString() );
 		}
 
 		double radius = getBallRadius( annotation );
@@ -208,7 +264,7 @@ public class MatlabSimulationKit {
 		String varListString = "";
 		Iterator<RealVariable> varIterator = varList.iterator();
 		while ( varIterator.hasNext() ) {
-			varListString = varListString + " " + varIterator.next().toKeYmaeraString();
+			varListString = varListString + " " + varIterator.next().toManticoreString();
 		}
 
 		probFile.println("% Declare state variables");

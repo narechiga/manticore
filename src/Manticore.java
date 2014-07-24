@@ -53,7 +53,7 @@ class Manticore {
 			System.out.println("With annotations: " + fileParser.annotations);
 
 			System.out.println("Writing to dynsys.m file...");
-			MatlabSimulationKit.generateDynsysFile( fileParser.parsedStructure.extractFirstHybridProgram() );
+			MatlabSimulationKit.generateDynsysFile( fileParser.parsedStructure.extractFirstHybridProgram(), fileParser.annotations.get(0) );
 			System.out.println("Writing to problemstatement.m file...");
 			MatlabSimulationKit.generateProblemStatementFile( fileParser.annotations, 1);
 
@@ -261,6 +261,9 @@ class Manticore {
 			if ( true ) {
 				System.out.println( "PARSED: " + myParser.parsedStructure.toKeYmaeraString() );
 				System.out.println("Valuation is: " + myParser.valuation.toString() );
+
+				if (valList == null) { throw new Exception("onoz null!"); }
+
 				System.out.println("Result of discrete execution is: " + valList.toString() );
 			}
 

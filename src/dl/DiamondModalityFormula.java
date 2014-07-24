@@ -12,16 +12,20 @@ public class DiamondModalityFormula extends dLFormula {
 		children.add( formula );
 	}
 
-	public HybridProgram program() {
+	public HybridProgram getProgram() {
 		return (HybridProgram)(children.get(0));
 	}
 
-	public dLFormula formula() {
+	public dLFormula getFormula() {
 		return (dLFormula)(children.get(1));
 	}
 
 	public String toKeYmaeraString () {
-		return "\\<" + program().toKeYmaeraString() +" \\>" + formula().toKeYmaeraString();
+		return "\\<" + getProgram().toKeYmaeraString() +" \\>" + getFormula().toKeYmaeraString();
+	}
+
+	public String toManticoreString () {
+		return "\\<" + getProgram().toManticoreString() +" \\>" + getFormula().toManticoreString();
 	}
 
 	public boolean isFirstOrder() {
@@ -30,6 +34,14 @@ public class DiamondModalityFormula extends dLFormula {
 	
 	public boolean isModal() {
 		return true;
+	}
+
+	public boolean isStatic() {
+		return false;
+	}
+
+	public boolean isQuantifierFree() {
+		return ( getProgram().isQuantifierFree() && getProgram().isQuantifierFree() );
 	}
 
 }

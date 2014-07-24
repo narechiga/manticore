@@ -322,64 +322,79 @@ eitoolblock: statevarblock eiparameterblock envelopeblock invariantblock robustp
 	}
 ;
 statevarblock: STATEVARIABLES OPENBRACE varlist CLOSEBRACE {
-	try {
-		statevariables = (ArrayList<RealVariable>)$3;
-	} catch ( Exception e ) {
-		System.err.println("Exception at location statevarblock: STATEVARIABLES OPENBRACE varlist CLOSEBRACE");
-		System.err.println( e );
+		try {
+			statevariables = (ArrayList<RealVariable>)$3;
+		} catch ( Exception e ) {
+			System.err.println("Exception at location statevarblock: STATEVARIABLES OPENBRACE varlist CLOSEBRACE");
+			System.err.println( e );
+		}
 	}
-}
+;
 
 eiparameterblock: EIPARAMETERS OPENBRACE varlist CLOSEBRACE {
-	try {
-		eiparameters = (ArrayList<RealVariable>)$3;
-	} catch ( Exception e ) {
-		System.err.println("Exception at location eiparameterblock: EIPARAMETERS OPENBRACE varlist CLOSEBRACE");
-		System.err.println( e );
+		try {
+			eiparameters = (ArrayList<RealVariable>)$3;
+		} catch ( Exception e ) {
+			System.err.println("Exception at location eiparameterblock: EIPARAMETERS OPENBRACE varlist CLOSEBRACE");
+			System.err.println( e );
+		}
 	}
-}
+;
 
 
 envelopeblock: ENVELOPE OPENBRACE dLformula CLOSEBRACE {
-	try {
-		envelope = (dLFormula)$3;
-	} catch ( Exception e ) {
-		System.err.println("Exception at location envelopeblock: ENVELOPE OPENBRACE dLformula CLOSEBRACE");
-		System.err.println( e );
+		try {
+			envelope = (dLFormula)$3;
+		} catch ( Exception e ) {
+			System.err.println("Exception at location envelopeblock: ENVELOPE OPENBRACE dLformula CLOSEBRACE");
+			System.err.println( e );
+		}
 	}
-}
+;
 invariantblock: INVARIANT OPENBRACE dLformula CLOSEBRACE {
-	try {
-		invariant = (dLFormula)$3;
-	} catch ( Exception e ) {
-		System.err.println("Exception at location invariantblock: INVARIANT OPENBRACE dLformula CLOSEBRACE");
-		System.err.println( e );
+		try {
+			invariant = (dLFormula)$3;
+		} catch ( Exception e ) {
+			System.err.println("Exception at location invariantblock: INVARIANT OPENBRACE dLformula CLOSEBRACE");
+			System.err.println( e );
+		}
 	}
-}
+;
 robustparameterblock: ROBUSTPARAMETERS OPENBRACE dLformula CLOSEBRACE {
-	try {
-		robustparameters = (dLFormula)$3;
-	} catch ( Exception e ) {
-		System.err.println("Exception at location robustparametersblock: ROBUSTPARAMETERS OPENBRACE dLformula CLOSEBRACE");
-		System.err.println( e );
-	}
-}
+		try {
+			robustparameters = (dLFormula)$3;
+		} catch ( Exception e ) {
+			System.err.println("Exception at location robustparametersblock: ROBUSTPARAMETERS OPENBRACE dLformula CLOSEBRACE");
+			System.err.println( e );
+		}
+	} /*| ROBUSTPARAMETERS OPENBRACE valuation CLOSEBRACE {
+		try {
+			$$ = "single valuation parameters: (String)$3";
+		} catch ( Exception e ) {
+			System.err.println("Exception at location robustparametersblock: ROBUSTPARAMETERS OPENBRACE dLformula CLOSEBRACE");
+			System.err.println( e );
+		}
+
+	}*/
+;
 controllawblock: CONTROLLAW OPENBRACE concreteassignment CLOSEBRACE {
-	try {
-		control = (ConcreteAssignmentProgram)$3;
-	} catch ( Exception e ) {
-		System.err.println("Exception at location controllawblock: CONTROLLAW OPENBRACE dLformula CLOSEBRACE");
-		System.err.println( e );
+		try {
+			control = (ConcreteAssignmentProgram)$3;
+		} catch ( Exception e ) {
+			System.err.println("Exception at location controllawblock: CONTROLLAW OPENBRACE dLformula CLOSEBRACE");
+			System.err.println( e );
+		}
 	}
-}
+;
 controltemplateblock: CONTROLTEMPLATE OPENBRACE concreteassignment CLOSEBRACE {
-	try {
-		control = (ConcreteAssignmentProgram)$3;
-	} catch ( Exception e ) {
-		System.err.println("Exception at location controltemplateblock: CONTROLTEMPLATE OPENBRACE dLformula CLOSEBRACE");
-		System.err.println( e );
+		try {
+			control = (ConcreteAssignmentProgram)$3;
+		} catch ( Exception e ) {
+			System.err.println("Exception at location controltemplateblock: CONTROLTEMPLATE OPENBRACE dLformula CLOSEBRACE");
+			System.err.println( e );
+		}
 	}
-}
+;
 
 
 

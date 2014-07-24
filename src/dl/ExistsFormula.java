@@ -24,6 +24,10 @@ public class ExistsFormula extends dLFormula {
 		return "(\\exists R " + getVariable().toKeYmaeraString() + "; " + getFormula().toKeYmaeraString() +" )";
 	}
 
+	public String toManticoreString () {
+		return "(\\exists R " + getVariable().toManticoreString() + "; " + getFormula().toManticoreString() +" )";
+	}
+
 	public String toMathematicaString () {
 		return "Exists[ " + getVariable().toMathematicaString() + ", " + getFormula().toMathematicaString() +" ]";
 	}
@@ -34,6 +38,14 @@ public class ExistsFormula extends dLFormula {
 	
 	public boolean isModal() {
 		return getFormula().isModal();
+	}
+
+	public boolean isStatic() {
+		return getFormula().isStatic();
+	}
+
+	public boolean isQuantifierFree() {
+		return false;
 	}
 
 }

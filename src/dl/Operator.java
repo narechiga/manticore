@@ -56,7 +56,15 @@ public class Operator {
 		return operator;
 	}
 
+	public String toManticoreString() {
+		return operator;
+	}
+
 	public String toMathematicaString() {
+		return operator;
+	}
+
+	public String todRealString() {
 		return operator;
 	}
 

@@ -25,6 +25,10 @@ public class ConcreteAssignmentProgram extends DiscreteProgram {
 		return "( " + getLHS().toKeYmaeraString() + " := " + getRHS().toKeYmaeraString() +" )";
 	}
 
+	public String toManticoreString() {
+		return "( " + getLHS().toManticoreString() + " := " + getRHS().toManticoreString() +" )";
+	}
+
 	public String toMathematicaString() {
 		return "( " + getLHS().toMathematicaString() + " = " + getRHS().toMathematicaString() +" )";
 	}
@@ -35,6 +39,10 @@ public class ConcreteAssignmentProgram extends DiscreteProgram {
 	}
 
 	public boolean isProgramPrimitive() {
+		return true;
+	}
+
+	public boolean isQuantifierFree() {
 		return true;
 	}
 

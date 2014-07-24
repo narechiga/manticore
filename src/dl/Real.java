@@ -30,6 +30,18 @@ public class Real extends Term {
 		return this.operator.toKeYmaeraString();
 	}
 
+	public String toManticoreString() {
+		return this.operator.toManticoreString();
+	}
+
+	public String toMathematicaString() {
+		return this.operator.toMathematicaString();
+	}
+
+	public String todRealString() {
+		return this.operator.todRealString();
+	}
+
 	public Real clone() {
 		return new Real( new Operator( this.operator.toString() ));
 	}

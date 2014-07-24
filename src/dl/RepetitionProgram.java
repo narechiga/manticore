@@ -14,7 +14,7 @@ public class RepetitionProgram extends HybridProgram {
 		this.children.add( onlyChild );
 	}
 
-	public HybridProgram getSubProgram() {
+	public HybridProgram getChild() {
 		return (HybridProgram)(children.get(0));
 	}
 	
@@ -24,6 +24,10 @@ public class RepetitionProgram extends HybridProgram {
 		return "(" + children.get(0).toKeYmaeraString() + "*)";
 	}
 
+	public String toManticoreString() {
+		return "(" + children.get(0).toManticoreString() + "***)";
+	}
+
 
 	// Administrative
 	public boolean isPurelyContinuous() {
@@ -31,7 +35,7 @@ public class RepetitionProgram extends HybridProgram {
 	}
 
 	public boolean isPurelyDiscrete() {
-		return getSubProgram().isPurelyDiscrete();
+		return getChild().isPurelyDiscrete();
 	}
 
 	public boolean isHybrid() {
@@ -44,6 +48,10 @@ public class RepetitionProgram extends HybridProgram {
 
 	public boolean isProgramPrimitive() {
 		return false;
+	}
+
+	public boolean isQuantifierFree() {
+		return getChild().isQuantifierFree();
 	}
 
 }

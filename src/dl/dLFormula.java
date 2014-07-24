@@ -14,9 +14,14 @@ public class dLFormula extends dLStructure {
 		return false;
 	}
 
-	public Operator getOperator() {
-		return this.operator;
+	public boolean isStatic() {
+		return false;
 	}
+
+	public boolean isQuantifierFree() {
+		return false;
+	}
+
 
 	//public dLFormula autoCast() {
 

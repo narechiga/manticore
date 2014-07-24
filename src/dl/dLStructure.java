@@ -28,6 +28,9 @@ public class dLStructure {
 
 	}
 
+	public Operator getOperator() {
+		return this.operator;
+	}
 
 	public Set<RealVariable> getVariables () {
 		Set<RealVariable> myVariables = new HashSet<RealVariable>();
@@ -110,5 +113,13 @@ public class dLStructure {
 		return null;
 	}
 
+	public String toManticoreString() {
+		System.out.println("Failed to find an appropriate Manticore string method for: " +this.toString());
+		return null;
+	}
+
+	public String todRealString() {
+		return null;
+	}
 
 }

@@ -26,7 +26,7 @@ package manticore.dl;
 
 
 IdentifierName = [a-zA-Z_]+[a-z0-9A-Z_]*
-Number = [-]? [0-9]+ \.?[0-9]* | [-]? [0-9]+ \.?[0-9]* e [-]?[0-9]+
+Number = [0-9]+ \.?[0-9]* | [0-9]+ \.?[0-9]* e [-]?[0-9]+
 InequalityLiteral = < | > | <= | >= | \!=
 SchemaText = [^\{\}]+
 

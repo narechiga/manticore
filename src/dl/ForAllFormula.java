@@ -24,6 +24,10 @@ public class ForAllFormula extends dLFormula {
 		return "(\\forall R " + getVariable().toKeYmaeraString() + "; " + getFormula().toKeYmaeraString() +" )";
 	}
 
+	public String toManticoreString () {
+		return "(\\forall R " + getVariable().toManticoreString() + "; " + getFormula().toManticoreString() +" )";
+	}
+
 	public String toMathematicaString () {
 		return "ForAll[ " + getVariable().toMathematicaString() + ", " + getFormula().toMathematicaString() +" ]";
 	}
@@ -34,6 +38,14 @@ public class ForAllFormula extends dLFormula {
 	
 	public boolean isModal() {
 		return getFormula().isModal();
+	}
+
+	public boolean isStatic() {
+		return getFormula().isStatic();
+	}
+
+	public boolean isQuantifierFree() {
+		return false;
 	}
 }
 

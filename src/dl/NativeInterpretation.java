@@ -307,8 +307,8 @@ public class NativeInterpretation implements Interpretation {
 		/**/		return ( (evaluateTerm( ((ComparisonFormula)thisFormula).getLHS(), valuation ).toDouble())
 		/**/			<= (evaluateTerm( ((ComparisonFormula)thisFormula).getRHS(), valuation ) ).toDouble());
 		/**/	}else if ( thisFormula.getOperator().equals( eq ) ) {
-		/**/		return ( (evaluateTerm( ((ComparisonFormula)thisFormula).getLHS(), valuation ).toDouble())
-		/**/			== (evaluateTerm( ((ComparisonFormula)thisFormula).getRHS(), valuation ) ).toDouble());
+		/**/		return ( (evaluateTerm( ((ComparisonFormula)thisFormula).getLHS(), valuation )).equals(
+		/**/			 (evaluateTerm( ((ComparisonFormula)thisFormula).getRHS(), valuation ) )));
 		/**/	} else {
 		/**/		throw new Exception("This comparison operator is not implemented in the native interpretation: "
 		/**/			+ thisFormula.getOperator().toString());

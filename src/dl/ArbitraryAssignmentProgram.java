@@ -19,6 +19,10 @@ public class ArbitraryAssignmentProgram extends DiscreteProgram {
 	public String toKeYmaeraString() {
 		return "( " + getLHS().toKeYmaeraString() + " := * )";
 	}
+	
+	public String toManticoreString() {
+		return "( " + getLHS().toManticoreString() + " := ** )";
+	}
 
 	// Administrative
 	public boolean isPurelyDiscrete() {
@@ -26,6 +30,10 @@ public class ArbitraryAssignmentProgram extends DiscreteProgram {
 	}
 
 	public boolean isProgramPrimitive() {
+		return true;
+	}
+
+	public boolean isQuantifierFree() {
 		return true;
 	}
 

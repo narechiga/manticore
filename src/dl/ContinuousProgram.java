@@ -109,7 +109,11 @@ public class ContinuousProgram extends HybridProgram {
 		return true;
 	}
 
-	// S tring operations
+	public boolean isQuantifierFree() {
+		return getDOE().isQuantifierFree();
+	}
+
+	// String operations
 	public String toKeYmaeraString() {
 		
 		String returnString = "{ ";
@@ -136,6 +140,11 @@ public class ContinuousProgram extends HybridProgram {
 		
 		return returnString;
 	}
+
+	public String toManticoreString() {
+		return toKeYmaeraString();
+	}
+
 
 
 }

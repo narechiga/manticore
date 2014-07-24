@@ -72,6 +72,25 @@ public class Term extends dLStructure {
 		return toKeYmaeraString();
 	}
 
+	public String toManticoreString() {
+		return toKeYmaeraString();
+	}
+
+	public String todRealString() {
+		String returnString = "(" + this.operator.todRealString() ;
+
+		Iterator<Term> subTermIterator = getSubTerms().iterator();
+		while ( subTermIterator.hasNext() ) {
+			returnString = returnString + " " + subTermIterator.next().todRealString();
+		}
+		returnString = returnString + " )";
+
+		return returnString;
+	}
+
+
+		
+
 	//public boolean equals( Object otherObject ) { // This is too restrictive, because does not allow for commutativity
 
 	//	if ( !(otherObject instanceof Term ) ) {

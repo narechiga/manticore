@@ -40,7 +40,7 @@ class ProofGenerator {
 	}
 
 	public void applyHCut( String hybridInvariant, PrintWriter proofWriter ) {
-		proofWriter.println("(rule \"HybridCut\" (formula \"2\") (inst \"#hybridinvariant="
+		proofWriter.println("(rule \"FInvCut\" (formula \"2\") (inst \"#finvariant="
 					+hybridInvariant+"\"))");
 
 		proofWriter.println("(branch \" Invariant holds\"");

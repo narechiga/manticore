@@ -29,6 +29,11 @@ public class ComparisonFormula extends dLFormula {
 				+ getRHS().toKeYmaeraString() + " )";
 	}
 
+	public String toManticoreString () {
+		return "( " + getLHS().toManticoreString() + inequality().toManticoreString() 
+				+ getRHS().toManticoreString() + " )";
+	}
+
 	public String toMathematicaString () {
 		if ( inequality().equals( new Operator("=") ) ) {
 			return "( " + getLHS().toMathematicaString() + "=="
@@ -39,6 +44,15 @@ public class ComparisonFormula extends dLFormula {
 		}
 	}
 
+	public String todRealString () {
+
+		return "(" + this.getOperator().toString() 
+				+ " " +getLHS().todRealString()
+				+ " " +getRHS().todRealString() + ")";
+
+
+	}
+
 	public boolean isFirstOrder() {
 		return true;
 	}
@@ -46,5 +60,13 @@ public class ComparisonFormula extends dLFormula {
 	public boolean isPropositionalPrimitive() {
 		return true;
 	}
+
+        public boolean isStatic() {
+		return true;
+        }
+
+        public boolean isQuantifierFree() {
+		return true;
+        }
 
 }

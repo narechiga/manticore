@@ -24,8 +24,16 @@ public class OrFormula extends dLFormula {
 		return "( " + getLHS().toKeYmaeraString() + " | " + getRHS().toKeYmaeraString() + " )";
 	}
 
+	public String toManticoreString () {
+		return "( " + getLHS().toManticoreString() + " | " + getRHS().toManticoreString() + " )";
+	}
+
 	public String toMathematicaString () {
 		return "( " + getLHS().toMathematicaString() + " || " + getRHS().toMathematicaString() + " )";
+	}
+
+	public String todRealString() {
+		return "(or " + getLHS().todRealString() + " " + getRHS().todRealString() + " )";
 	}
 
 	public boolean isFirstOrder() {
@@ -35,4 +43,12 @@ public class OrFormula extends dLFormula {
 	public boolean isModal() {
 		return (getLHS().isModal() && getRHS().isModal() );
 	}
+
+        public boolean isStatic() {
+                return (getLHS().isStatic() && getRHS().isStatic());
+        }
+
+        public boolean isQuantifierFree() {
+                return (getLHS().isQuantifierFree() && getRHS().isQuantifierFree());
+        }
 }

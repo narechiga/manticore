@@ -19,11 +19,15 @@ public class ChoiceProgram extends HybridProgram {
 		return "( " + children.get(0).toKeYmaeraString() + " ++ " + children.get(1).toKeYmaeraString() + " )";
 	}
 
-	public HybridProgram getLeftProgram() {
+	public String toManticoreString() {
+		return "( " + children.get(0).toManticoreString() + " ++ " + children.get(1).toManticoreString() + " )";
+	}
+
+	public HybridProgram getLHS() {
 		return (HybridProgram)(children.get(0));
 	}
 
-	public HybridProgram getRightProgram() {
+	public HybridProgram getRHS() {
 		return (HybridProgram)(children.get(1));
 	}
 
@@ -33,7 +37,7 @@ public class ChoiceProgram extends HybridProgram {
 	}
 
 	public boolean isPurelyDiscrete() {
-		return ( getLeftProgram().isPurelyDiscrete() && getRightProgram().isPurelyDiscrete() );
+		return ( getLHS().isPurelyDiscrete() && getRHS().isPurelyDiscrete() );
 	}
 
 	public boolean isHybrid() {
@@ -46,6 +50,10 @@ public class ChoiceProgram extends HybridProgram {
 
 	public boolean isProgramPrimitive() {
 		return false;
+	}
+
+	public boolean isQuantifierFree() {
+		return (getLHS().isQuantifierFree() && getRHS().isQuantifierFree());
 	}
 
 }
