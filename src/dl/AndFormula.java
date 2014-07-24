@@ -34,21 +34,22 @@ public class AndFormula extends dLFormula {
     
 	public String todRealString () {
 
-		String returnString = "";
+		//String returnString = "";
+		//if ( this.getLHS().isPropositionalPrimitive() ) {
+		//	returnString = returnString + "(assert " + getLHS().todRealString() + " )\n";
+		//} else {
+		//	returnString = returnString + getLHS().todRealString() + "\n";
+		//}
 
-		if ( this.getLHS().isPropositionalPrimitive() ) {
-			returnString = returnString + "(assert " + getLHS().todRealString() + " )\n";
-		} else {
-			returnString = returnString + getLHS().todRealString() + "\n";
-		}
+		//if ( this.getRHS().isPropositionalPrimitive() ) {
+		//	returnString = returnString + "(assert " + getRHS().todRealString() + " )\n";
+		//} else {
+		//	returnString = returnString + getRHS().todRealString() + "\n";
+		//}
+		//return returnString;
 
-		if ( this.getRHS().isPropositionalPrimitive() ) {
-			returnString = returnString + "(assert " + getRHS().todRealString() + " )\n";
-		} else {
-			returnString = returnString + getRHS().todRealString() + "\n";
-		}
+		return "(and " + getLHS().todRealString() + " " + getRHS().todRealString() + " )";
 
-		return returnString;
 	}
 
 	public boolean isFirstOrder() {

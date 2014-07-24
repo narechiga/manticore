@@ -33,6 +33,10 @@ public class ConcreteAssignmentProgram extends DiscreteProgram {
 		return "( " + getLHS().toMathematicaString() + " = " + getRHS().toMathematicaString() +" )";
 	}
 
+	public String todRealString() {
+		return "(= " + getLHS().toMathematicaString() + " " + getRHS().toMathematicaString() +" )";
+	}
+
 	// Administrative
 	public boolean isPurelyDiscrete() {
 		return true;
