@@ -14,6 +14,10 @@ public class Valuation {
 		this.valuation = valuation;
 	}
 
+	public Set<RealVariable> keySet() {
+		return valuation.keySet();
+	}
+
 	public void put( RealVariable var, Real num ) {
 		this.valuation.put( var, num );
 	}
@@ -24,6 +28,47 @@ public class Valuation {
 
 	public String toString() {
 		return valuation.toString();
+	}
+
+	public String todRealString() {
+		String returnString = "";
+
+		Set<RealVariable> variables = valuation.keySet();
+		Iterator<RealVariable> varIterator = variables.iterator();
+		
+		RealVariable thisVariable;
+		while ( varIterator.hasNext() ) {
+			thisVariable = varIterator.next();
+			returnString = returnString + "(assert (= " + thisVariable 
+					+ " " + get( thisVariable )
+					+ "))\n";
+		}
+		return returnString;
+	}
+
+	public String toMathematicaString() {
+		String returnString = "{";
+
+		Set<RealVariable> variables = valuation.keySet();
+		Iterator<RealVariable> varIterator = variables.iterator();
+		
+		RealVariable thisVariable;
+		while ( varIterator.hasNext() ) {
+			thisVariable = varIterator.next();
+
+			if ( varIterator.hasNext() ) {
+				returnString = returnString + thisVariable 
+					+ "->" +  get( thisVariable )
+					+ ", ";
+			} else {
+				returnString = returnString + thisVariable 
+					+ "->" +  get( thisVariable )
+					+ " }";
+			}
+
+
+		}
+		return returnString;
 	}
 
 	public Valuation clone() {

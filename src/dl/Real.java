@@ -14,6 +14,21 @@ public class Real extends Term {
 		children = null;
 	}
 
+	public Real( Double value ) {
+		operator = new Operator( value.toString() );
+		children = null;
+	}
+	
+	public Real( Float value ) {
+		operator = new Operator( value.toString() );
+		children = null;
+	}
+
+	public Real( Integer value ) {
+		operator = new Operator( value.toString() );
+		children = null;
+	}
+
 	public boolean equals( Object otherObject ) {
 		if ( otherObject instanceof Real ) {
 			return operator.equals( ((Real)otherObject).operator );
