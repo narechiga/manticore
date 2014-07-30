@@ -23,6 +23,7 @@
 %token ENVELOPE
 %token INVARIANT
 %token ROBUSTPARAMETERS
+%token DOMAIN
 %token CONTROLLAW
 %token CONTROLTEMPLATE
 
@@ -304,7 +305,7 @@ problemblock:
 
 /*============================================================*/
 /*==================== Input file for EITool ====================*/
-eitoolblock: statevarblock eiparameterblock envelopeblock invariantblock robustparameterblock controllawblock {
+eitoolblock: statevarblock eiparameterblock envelopeblock invariantblock robustparameterblock domainblock controllawblock {
 		try {
 			synthesis = false;
 		} catch ( Exception e ) {
@@ -351,6 +352,7 @@ envelopeblock: ENVELOPE OPENBRACE dLformula CLOSEBRACE {
 		}
 	}
 ;
+
 invariantblock: INVARIANT OPENBRACE dLformula CLOSEBRACE {
 		try {
 			invariant = (dLFormula)$3;
@@ -360,6 +362,7 @@ invariantblock: INVARIANT OPENBRACE dLformula CLOSEBRACE {
 		}
 	}
 ;
+
 robustparameterblock: ROBUSTPARAMETERS OPENBRACE dLformula CLOSEBRACE {
 		try {
 			robustparameters = (dLFormula)$3;
@@ -377,6 +380,18 @@ robustparameterblock: ROBUSTPARAMETERS OPENBRACE dLformula CLOSEBRACE {
 
 	}*/
 ;
+
+domainblock: DOMAIN OPENBRACE dLformula CLOSEBRACE {
+		try {
+			domain = (dLFormula)$3;
+		} catch ( Exception e ) {
+			System.err.println("Exception at location invariantblock: INVARIANT OPENBRACE dLformula CLOSEBRACE");
+			System.err.println( e );
+		}
+	}
+;
+
+
 controllawblock: CONTROLLAW OPENBRACE concreteassignment CLOSEBRACE {
 		try {
 			control = (ConcreteAssignmentProgram)$3;

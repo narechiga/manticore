@@ -143,6 +143,13 @@ Comment = {TraditionalComment} | {EndOfLineComment} | {DocumentationComment}
 		}
 		return ROBUSTPARAMETERS;
 	}
+	"\\domain" {
+		if ( debug ) {
+			System.out.println("Lexer: DOMAIN");
+			System.out.println("Lexer @ " + yytext() );
+		}
+		return INVARIANT;
+	}
 	"\\controllaw" {
 		if ( debug ) {
 			System.out.println("Lexer: CONTROLLAW");
