@@ -83,7 +83,7 @@ public class MatlabSimulationKit {
 		if ( annotation instanceof TrueFormula ) {
 			return null;
 		} else if ( annotation.isPropositionalPrimitive() ) {
-			if ( annotation.operator.equals( new Operator("=") ) ) {
+			if ( annotation.getOperator().equals( new Operator("=") ) ) {
 				return ((ComparisonFormula)annotation).getLHS().toManticoreString() + " -> " 
 					+ ((ComparisonFormula)annotation).getRHS().toManticoreString();
 			} else {
@@ -218,8 +218,8 @@ public class MatlabSimulationKit {
 
 
 		if ( (annotation instanceof ComparisonFormula)
-			&& ( annotation.operator.equals( lt ) || annotation.operator.equals( le ) )
-			&& ( ((ComparisonFormula)annotation).getLHS().operator.equals( ball ) )
+			&& ( annotation.getOperator().equals( lt ) || annotation.getOperator().equals( le ) )
+			&& ( ((ComparisonFormula)annotation).getLHS().getOperator().equals( ball ) )
 			&& ( ((ComparisonFormula)annotation).getRHS() instanceof Real )
 			 ) {
 

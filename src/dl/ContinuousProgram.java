@@ -5,7 +5,7 @@ import java.util.*;
 public class ContinuousProgram extends HybridProgram {
 
 	// constructor with DOE
-	public ContinuousProgram ( List<dLStructure> odeList, dLFormula doe ) {
+	public ContinuousProgram ( ArrayList<dLStructure> odeList, dLFormula doe ) {
 		this.operator = new Operator("continuous-evolution");
 		this.children = odeList;
 
@@ -14,7 +14,7 @@ public class ContinuousProgram extends HybridProgram {
 	}
 
 	// constructor without DOE
-	public ContinuousProgram ( List<dLStructure> odeList ) {
+	public ContinuousProgram ( ArrayList<dLStructure> odeList ) {
 		this.operator = new Operator("continuous-evolution");
 		this.children = odeList;
 
@@ -63,7 +63,7 @@ public class ContinuousProgram extends HybridProgram {
 		children.add( doeIndex, ode );
 	}
 
-	public void addODEs( List<dLStructure> odeList ) {
+	public void addODEs( ArrayList<dLStructure> odeList ) {
 		int doeIndex = children.size() - 1;
 		
 		children.addAll( doeIndex, odeList );
