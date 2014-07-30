@@ -148,7 +148,7 @@ Comment = {TraditionalComment} | {EndOfLineComment} | {DocumentationComment}
 			System.out.println("Lexer: DOMAIN");
 			System.out.println("Lexer @ " + yytext() );
 		}
-		return INVARIANT;
+		return DOMAIN;
 	}
 	"\\controllaw" {
 		if ( debug ) {
