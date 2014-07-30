@@ -96,9 +96,6 @@ public class dLStructure {
 			return newStructure;
 		}
 	}
-				
-
-
 
 
 // Extract assorted bits and pieces

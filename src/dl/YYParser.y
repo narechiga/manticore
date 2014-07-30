@@ -313,7 +313,7 @@ eitoolblock: statevarblock eiparameterblock envelopeblock invariantblock robustp
 			System.err.println( e );
 		}
 	}
-	| statevarblock eiparameterblock envelopeblock invariantblock robustparameterblock controltemplateblock {
+	| statevarblock eiparameterblock envelopeblock invariantblock robustparameterblock domainblock controltemplateblock {
 		try {
 			synthesis = true;
 		} catch ( Exception e ) {
