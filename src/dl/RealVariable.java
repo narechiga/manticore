@@ -4,11 +4,13 @@ import java.util.*;
 
 public class RealVariable extends Term {
 
+// Constructor
 	public RealVariable ( String name ) {
-		operator = new Operator( name );
+		operator = new Operator( name, 0 );
 		children = null;
 	}
 
+// equals
 	public boolean equals( Object otherObject ) {
 		if ( otherObject instanceof RealVariable ) {
 			return operator.equals( ((RealVariable)otherObject).operator );
@@ -17,10 +19,20 @@ public class RealVariable extends Term {
 		}
 	}
 
+	public Term substituteConcreteValuation( Valuation substitution ) {
+		if ( substitution.containsVariable( this ) ) {
+			return substitution.get( this );
+		} else {
+			return this.clone();
+		}
+	}
+
+// hashCode
 	public int hashCode() {
 		return operator.toString().hashCode();
 	}
 
+// String methods
 	public String toKeYmaeraString() {
 		return operator.toKeYmaeraString();
 	}
@@ -37,6 +49,7 @@ public class RealVariable extends Term {
 		return operator.todRealString();
 	}
 
+// Clone
 	public RealVariable clone() {
 		return new RealVariable( this.operator.toString() );
 		

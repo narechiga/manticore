@@ -17,7 +17,17 @@ public class TestProgram extends DiscreteProgram {
 		return (dLFormula)(children.get(0));
 	}
 
-	// String methods
+// Substitute
+	public TestProgram substituteConcreteValuation( Valuation substitution ) {
+		return new TestProgram( getFormula().substituteConcreteValuation( substitution ) );
+	}
+
+// Clone
+	public TestProgram clone() {
+		return new TestProgram( getFormula().clone() );
+	}
+
+// String methods
 	public String toKeYmaeraString() {
 		return "(? " + getFormula().toKeYmaeraString() + " )";
 	}
@@ -26,7 +36,7 @@ public class TestProgram extends DiscreteProgram {
 		return "(? " + getFormula().toManticoreString() + " )";
 	}
 
-	// Administrative
+// Administrative
 	public boolean isPurelyDiscrete() {
 		return true;
 	}

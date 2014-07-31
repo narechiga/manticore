@@ -4,31 +4,38 @@ import java.util.*;
 
 public class Real extends Term {
 
-	public Real ( Operator operator ) {
-		this.operator = operator;
-		children = null;
-	}
+// Constructors
+	//public Real ( Operator operator ) {
+	//	this.operator = operator;
+	//	children = null;
+	//}
 
 	public Real ( String value ) {
-		operator = new Operator( value );
+		operator = new Operator( value, 0 );
 		children = null;
 	}
 
 	public Real( Double value ) {
-		operator = new Operator( value.toString() );
+		operator = new Operator( value.toString(), 0 );
 		children = null;
 	}
 	
 	public Real( Float value ) {
-		operator = new Operator( value.toString() );
+		operator = new Operator( value.toString(), 0 );
 		children = null;
 	}
 
 	public Real( Integer value ) {
-		operator = new Operator( value.toString() );
+		operator = new Operator( value.toString(), 0 );
 		children = null;
 	}
 
+// Substitution method
+	public Real substituteConcreteValuation( Valuation substitution ) {
+		return this.clone();
+	}
+
+// Equality
 	public boolean equals( Object otherObject ) {
 		if ( otherObject instanceof Real ) {
 			return operator.equals( ((Real)otherObject).operator );
@@ -37,10 +44,12 @@ public class Real extends Term {
 		}
 	}
 
+// hashCode
 	public int hashCode() {
 		return operator.toString().hashCode();
 	}
 
+// String methods
 	public String toKeYmaeraString() {
 		return this.operator.toKeYmaeraString();
 	}
@@ -57,10 +66,12 @@ public class Real extends Term {
 		return this.operator.todRealString();
 	}
 
+// Clone
 	public Real clone() {
-		return new Real( new Operator( this.operator.toString() ));
+		return new Real(  this.operator.toString() );
 	}
 
+// toDouble
 	public Double toDouble() throws Exception {
 		if ( this.operator.toString().equals("*") ) {
 			throw new Exception("Cannot convert arbitrary assignment to double");
@@ -69,6 +80,7 @@ public class Real extends Term {
 		}
 	}
 
+// Basic arithmetic
 	public static Real add( Real a, Real b ) {
 		Double aDouble = new Double( a.getOperator().toString() );
 		Double bDouble = new Double( b.getOperator().toString() );

@@ -4,23 +4,14 @@ import java.util.*;
 
 public class ChoiceProgram extends HybridProgram {
 
-	//public ArrayList<HybridProgram> children;
-
+// Constructors and field getters
 	public ChoiceProgram( HybridProgram leftProgram, HybridProgram rightProgram ) {
 
-		this.operator = new Operator("choice");
+		this.operator = new Operator("choice", true);
 
 		this.children = new ArrayList<dLStructure>();
 		this.children.add( leftProgram );
 		this.children.add( rightProgram );
-	}
-
-	public String toKeYmaeraString() {
-		return "( " + children.get(0).toKeYmaeraString() + " ++ " + children.get(1).toKeYmaeraString() + " )";
-	}
-
-	public String toManticoreString() {
-		return "( " + children.get(0).toManticoreString() + " ++ " + children.get(1).toManticoreString() + " )";
 	}
 
 	public HybridProgram getLHS() {
@@ -30,8 +21,29 @@ public class ChoiceProgram extends HybridProgram {
 	public HybridProgram getRHS() {
 		return (HybridProgram)(children.get(1));
 	}
+	
+// Substitution method
+	public ChoiceProgram substituteConcreteValuation( Valuation substitution ) {
+		return new ChoiceProgram(  getLHS().substituteConcreteValuation( substitution ),
+						getRHS().substituteConcreteValuation( substitution ) ) ;
+	}
 
-	// Administrative
+// Clone method
+	public ChoiceProgram clone() {
+		return new ChoiceProgram( getLHS().clone(), getRHS().clone());
+	}
+
+
+// String methods
+	public String toKeYmaeraString() {
+		return "( " + children.get(0).toKeYmaeraString() + " ++ " + children.get(1).toKeYmaeraString() + " )";
+	}
+
+	public String toManticoreString() {
+		return "( " + children.get(0).toManticoreString() + " ++ " + children.get(1).toManticoreString() + " )";
+	}
+
+// Assorted convenience functions
 	public boolean isPurelyContinuous() {
 		return false;
 	}

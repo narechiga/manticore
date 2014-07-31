@@ -4,8 +4,9 @@ import java.util.*;
 
 public class IffFormula extends dLFormula {
 
+// Constructor and field getters
 	public IffFormula ( dLFormula antecedent, dLFormula succedent ) {
-		operator = new Operator("iff"); //
+		operator = new Operator("iff", 2, true); //
 
 		children = new ArrayList<dLStructure>();
 		children.add( antecedent );
@@ -20,6 +21,18 @@ public class IffFormula extends dLFormula {
 		return (dLFormula)(children.get(1));
 	}
 
+// Substitution method
+	public IffFormula substituteConcreteValuation( Valuation substitution ) {
+		return new IffFormula( getAntecedent().substituteConcreteValuation( substitution ),
+					getSuccedent().substituteConcreteValuation( substitution ) );
+	}
+
+// Clone method
+	public IffFormula clone() {
+		return new IffFormula( getAntecedent().clone(), getSuccedent().clone() );
+	}
+
+// String methods
 	public String toKeYmaeraString () {
 		return "( " + getAntecedent().toKeYmaeraString() + " <-> " + getSuccedent().toKeYmaeraString() + " )";
 	}
@@ -35,11 +48,12 @@ public class IffFormula extends dLFormula {
 
 	public String todRealString () {
 		AndFormula biimplies = new AndFormula( new ImpliesFormula( this.getAntecedent(), this.getSuccedent() ),
-							new ImpliesFormula( this.getSuccedent(), this.getAntecedent() ) );
+							new ImpliesFormula( this.getSuccedent(), this.getAntecedent() ) ) ;
 		
 		return biimplies.todRealString();
 	}
 
+// Assorted convenience functions
 	public boolean isFirstOrder() {
 		return (getAntecedent().isFirstOrder() && getSuccedent().isFirstOrder() );
 	}

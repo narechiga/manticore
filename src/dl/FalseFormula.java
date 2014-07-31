@@ -3,10 +3,22 @@ package manticore.dl;
 
 public class FalseFormula extends dLFormula {
 
+// Constructor
 	public FalseFormula () {
-		this.operator = new Operator("false"); //
+		this.operator = new Operator("false", 0); //
 	}
 
+// Substitution method
+	public FalseFormula substituteConcreteValuation( Valuation substitution ) {
+		return new FalseFormula();
+	}
+
+// Clone method
+	public FalseFormula clone() {
+		return new FalseFormula();
+	}
+
+// String methods
 	public String toKeYmaeraString () {
 		return "false";
 	}
@@ -19,6 +31,7 @@ public class FalseFormula extends dLFormula {
 		return "false";
 	}
 
+// Assorted convenience functions
 	public boolean isFirstOrder() {
 		return true;
 	}

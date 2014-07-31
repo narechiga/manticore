@@ -5,6 +5,7 @@ import java.io.*;
 
 public class dLStructure {
 
+	protected boolean debug = true;
 	protected Operator operator;
 	protected ArrayList<dLStructure> children;
 
@@ -78,25 +79,56 @@ public class dLStructure {
 
 // Return a dLStructure that is the same as this one, but with syntactic substitution
 // of real variables according to the valuation given as an argument
-	public dLStructure substitute( Valuation substitutions ) {
-		if ( this instanceof Real ) {
-			return ((Real)this).clone();
-		} else if ( this instanceof RealVariable ) {
-			return substitutions.get( (RealVariable)this ).clone();
-		} else {
-
-			dLStructure newStructure = new dLStructure( this.getOperator() );
-			Iterator<dLStructure> childIterator = children.iterator();
-			while( childIterator.hasNext() ) {
-				newStructure.addChild(
-					childIterator.next().substitute( substitutions )
-					);
-			}
-
-			return newStructure;
-		}
-	}
-
+//	public dLStructure substitute( Valuation substitutions ) {
+//
+//		if ( substitutions == null ) {
+//			 System.out.println("WARNING: manticore.dLStructure.substitute received a null subsitituion valuation");
+//			 return this;
+//			
+//		} else if ( this instanceof Real ) {
+//			if( debug ) {
+//				System.out.println("manticore.dLStructure.substitute returning: " 
+//					+ this.toMathematicaString() );
+//			}
+//			return ((Real)this).clone();
+//
+//		} else if ( this instanceof RealVariable ) {
+//
+//			if ( substitutions.get( (RealVariable)this ) != null ) {	
+//				if( debug ) {
+//					System.out.println("manticore.dLStructure.substitute returning: " + 
+//						substitutions.get( (RealVariable)this ).clone().toMathematicaString());
+//				}
+//
+//				return substitutions.get( (RealVariable)this ).clone();
+//			} else {
+//				if( debug ) {
+//					System.out.println("manticore.dLStructure.substitute returning: " + 
+//								this.toMathematicaString() );
+//				}
+//
+//				return this;
+//			}
+//
+//
+//		} else {
+//
+//			dLStructure newStructure = new dLStructure( this.getOperator() );
+//			Iterator<dLStructure> childIterator = children.iterator();
+//			while( childIterator.hasNext() ) {
+//				newStructure.addChild(
+//					childIterator.next().substitute( substitutions )
+//					);
+//			}
+//
+//			if( debug ) {
+//				System.out.println("manticore.dLStructure.substitute returning: " 
+//					+ newStructure.toMathematicaString() );
+//			}
+//
+//			return newStructure;
+//		}
+//	}
 
 // Extract assorted bits and pieces
 // 1. getVariables

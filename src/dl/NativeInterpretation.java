@@ -316,7 +316,7 @@ public class NativeInterpretation implements Interpretation {
 
 
 		} else if ( thisFormula instanceof NotFormula ) {
-			return (! evaluateFormula( ((NotFormula)thisFormula).getChild(), valuation ) );
+			return (! evaluateFormula( ((NotFormula)thisFormula).getFormula(), valuation ) );
 		} else if ( thisFormula instanceof AndFormula ) {
 			return (evaluateFormula( ((AndFormula)thisFormula).getLHS(), valuation ) 
 				&& evaluateFormula( ((AndFormula)thisFormula).getRHS(), valuation ));

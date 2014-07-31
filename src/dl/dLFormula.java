@@ -2,7 +2,7 @@ package manticore.dl;
 
 import java.io.*;
 
-public class dLFormula extends dLStructure {
+public abstract class dLFormula extends dLStructure {
 
 	public boolean isFirstOrder() {
 		return false;
@@ -23,6 +23,11 @@ public class dLFormula extends dLStructure {
 	public boolean isQuantifierFree() {
 		return false;
 	}
+
+// All subclasses need to implement this guy
+	public abstract dLFormula clone();
+
+	public abstract dLFormula substituteConcreteValuation( Valuation substitution );
 
 
 }

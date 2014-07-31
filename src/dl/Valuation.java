@@ -26,6 +26,10 @@ public class Valuation {
 		return this.valuation.get( var );
 	}
 
+	public boolean containsVariable( RealVariable var ) {
+		return this.valuation.containsKey( var );
+	}
+
 	public String toString() {
 		return valuation.toString();
 	}

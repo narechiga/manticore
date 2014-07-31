@@ -146,7 +146,7 @@ print NI "\t\t/**/\t\t\t+ thisFormula.getOperator().toString());\n";
 print NI "\t\t/**/\t}\n";
 print NI "\n\n";
 print NI "\t\t} else if ( thisFormula instanceof NotFormula ) {\n";
-print NI "\t\t\treturn (! evaluateFormula( ((NotFormula)thisFormula).getChild(), valuation ) );\n";
+print NI "\t\t\treturn (! evaluateFormula( ((NotFormula)thisFormula).getFormula(), valuation ) );\n";
 print NI "\t\t} else if ( thisFormula instanceof AndFormula ) {\n";
 print NI "\t\t\treturn (evaluateFormula( ((AndFormula)thisFormula).getLHS(), valuation ) \n";
 print NI "\t\t\t\t&& evaluateFormula( ((AndFormula)thisFormula).getRHS(), valuation ));\n";

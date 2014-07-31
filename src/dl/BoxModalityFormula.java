@@ -4,6 +4,7 @@ import java.util.*;
 
 public class BoxModalityFormula extends dLFormula {
 
+// Constructors and field getters
 	public BoxModalityFormula ( HybridProgram program, dLFormula formula ) {
 		operator = new Operator("box-modality"); //
 
@@ -20,6 +21,19 @@ public class BoxModalityFormula extends dLFormula {
 		return (dLFormula)(children.get(1));
 	}
 
+
+// Substitution method
+	public BoxModalityFormula substituteConcreteValuation( Valuation substitution ) {
+		return new BoxModalityFormula( getProgram().substituteConcreteValuation( substitution ), 
+					getFormula().substituteConcreteValuation( substitution ) );
+	}
+
+// Clone method
+	public BoxModalityFormula clone() {
+		return new BoxModalityFormula( getProgram().clone(), getFormula().clone() );
+	}
+
+// String methods
 	public String toKeYmaeraString () {
 		return "\\[" + getProgram().toKeYmaeraString() +" \\]" + getFormula().toKeYmaeraString();
 	}
@@ -28,6 +42,8 @@ public class BoxModalityFormula extends dLFormula {
 		return "\\[" + getProgram().toManticoreString() +" \\]" + getFormula().toManticoreString();
 	}
 
+
+// Assorted convenience functions
 	public boolean isFirstOrder() {
 		return false;
 	}

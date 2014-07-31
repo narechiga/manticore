@@ -4,8 +4,9 @@ import java.util.*;
 
 public class AndFormula extends dLFormula {
 
+// Constructors and field getters
 	public AndFormula ( dLFormula leftChild, dLFormula rightChild ) {
-		operator = new Operator("and"); //
+		operator = new Operator("and", 2, true); //
 
 		children = new ArrayList<dLStructure>();
 		children.add( leftChild );
@@ -20,6 +21,18 @@ public class AndFormula extends dLFormula {
 		return (dLFormula)(children.get(1));
 	}
 
+// Substitution method
+	public AndFormula substituteConcreteValuation( Valuation substitution ) {
+		return new AndFormula( getLHS().substituteConcreteValuation( substitution ), 
+					getRHS().substituteConcreteValuation( substitution ) );
+	}
+
+// Clone method
+	public AndFormula clone() {
+		return new AndFormula( getLHS().clone(), getRHS().clone() );
+	}
+
+// String methods
 	public String toKeYmaeraString () {
 		return "( " + getLHS().toKeYmaeraString() + " & " + getRHS().toKeYmaeraString() + " )";
 	}
@@ -33,25 +46,10 @@ public class AndFormula extends dLFormula {
 	}
     
 	public String todRealString () {
-
-		//String returnString = "";
-		//if ( this.getLHS().isPropositionalPrimitive() ) {
-		//	returnString = returnString + "(assert " + getLHS().todRealString() + " )\n";
-		//} else {
-		//	returnString = returnString + getLHS().todRealString() + "\n";
-		//}
-
-		//if ( this.getRHS().isPropositionalPrimitive() ) {
-		//	returnString = returnString + "(assert " + getRHS().todRealString() + " )\n";
-		//} else {
-		//	returnString = returnString + getRHS().todRealString() + "\n";
-		//}
-		//return returnString;
-
 		return "(and " + getLHS().todRealString() + " " + getRHS().todRealString() + " )";
-
 	}
 
+// Assorted convenience functions
 	public boolean isFirstOrder() {
 		return (getLHS().isFirstOrder() && getRHS().isFirstOrder() );
 	}

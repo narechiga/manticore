@@ -936,7 +936,7 @@ test:
 odesystem:
 	OPENBRACE odelist CLOSEBRACE { 
 		try {
-			$$ = new ContinuousProgram( (ArrayList<dLStructure>)$2 ); // Constructor appends "true" doe automaticaly
+			$$ = new ContinuousProgram( (ArrayList<ExplicitODE>)$2 ); // Constructor appends "true" doe automaticaly
 		} catch ( Exception e ) {
 			System.err.println("Exception at location odesystem:OPENBRACE odelist CLOSEBRACE");
 			System.err.println( e );
@@ -944,7 +944,7 @@ odesystem:
 	}
 	| OPENBRACE odelist AND dLformula CLOSEBRACE { 
 		try {
-			$$ = new ContinuousProgram( (ArrayList<dLStructure>)$2, (dLFormula)$4 );
+			$$ = new ContinuousProgram( (ArrayList<ExplicitODE>)$2, (dLFormula)$4 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location odesystem:OPENBRACE odelist AND dLformula CLOSEBRACE");
 			System.err.println( e );
@@ -996,7 +996,7 @@ ode:
 comparison:
 	term INEQUALITY term { 
 		try {
-			$$ = new ComparisonFormula( new Operator( (String)$2 ), (Term)$1, (Term)$3 ) ;
+			$$ = new ComparisonFormula( new Operator( (String)$2, 2, true ), (Term)$1, (Term)$3 ) ;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location comparison:term INEQUALITY term");
 			System.err.println( e );
@@ -1004,7 +1004,7 @@ comparison:
 	}
 	| term EQUALS term {
 		try {
-			$$ = new ComparisonFormula( new Operator( (String)$2), (Term)$1, (Term)$3 ) ;
+			$$ = new ComparisonFormula( new Operator( (String)$2, 2, true ), (Term)$1, (Term)$3 ) ;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location comparison:term EQUALS term");
 			System.err.println( e );
@@ -1024,7 +1024,7 @@ term:
 	}
 	| IDENTIFIER LPAREN argumentlist RPAREN {
 		try {
-			$$ = new Term( new Operator( (String)$1 ), (ArrayList<Term>)$3 );
+			$$ = new Term( new Operator( (String)$1, ((ArrayList<Term>)$3).size() ), (ArrayList<Term>)$3 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:IDENTIFIER LPAREN argumentlist RPAREN");
 			System.err.println( e );
@@ -1051,7 +1051,7 @@ term:
 			ArrayList<Term> args = new ArrayList<Term>();
 			args.add( (Term)$1 );
 			args.add( (Term)$3 );
-			$$ = new Term( new Operator("+", true), args );
+			$$ = new Term( new Operator("+", 2, true), args );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:term PLUS term");
 			System.err.println( e );
@@ -1062,7 +1062,7 @@ term:
 			ArrayList<Term> args = new ArrayList<Term>();
 			args.add( (Term)$1 );
 			args.add( (Term)$3 );
-			$$ = new Term( new Operator("-", true), args );
+			$$ = new Term( new Operator("-", 2, true), args );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:term MINUS term");
 			System.err.println( e );
@@ -1073,7 +1073,7 @@ term:
 			ArrayList<Term> args = new ArrayList<Term>();
 			args.add( (Term)$1 );
 			args.add( (Term)$3 );
-			$$ = new Term( new Operator("*", true), args );
+			$$ = new Term( new Operator("*", 2, true), args );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:term ASTERISK term");
 			System.err.println( e );
@@ -1084,7 +1084,7 @@ term:
 			ArrayList<Term> args = new ArrayList<Term>();
 			args.add( (Term)$1 );
 			args.add( (Term)$3 );
-			$$ = new Term( new Operator("/", true), args );
+			$$ = new Term( new Operator("/", 2, true), args );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:term DIVIDE term");
 			System.err.println( e );
@@ -1095,7 +1095,7 @@ term:
 			ArrayList<Term> args = new ArrayList<Term>();
 			args.add( (Term)$1 );
 			args.add( (Term)$3 );
-			$$ = new Term( new Operator("^", true), args );
+			$$ = new Term( new Operator("^", 2, true), args );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:term POWER tterm:term POWER term");
 			System.err.println( e );
@@ -1106,7 +1106,7 @@ term:
 			ArrayList<Term> args = new ArrayList<Term>();
 			args.add( new Real( "0" ) );
 			args.add( (Term)$2 );
-			$$ = new Term( new Operator("-", true), args );
+			$$ = new Term( new Operator("-", 1), args );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:MINUS term");
 			System.err.println( e );

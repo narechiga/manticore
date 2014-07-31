@@ -1,7 +1,7 @@
 package manticore.dl;
 
 
-public class DiscreteProgram extends HybridProgram {
+public abstract class DiscreteProgram extends HybridProgram {
 
 	public boolean isPurelyDiscrete() {
 		return true;

@@ -4,19 +4,20 @@ import java.util.*;
 
 public class ContinuousProgram extends HybridProgram {
 
+// Constructors and field getters
 	// constructor with DOE
-	public ContinuousProgram ( ArrayList<dLStructure> odeList, dLFormula doe ) {
+	public ContinuousProgram ( ArrayList<ExplicitODE> odeList, dLFormula doe ) {
 		this.operator = new Operator("continuous-evolution");
-		this.children = odeList;
+		this.children.addAll( odeList );
 
 		// Guarantee: Must always have a doe, even if it's just "true"
 		this.children.add( doe );
 	}
 
 	// constructor without DOE
-	public ContinuousProgram ( ArrayList<dLStructure> odeList ) {
+	public ContinuousProgram ( ArrayList<ExplicitODE> odeList ) {
 		this.operator = new Operator("continuous-evolution");
-		this.children = odeList;
+		this.children.addAll( odeList );
 
 		// Guarantee: Must always have a doe, even if it's just "true"
 		this.children.add( new TrueFormula() );
@@ -92,7 +93,34 @@ public class ContinuousProgram extends HybridProgram {
 
 	public void enlargeDOE () {}
 
-	// Implementing abstract methods from superclass
+
+// Substitution method
+	public ContinuousProgram substituteConcreteValuation( Valuation substitution ) {
+		// Substitute into the ode list
+		ArrayList<ExplicitODE> odeSubstituted = new ArrayList<ExplicitODE>();
+		Iterator<ExplicitODE> myODEiterator = getODEs().iterator();
+		while ( myODEiterator.hasNext() ) {
+			odeSubstituted.add( myODEiterator.next().substituteConcreteValuation( substitution ) );
+		}
+
+		return new ContinuousProgram( odeSubstituted, getDOE().clone() );
+	}
+
+
+
+// Clone method
+	public ContinuousProgram clone() {
+		// Clone the ode list
+		ArrayList<ExplicitODE> odeClones = new ArrayList<ExplicitODE>();
+		Iterator<ExplicitODE> myODEiterator = getODEs().iterator();
+		while ( myODEiterator.hasNext() ) {
+			odeClones.add( myODEiterator.next().clone() );
+		}
+
+		return new ContinuousProgram( odeClones, getDOE().clone() );
+	}
+
+// Assorted convenience functions
 	public boolean isPurelyContinuous() {
 		return true;
 	}
@@ -113,7 +141,7 @@ public class ContinuousProgram extends HybridProgram {
 		return getDOE().isQuantifierFree();
 	}
 
-	// String operations
+// String operations
 	public String toKeYmaeraString() {
 		
 		String returnString = "{ ";
@@ -133,7 +161,7 @@ public class ContinuousProgram extends HybridProgram {
 
 			} else { //then this is the doe
 				returnString = returnString.substring(0, returnString.length() -2 );
-				returnString = returnString + " & " + getDOE().toKeYmaeraString(); // TODO: Write a toKeYmaeraString for logical formulas
+				returnString = returnString + " & " + getDOE().toKeYmaeraString();
 			}
 		}
 		returnString = returnString + " }";

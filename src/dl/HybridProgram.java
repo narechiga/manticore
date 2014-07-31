@@ -1,8 +1,8 @@
 package manticore.dl;
 
-public class HybridProgram extends dLStructure {
+public abstract class HybridProgram extends dLStructure {
 
-	// Specific classes override these.
+// Specific classes override these.
 	public boolean isPurelyContinuous() {
 		return false;
 	}
@@ -22,6 +22,10 @@ public class HybridProgram extends dLStructure {
 	public boolean isQuantifierFree() {
 		return false;
 	}
+
+	public abstract HybridProgram substituteConcreteValuation( Valuation substitution );
+
+	public abstract HybridProgram clone();
 
 
 }

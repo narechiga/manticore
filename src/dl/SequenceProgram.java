@@ -4,10 +4,10 @@ import java.util.*;
 
 public class SequenceProgram extends HybridProgram {
 
-
+// Constructors and field getters
 	public SequenceProgram( HybridProgram firstProgram, HybridProgram secondProgram ) {
 
-		this.operator = new Operator("sequence");
+		this.operator = new Operator("sequence", true);
 
 		this.children = new ArrayList<dLStructure>();
 		this.children.add( firstProgram );
@@ -21,8 +21,19 @@ public class SequenceProgram extends HybridProgram {
 	public HybridProgram getRHS() {
 		return (HybridProgram)(children.get(1));
 	}
+	
+// Substition method
+	public SequenceProgram substituteConcreteValuation( Valuation substitution ) {
+		return new SequenceProgram( getLHS().substituteConcreteValuation( substitution ),
+						getRHS().substituteConcreteValuation( substitution ) );
+	}
 
-	// String methods
+// Clone method
+	public SequenceProgram clone() {
+		return new SequenceProgram( getLHS().clone(), getRHS().clone() );
+	}
+
+// String methods
 	public String toKeYmaeraString() {
 		return "( " + children.get(0).toKeYmaeraString() + " ; " + children.get(1).toKeYmaeraString() + " )";
 	}
@@ -40,7 +51,7 @@ public class SequenceProgram extends HybridProgram {
 		return (HybridProgram)(children.get(1));
 	}
 
-	// Administrative
+// Administrative
 	public boolean isPurelyContinuous() {
 		return false;
 	}

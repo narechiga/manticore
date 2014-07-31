@@ -170,7 +170,7 @@ public class NativeExecutionEngine {
 							ValuationList valuations ) throws Exception {
 
 		this.iteration = this.iteration + 1;
-		SequenceProgram iterate = new SequenceProgram( program.getChild(), program );
+		SequenceProgram iterate = new SequenceProgram( program.getProgram(), program );
 		return runDiscreteSteps( iterate, valuations );
 	}
 

@@ -3,10 +3,22 @@ package manticore.dl;
 
 public class TrueFormula extends dLFormula {
 
+// Constructor
 	public TrueFormula () {
-		this.operator = new Operator("true"); //
+		this.operator = new Operator("true", 0); //
 	}
 
+// Substitution method
+	public TrueFormula substituteConcreteValuation( Valuation substitution ) {
+		return this.clone();
+	}
+
+// Clone method
+	public TrueFormula clone() {
+		return new TrueFormula();
+	}
+
+// String methods
 	public String toKeYmaeraString () {
 		return "true";
 	}
@@ -24,6 +36,7 @@ public class TrueFormula extends dLFormula {
 	}
 
 
+// Administrative
 	public boolean isFirstOrder() {
 		return true;
 	}

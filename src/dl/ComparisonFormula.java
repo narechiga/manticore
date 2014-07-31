@@ -4,6 +4,7 @@ import java.util.*;
 
 public class ComparisonFormula extends dLFormula {
 
+// Constructors and field getters
 	public ComparisonFormula ( Operator inequality, Term lhs, Term rhs ) {
 		operator = inequality; //
 
@@ -12,7 +13,7 @@ public class ComparisonFormula extends dLFormula {
 		children.add( rhs );
 	}
 
-	public Operator inequality() {
+	public Operator getInequality() {
 		return (Operator)operator;
 	}
 
@@ -24,22 +25,37 @@ public class ComparisonFormula extends dLFormula {
 		return (Term)(children.get(1));
 	}
 
+// Substitution method
+	public ComparisonFormula substituteConcreteValuation( Valuation substitution ) {
+		return new ComparisonFormula( getInequality().clone(),
+						getLHS().substituteConcreteValuation( substitution ),
+						getRHS().substituteConcreteValuation( substitution ) );
+	}
+
+// Clone method
+	public ComparisonFormula clone() {
+		return new ComparisonFormula( getInequality().clone(),
+						getLHS().clone(),
+						getRHS().clone());
+	}
+
+// String methods
 	public String toKeYmaeraString () {
-		return "( " + getLHS().toKeYmaeraString() + inequality().toKeYmaeraString() 
+		return "( " + getLHS().toKeYmaeraString() + getInequality().toKeYmaeraString() 
 				+ getRHS().toKeYmaeraString() + " )";
 	}
 
 	public String toManticoreString () {
-		return "( " + getLHS().toManticoreString() + inequality().toManticoreString() 
+		return "( " + getLHS().toManticoreString() + getInequality().toManticoreString() 
 				+ getRHS().toManticoreString() + " )";
 	}
 
 	public String toMathematicaString () {
-		if ( inequality().equals( new Operator("=") ) ) {
+		if ( getInequality().equals( new Operator("=") ) ) {
 			return "( " + getLHS().toMathematicaString() + "=="
 					+ getRHS().toMathematicaString() + " )";
 		} else {
-			return "( " + getLHS().toMathematicaString() + inequality().toMathematicaString() 
+			return "( " + getLHS().toMathematicaString() + getInequality().toMathematicaString() 
 					+ getRHS().toMathematicaString() + " )";
 		}
 	}
@@ -53,6 +69,7 @@ public class ComparisonFormula extends dLFormula {
 
 	}
 
+// Assorted convenience functions
 	public boolean isFirstOrder() {
 		return true;
 	}

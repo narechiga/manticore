@@ -5,8 +5,9 @@ import java.util.*;
 
 public class ConcreteAssignmentProgram extends DiscreteProgram {
 
+// Constructors and field getters
 	public ConcreteAssignmentProgram( RealVariable leftChild, Term rightChild ) {
-		operator = new Operator( "assign" );
+		operator = new Operator( "assign", 2, true );
 
 		children = new ArrayList<dLStructure>();
 		children.add( leftChild );
@@ -21,6 +22,19 @@ public class ConcreteAssignmentProgram extends DiscreteProgram {
 		return (Term)children.get(1);
 	}
 
+// Substitution method
+	public ConcreteAssignmentProgram substituteConcreteValuation( Valuation substitution ) {
+		// Don't mess with the LHS, just the RHS
+		return new ConcreteAssignmentProgram( getLHS().clone(),
+							getRHS().substituteConcreteValuation( substitution ) );
+	}
+
+// Clone method
+	public ConcreteAssignmentProgram clone() {
+		return new ConcreteAssignmentProgram( getLHS().clone(), getRHS().clone() );
+	}
+
+// String methods
 	public String toKeYmaeraString() {
 		return "( " + getLHS().toKeYmaeraString() + " := " + getRHS().toKeYmaeraString() +" )";
 	}
@@ -37,7 +51,7 @@ public class ConcreteAssignmentProgram extends DiscreteProgram {
 		return "(= " + getLHS().toMathematicaString() + " " + getRHS().toMathematicaString() +" )";
 	}
 
-	// Administrative
+// Assorted convenience functions
 	public boolean isPurelyDiscrete() {
 		return true;
 	}

@@ -4,8 +4,9 @@ import java.util.*;
 
 public class ImpliesFormula extends dLFormula {
 
+// Constructor and field getters
 	public ImpliesFormula ( dLFormula antecedent, dLFormula succedent ) {
-		operator = new Operator("implies"); //
+		operator = new Operator("implies", 2, true); //
 
 		children = new ArrayList<dLStructure>();
 		children.add( antecedent );
@@ -20,12 +21,25 @@ public class ImpliesFormula extends dLFormula {
 		return (dLFormula)(children.get(1));
 	}
 
+// Substitution method
+	public ImpliesFormula substituteConcreteValuation( Valuation substitution ) {
+		return new ImpliesFormula( getAntecedent().substituteConcreteValuation( substitution ),
+						getSuccedent().substituteConcreteValuation( substitution ) );
+	}
+
+// Clone method
+	public ImpliesFormula clone() {
+		return new ImpliesFormula( getAntecedent().clone(), getSuccedent().clone() );
+	}
+
+// Strint methods
 	public String toKeYmaeraString () {
 		return "(" + getAntecedent().toKeYmaeraString() + " -> " + getSuccedent().toKeYmaeraString() + ")";
 	}
 
 	public String toMathematicaString () {
-		return "Implies[ " + getAntecedent().toMathematicaString() + ", " + getSuccedent().toMathematicaString() + " ]";
+		return "Implies[ " + getAntecedent().toMathematicaString() 
+				+ ", " + getSuccedent().toMathematicaString() + " ]";
 	}
 
 	public String toManticoreString () {
@@ -36,6 +50,7 @@ public class ImpliesFormula extends dLFormula {
 		return "(implies " + getAntecedent().todRealString() + " " + getSuccedent().todRealString() + ")\n";
 	}
 
+// Assorted convenience functions
 	public boolean isFirstOrder() {
 		return (getAntecedent().isFirstOrder() && getSuccedent().isFirstOrder() );
 	}

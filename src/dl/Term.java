@@ -23,6 +23,28 @@ public class Term extends dLStructure {
 		return this.operator;
 	}
 
+// Substitution method
+	public Term substituteConcreteValuation( Valuation substitution ) {
+		ArrayList<Term> subtermsSubstituted = new ArrayList<Term>();
+		Iterator<Term> subtermIterator = getSubTerms().iterator();
+		while ( subtermIterator.hasNext() ) {
+			subtermsSubstituted.add( subtermIterator.next().substituteConcreteValuation( substitution ) );
+		}
+		
+		return new Term( getOperator().clone(), subtermsSubstituted );
+	}
+
+// Clone method
+	public Term clone() {
+		ArrayList<Term> subtermClones = new ArrayList<Term>();
+		Iterator<Term> subTermIterator = getSubTerms().iterator();
+		while ( subTermIterator.hasNext() ) {
+			subtermClones.add( subTermIterator.next().clone() );
+		}
+
+		return new Term( getOperator().clone(), subtermClones );
+	}
+
 	public ArrayList<Term> getSubTerms() {
 		ArrayList<Term> subTerms = new ArrayList<Term>();
 		Iterator<dLStructure> subTermIterator = children.iterator();

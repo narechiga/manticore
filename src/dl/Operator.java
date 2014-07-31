@@ -3,10 +3,8 @@ package manticore.dl;
 public class Operator {
 
 	public String operator;
-	//public String infixORprefix;
 	public int arity;
 	public boolean infix;
-
 
 	public Operator () { }
 
@@ -34,6 +32,16 @@ public class Operator {
 		this.infix = infix;
 	}
 
+	public Operator ( String operator, boolean infix, int arity ) {
+		this.operator = operator;
+		this.arity = arity;
+		this.infix = infix;
+	}
+	
+	public Operator clone() {
+		return new Operator( this.operator );
+	}
+
 	public boolean equals( Object otherObject ) {
 		if ( otherObject instanceof Operator ) {
 			return operator.equals( ((Operator)otherObject).operator );
@@ -41,7 +49,6 @@ public class Operator {
 			return false;
 		}
 	}
-
 
 	public int hashCode() {
 		return operator.toString().hashCode();

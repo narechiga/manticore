@@ -8,34 +8,43 @@ public class RepetitionProgram extends HybridProgram {
 
 	public RepetitionProgram( HybridProgram onlyChild ) {
 
-		this.operator = new Operator("repeat");
+		this.operator = new Operator("repeat", 1);
 
 		this.children = new ArrayList<dLStructure>();
 		this.children.add( onlyChild );
 	}
 
-	public HybridProgram getChild() {
+	public HybridProgram getProgram() {
 		return (HybridProgram)(children.get(0));
 	}
-	
 
-	// String methods
+// Substitution method
+	public RepetitionProgram substituteConcreteValuation( Valuation substitution ) {
+		return new RepetitionProgram( getProgram().substituteConcreteValuation( substitution ) );
+	}
+
+// Clone method
+	public RepetitionProgram clone() {
+		return new RepetitionProgram( getProgram().clone() );
+	}
+
+// String methods
 	public String toKeYmaeraString() {
-		return "(" + children.get(0).toKeYmaeraString() + "*)";
+		return "(" + getProgram().toKeYmaeraString() + "*)";
 	}
 
 	public String toManticoreString() {
-		return "(" + children.get(0).toManticoreString() + "***)";
+		return "(" + getProgram().toManticoreString() + "***)";
 	}
 
 
-	// Administrative
+// Assorted convenience functions
 	public boolean isPurelyContinuous() {
 		return false;
 	}
 
 	public boolean isPurelyDiscrete() {
-		return getChild().isPurelyDiscrete();
+		return getProgram().isPurelyDiscrete();
 	}
 
 	public boolean isHybrid() {
@@ -51,7 +60,7 @@ public class RepetitionProgram extends HybridProgram {
 	}
 
 	public boolean isQuantifierFree() {
-		return getChild().isQuantifierFree();
+		return getProgram().isQuantifierFree();
 	}
 
 }

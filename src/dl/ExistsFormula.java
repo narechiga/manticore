@@ -4,6 +4,7 @@ import java.util.*;
 
 public class ExistsFormula extends dLFormula {
 
+// Constructors and field getters
 	public ExistsFormula ( RealVariable quantifiedVariable, dLFormula quantifiedFormula ) {
 		operator = new Operator("exists"); //
 
@@ -19,7 +20,23 @@ public class ExistsFormula extends dLFormula {
 	public dLFormula getFormula() {
 		return (dLFormula)(children.get(1));
 	}
+// Substitution method
+	public ExistsFormula substituteConcreteValuation( Valuation substitution ) {
+		if ( substitution.containsVariable( getVariable() ) ) {
+			// It's not actually the same variable, because of the scope of the quantifier
+			return this.clone();
+		} else {
+			return new ExistsFormula( getVariable().clone(),
+						getFormula().substituteConcreteValuation( substitution ) );
+		}
+	}
 
+// Clone method
+	public ExistsFormula clone() {
+		return new ExistsFormula( getVariable().clone(), getFormula().clone() );
+	}
+
+// String methods
 	public String toKeYmaeraString () {
 		return "(\\exists R " + getVariable().toKeYmaeraString() + "; " + getFormula().toKeYmaeraString() +" )";
 	}
@@ -32,6 +49,7 @@ public class ExistsFormula extends dLFormula {
 		return "Exists[ " + getVariable().toMathematicaString() + ", " + getFormula().toMathematicaString() +" ]";
 	}
 
+// Assorted convenience functions
 	public boolean isFirstOrder() {
 		return getFormula().isFirstOrder();
 	}

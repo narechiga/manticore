@@ -4,6 +4,7 @@ import java.util.*;
 
 public class ExplicitODE extends dLStructure {
 
+// Constructors and field getters
 	public ExplicitODE ( RealVariable lhs, Term rhs ) {
 		operator = new Operator( "explicit-ode" );
 
@@ -30,6 +31,18 @@ public class ExplicitODE extends dLStructure {
 		return (Term)(children.get(1));
 	}
 
+// Substitution method
+	public ExplicitODE substituteConcreteValuation( Valuation substitution ) {
+		return new ExplicitODE( getLHS().clone(),
+					getRHS().substituteConcreteValuation( substitution ) );
+	}
+
+// Clone method
+	public ExplicitODE clone() {
+		return new ExplicitODE( getLHS().clone(), getRHS().clone() );
+	}
+
+// String methods
 	public String toInfix() {
 		return toString();
 	}

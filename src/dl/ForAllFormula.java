@@ -4,6 +4,7 @@ import java.util.*;
 
 public class ForAllFormula extends dLFormula {
 
+// Constructors and field getters
 	public ForAllFormula ( RealVariable quantifiedVariable, dLFormula quantifiedFormula ) {
 		operator = new Operator("forall"); //
 
@@ -20,6 +21,20 @@ public class ForAllFormula extends dLFormula {
 		return (dLFormula)(children.get(1));
 	}
 
+	public ForAllFormula substituteConcreteValuation( Valuation substitution ) {
+		if ( substitution.containsVariable( getVariable() ) ) {
+			return this.clone();
+		} else {
+			return new ForAllFormula( getVariable().clone(),
+						getFormula().substituteConcreteValuation( substitution ) );
+		}
+	}
+
+	public ForAllFormula clone() {
+		return new ForAllFormula( getVariable().clone(), getFormula().clone() );
+	}
+
+// String methods
 	public String toKeYmaeraString () {
 		return "(\\forall R " + getVariable().toKeYmaeraString() + "; " + getFormula().toKeYmaeraString() +" )";
 	}
@@ -32,6 +47,7 @@ public class ForAllFormula extends dLFormula {
 		return "ForAll[ " + getVariable().toMathematicaString() + ", " + getFormula().toMathematicaString() +" ]";
 	}
 
+// Assorted convenience functions
 	public boolean isFirstOrder() {
 		return getFormula().isFirstOrder();
 	}
