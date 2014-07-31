@@ -51,7 +51,7 @@ public class Valuation {
 	}
 
 	public String toMathematicaString() {
-		String returnString = "{";
+		String returnString = "{ ";
 
 		Set<RealVariable> variables = valuation.keySet();
 		Iterator<RealVariable> varIterator = variables.iterator();
@@ -62,7 +62,7 @@ public class Valuation {
 
 			if ( varIterator.hasNext() ) {
 				returnString = returnString + thisVariable 
-					+ "->" +  get( thisVariable )
+					+ " -> " +  get( thisVariable )
 					+ ", ";
 			} else {
 				returnString = returnString + thisVariable 

@@ -41,7 +41,8 @@ public class ComparisonFormula extends dLFormula {
 
 // String methods
 	public String toKeYmaeraString () {
-		return "( " + getLHS().toKeYmaeraString() + getInequality().toKeYmaeraString() 
+		return "( " + getLHS().toKeYmaeraString() 
+				+ " " + getInequality().toKeYmaeraString() + " "
 				+ getRHS().toKeYmaeraString() + " )";
 	}
 
@@ -52,10 +53,11 @@ public class ComparisonFormula extends dLFormula {
 
 	public String toMathematicaString () {
 		if ( getInequality().equals( new Operator("=") ) ) {
-			return "( " + getLHS().toMathematicaString() + "=="
+			return "( " + getLHS().toMathematicaString() + " == "
 					+ getRHS().toMathematicaString() + " )";
 		} else {
-			return "( " + getLHS().toMathematicaString() + getInequality().toMathematicaString() 
+			return "( " + getLHS().toMathematicaString() 
+					+ " " + getInequality().toMathematicaString() + " "
 					+ getRHS().toMathematicaString() + " )";
 		}
 	}

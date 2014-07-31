@@ -80,7 +80,7 @@ public class Term extends dLStructure {
 					returnString = returnString + childIterator.next().toKeYmaeraString();
 
 					if ( childIterator.hasNext() ) {
-						returnString = returnString + operator.toKeYmaeraString();
+						returnString = returnString + " " + operator.toKeYmaeraString() + " ";
 					}
 				}
 			}
