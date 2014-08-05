@@ -65,6 +65,10 @@ public class dLStructure {
 		}
 	}
 
+	public void spawnChildren() {
+		children = new ArrayList<dLStructure>();
+	}
+
 // Parse a dLStructure from a string
 	public static dLStructure parseStructure( String structureString ) throws Exception {
 		// returns the dLStructure that exists in the string

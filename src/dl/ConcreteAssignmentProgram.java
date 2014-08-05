@@ -48,7 +48,7 @@ public class ConcreteAssignmentProgram extends DiscreteProgram {
 	}
 
 	public String todRealString() {
-		return "(= " + getLHS().toMathematicaString() + " " + getRHS().toMathematicaString() +" )";
+		return "(= " + getLHS().todRealString() + " " + getRHS().todRealString() +" )";
 	}
 
 // Assorted convenience functions

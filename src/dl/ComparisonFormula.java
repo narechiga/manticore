@@ -13,6 +13,9 @@ public class ComparisonFormula extends dLFormula {
 		children.add( rhs );
 	}
 
+	public ComparisonFormula() {
+	}
+
 	public Operator getInequality() {
 		return (Operator)operator;
 	}

@@ -225,6 +225,7 @@ input:
 	}
 	| error {
 		System.err.println("Parser: I'm confused, throwing error");
+		System.out.println( (String)$1 );
 		System.exit(1);
 	}
 ;
@@ -1106,7 +1107,7 @@ term:
 			ArrayList<Term> args = new ArrayList<Term>();
 			args.add( new Real( "0" ) );
 			args.add( (Term)$2 );
-			$$ = new Term( new Operator("-", 1), args );
+			$$ = new Term( new Operator("-", 2, true), args );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:MINUS term");
 			System.err.println( e );

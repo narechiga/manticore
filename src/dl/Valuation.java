@@ -26,6 +26,14 @@ public class Valuation {
 		return this.valuation.get( var );
 	}
 
+	public int size() {
+		return this.valuation.size();
+	}
+
+	public boolean isEmpty() {
+		return this.valuation.isEmpty();
+	}
+
 	public boolean containsVariable( RealVariable var ) {
 		return this.valuation.containsKey( var );
 	}
@@ -66,7 +74,7 @@ public class Valuation {
 					+ ", ";
 			} else {
 				returnString = returnString + thisVariable 
-					+ "->" +  get( thisVariable )
+					+ " -> " +  get( thisVariable )
 					+ " }";
 			}
 

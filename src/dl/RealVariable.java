@@ -20,7 +20,9 @@ public class RealVariable extends Term {
 	}
 
 	public Term substituteConcreteValuation( Valuation substitution ) {
-		if ( substitution.containsVariable( this ) ) {
+		if ( substitution == null ) {
+			return this;
+		} else if ( substitution.get( this ) != null ) {
 			return substitution.get( this );
 		} else {
 			return this.clone();
