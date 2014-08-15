@@ -26,6 +26,7 @@
 %token DOMAIN
 %token CONTROLLAW
 %token CONTROLTEMPLATE
+%token SETTINGS
 
 /* Hybrid programs */
 %token ASSIGN
@@ -112,9 +113,9 @@
 
 %%
 input: 
-	valuation {
+	OPENBRACE valuation CLOSEBRACE {
 		try {
-			$$ = (String)$1;
+			$$ = (String)$2;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location input:valuation");
 			System.err.println( e );
@@ -181,7 +182,7 @@ input:
 	}
 	| dLformula { 
 		try {
-			System.out.println("Found: dLformula"); 
+			//System.out.println("Found: dLformula"); 
 			parsedStructure = (dLFormula)$1;	
 		} catch ( Exception e ) {
 			System.err.println("Exception at location input:dLformula");
@@ -226,7 +227,7 @@ input:
 	| error {
 		System.err.println("Parser: I'm confused, throwing error");
 		System.out.println( (String)$1 );
-		System.exit(1);
+		//System.exit(1);
 	}
 ;
 
@@ -393,18 +394,18 @@ domainblock: DOMAIN OPENBRACE dLformula CLOSEBRACE {
 ;
 
 
-controllawblock: CONTROLLAW OPENBRACE concreteassignment CLOSEBRACE {
+controllawblock: CONTROLLAW OPENBRACE dLformula CLOSEBRACE {
 		try {
-			control = (ConcreteAssignmentProgram)$3;
+			control = (dLFormula)$3;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location controllawblock: CONTROLLAW OPENBRACE dLformula CLOSEBRACE");
 			System.err.println( e );
 		}
 	}
 ;
-controltemplateblock: CONTROLTEMPLATE OPENBRACE concreteassignment CLOSEBRACE {
+controltemplateblock: CONTROLTEMPLATE OPENBRACE dLformula CLOSEBRACE {
 		try {
-			control = (ConcreteAssignmentProgram)$3;
+			control = (dLFormula)$3;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location controltemplateblock: CONTROLTEMPLATE OPENBRACE dLformula CLOSEBRACE");
 			System.err.println( e );
@@ -418,7 +419,8 @@ controltemplateblock: CONTROLTEMPLATE OPENBRACE concreteassignment CLOSEBRACE {
 
 /*==================== Valuations, for command-line interface ====================*/
 valuation:
-	IDENTIFIER IMPLIES NUMBER {
+	%empty
+	| IDENTIFIER IMPLIES NUMBER {
 		try {
 			if ( this.valuation == null ) {
 				this.valuation = new Valuation();
@@ -433,6 +435,21 @@ valuation:
 		}
 		
 	}
+	| IDENTIFIER IMPLIES MINUS NUMBER {
+		try {
+			if ( this.valuation == null ) {
+				this.valuation = new Valuation();
+			}
+
+			this.valuation.put( new RealVariable( (String)$1 ), new Real( "-" + (String)$4 ) );
+			$$ = "(valuation " +  (String)$1 + "->" + "-" + (String)$3 + ")";
+
+		} catch ( Exception e ) {
+			System.err.println("Exception at location valuation:IDENTIFIER IMPLIES MINUS NUMBER");
+			System.err.println( e );
+		}
+		
+	}
 	| valuation COMMA IDENTIFIER IMPLIES NUMBER {
 		try{
 			if ( this.valuation == null ) {
@@ -442,6 +459,18 @@ valuation:
 			$$ = (String)$1 + "\n" + "(valuation " +  (String)$3 + "->" + (String)$5 + ")";
 		} catch ( Exception e ) {
 			System.err.println("Exception at location valuation:valuation COMMA IDENTIFIER IMPLIES NUMBER");
+			System.err.println( e );
+		}
+	}
+	| valuation COMMA IDENTIFIER IMPLIES MINUS NUMBER {
+		try{
+			if ( this.valuation == null ) {
+				this.valuation = new Valuation();
+			}
+			this.valuation.put( new RealVariable( (String)$3 ), new Real( "-" + (String)$6 ) );
+			$$ = (String)$1 + "\n" + "(valuation " +  (String)$3 + "->" + "-" + (String)$5 + ")";
+		} catch ( Exception e ) {
+			System.err.println("Exception at location valuation:valuation COMMA IDENTIFIER IMPLIES MINUS NUMBER");
 			System.err.println( e );
 		}
 	}
@@ -1025,7 +1054,7 @@ term:
 	}
 	| IDENTIFIER LPAREN argumentlist RPAREN {
 		try {
-			$$ = new Term( new Operator( (String)$1, ((ArrayList<Term>)$3).size() ), (ArrayList<Term>)$3 );
+			$$ = new Term( new Operator( (String)$1, ((ArrayList<Term>)$3).size(), false ), (ArrayList<Term>)$3 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:IDENTIFIER LPAREN argumentlist RPAREN");
 			System.err.println( e );

@@ -68,4 +68,18 @@ public class ChoiceProgram extends HybridProgram {
 		return (getLHS().isQuantifierFree() && getRHS().isQuantifierFree());
 	}
 
+	public Set<RealVariable> getBoundVariables() {
+		HashSet<RealVariable> boundVariables = new HashSet<RealVariable>();
+		boundVariables.addAll( getLHS().getBoundVariables() );
+		boundVariables.addAll( getRHS().getBoundVariables() );
+		return boundVariables;
+	}
+
+	public Set<RealVariable> getFreeVariables() {
+		HashSet<RealVariable> freeVariables = new HashSet<RealVariable>();
+		freeVariables.addAll( getLHS().getFreeVariables() );
+		freeVariables.addAll( getRHS().getFreeVariables() );
+		return freeVariables;
+	}
+
 }

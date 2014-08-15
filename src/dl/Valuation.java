@@ -74,12 +74,12 @@ public class Valuation {
 					+ ", ";
 			} else {
 				returnString = returnString + thisVariable 
-					+ " -> " +  get( thisVariable )
-					+ " }";
+					+ " -> " +  get( thisVariable );
 			}
 
 
 		}
+		returnString = returnString + " }";
 		return returnString;
 	}
 

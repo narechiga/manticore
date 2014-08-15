@@ -63,4 +63,16 @@ public class RepetitionProgram extends HybridProgram {
 		return getProgram().isQuantifierFree();
 	}
 
+	public Set<RealVariable> getBoundVariables() {
+		HashSet<RealVariable> boundVariables = new HashSet<RealVariable>();
+		boundVariables.addAll( getProgram().getBoundVariables() );
+		return boundVariables;
+	}
+
+	public Set<RealVariable> getFreeVariables() {
+		HashSet<RealVariable> freeVariables = new HashSet<RealVariable>();
+		freeVariables.addAll( getProgram().getFreeVariables() );
+		return freeVariables;
+	}
+
 }

@@ -21,6 +21,14 @@ public class SequenceProgram extends HybridProgram {
 	public HybridProgram getRHS() {
 		return (HybridProgram)(children.get(1));
 	}
+
+	public HybridProgram getFirstProgram() {
+		return (HybridProgram)(children.get(0));
+	}
+
+	public HybridProgram getSecondProgram() {
+		return (HybridProgram)(children.get(1));
+	}
 	
 // Substition method
 	public SequenceProgram substituteConcreteValuation( Valuation substitution ) {
@@ -43,13 +51,6 @@ public class SequenceProgram extends HybridProgram {
 	}
 
 
-	public HybridProgram getFirstProgram() {
-		return (HybridProgram)(children.get(0));
-	}
-
-	public HybridProgram getSecondProgram() {
-		return (HybridProgram)(children.get(1));
-	}
 
 // Administrative
 	public boolean isPurelyContinuous() {
@@ -74,6 +75,20 @@ public class SequenceProgram extends HybridProgram {
 
 	public boolean isQuantifierFree() {
 		return (getLHS().isQuantifierFree() && getRHS().isQuantifierFree() );
+	}
+
+	public Set<RealVariable> getBoundVariables() {
+		HashSet<RealVariable> boundVariables = new HashSet<RealVariable>();
+		boundVariables.addAll( getLHS().getBoundVariables() );
+		boundVariables.addAll( getRHS().getBoundVariables() );
+		return boundVariables;
+	}
+
+	public Set<RealVariable> getFreeVariables() {
+		HashSet<RealVariable> freeVariables = new HashSet<RealVariable>();
+		freeVariables.addAll( getLHS().getFreeVariables() );
+		freeVariables.addAll( getRHS().getFreeVariables() );
+		return freeVariables;
 	}
 
 }

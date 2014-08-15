@@ -1,4 +1,5 @@
 package manticore.dl;
+import java.util.*;
 
 
 public class TrueFormula extends dLFormula {
@@ -53,5 +54,17 @@ public class TrueFormula extends dLFormula {
 		return true;
         }
 
+// Logic
+	public FalseFormula negate() {
+		return new FalseFormula();
+	}
+
+	public Set<RealVariable> getBoundVariables() {
+		return new HashSet<RealVariable>();
+	}
+
+	public Set<RealVariable> getFreeVariables() {
+		return new HashSet<RealVariable>();
+	}
 
 }

@@ -21,6 +21,14 @@ public class BoxModalityFormula extends dLFormula {
 		return (dLFormula)(children.get(1));
 	}
 
+//	public HybridProgram getLHS() {
+//		return getProgram();
+//	}
+//
+//	public dLFormula getRHS() {
+//		return getFormula();
+//	}
+
 
 // Substitution method
 	public BoxModalityFormula substituteConcreteValuation( Valuation substitution ) {
@@ -58,6 +66,26 @@ public class BoxModalityFormula extends dLFormula {
 
 	public boolean isQuantifierFree() {
 		return (getFormula().isQuantifierFree() && getProgram().isQuantifierFree());
+	}
+
+// Logical manipulations
+	public DiamondModalityFormula negate() {
+		return new DiamondModalityFormula( getProgram(), getFormula().negate() );
+	}
+
+	public Set<RealVariable> getBoundVariables() {
+		HashSet<RealVariable> boundVariables = new HashSet<RealVariable>();
+		boundVariables.addAll( getFormula().getBoundVariables() );
+		boundVariables.addAll( getProgram().getBoundVariables() );
+		return boundVariables;
+	}
+
+
+	public Set<RealVariable> getFreeVariables() {
+		HashSet<RealVariable> freeVariables = new HashSet<RealVariable>();
+		freeVariables.addAll( getFormula().getFreeVariables() );
+		freeVariables.addAll( getProgram().getFreeVariables() );
+		return freeVariables;
 	}
 
 }

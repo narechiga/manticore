@@ -49,4 +49,11 @@ public class ArbitraryAssignmentProgram extends DiscreteProgram {
 		return true;
 	}
 
+// public Set<RealVariable> getBoundVariables();
+// Assignment program cannot bind any variables, so we do not return any bound variables
+
+	public Set<RealVariable> getFreeVariables() {
+		return getLHS().getFreeVariables();
+	}
+
 }

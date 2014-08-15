@@ -21,6 +21,15 @@ public class IffFormula extends dLFormula {
 		return (dLFormula)(children.get(1));
 	}
 
+	public dLFormula getLHS() {
+		return (dLFormula)(children.get(0));
+	}
+
+	public dLFormula getRHS() {
+		return (dLFormula)(children.get(1));
+	}
+
+
 // Substitution method
 	public IffFormula substituteConcreteValuation( Valuation substitution ) {
 		return new IffFormula( getAntecedent().substituteConcreteValuation( substitution ),
@@ -69,5 +78,25 @@ public class IffFormula extends dLFormula {
         public boolean isQuantifierFree() {
                 return (getAntecedent().isQuantifierFree() && getSuccedent().isQuantifierFree());
         }
+// Logic
+	public OrFormula negate() {
+		AndFormula biimplies = new AndFormula( new ImpliesFormula( this.getAntecedent(), this.getSuccedent() ),
+							new ImpliesFormula( this.getSuccedent(), this.getAntecedent() ) ) ;
+		return biimplies.negate();
+	}
+	
+	public Set<RealVariable> getBoundVariables() {
+		HashSet<RealVariable> boundVariables = new HashSet<RealVariable>();
+		boundVariables.addAll( getLHS().getBoundVariables() );
+		boundVariables.addAll( getRHS().getBoundVariables() );
+		return boundVariables;
+	}
+
+	public Set<RealVariable> getFreeVariables() {
+		HashSet<RealVariable> freeVariables = new HashSet<RealVariable>();
+		freeVariables.addAll( getLHS().getFreeVariables() );
+		freeVariables.addAll( getRHS().getFreeVariables() );
+		return freeVariables;
+	}
 
 }

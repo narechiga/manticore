@@ -57,6 +57,13 @@ public class RealVariable extends Term {
 		
 	}
 
+// Logic
+	public Set<RealVariable> getFreeVariables() {
+		HashSet<RealVariable> freeVariables = new HashSet<RealVariable>();
+		freeVariables.add( this.clone() );
+		return freeVariables;
+	}
+
 
 }
 

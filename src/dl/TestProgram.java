@@ -49,4 +49,16 @@ public class TestProgram extends DiscreteProgram {
 		return getFormula().isQuantifierFree();
 	}
 
+	public Set<RealVariable> getBoundVariables() {
+		HashSet<RealVariable> boundVariables = new HashSet<RealVariable>();
+		boundVariables.addAll( getFormula().getBoundVariables() );
+		return boundVariables;
+	}
+
+	public Set<RealVariable> getFreeVariables() {
+		HashSet<RealVariable> freeVariables = new HashSet<RealVariable>();
+		freeVariables.addAll( getFormula().getFreeVariables() );
+		return freeVariables;
+	}
+
 }

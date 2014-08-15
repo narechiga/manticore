@@ -27,6 +27,12 @@ public class ClosedBallFormula extends ComparisonFormula {
 		addChild( radius );
 	}
 
+	// Just inherit the negation from ComparisonFormula (?)
+	//public ComparisonFormula negate() {
+	//	return new ComparisonFormula( ">", this.getLHS(), this.getRHS() );
+	//}
+
+
 	//public ClosedBallFormula( ArrayList<RealVariable> variables, Valuation center, Real radius ) {
 	//}
 

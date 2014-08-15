@@ -3,6 +3,7 @@ import java.util.*;
 
 
 public class AndFormula extends dLFormula {
+	boolean debug = false;
 
 // Constructors and field getters
 	public AndFormula ( dLFormula leftChild, dLFormula rightChild ) {
@@ -23,8 +24,12 @@ public class AndFormula extends dLFormula {
 
 // Substitution method
 	public AndFormula substituteConcreteValuation( Valuation substitution ) {
-		return new AndFormula( getLHS().substituteConcreteValuation( substitution ), 
-					getRHS().substituteConcreteValuation( substitution ) );
+		AndFormula substitutedFormula =  new AndFormula( getLHS().substituteConcreteValuation( substitution ), 
+							getRHS().substituteConcreteValuation( substitution ) );
+		if( debug ) {
+			System.out.println("Returning AndFormula: " + substitutedFormula.toMathematicaString() );
+		}
+		return substitutedFormula;
 	}
 
 // Clone method
@@ -66,4 +71,24 @@ public class AndFormula extends dLFormula {
 		return (getLHS().isQuantifierFree() && getRHS().isQuantifierFree());
 	}
 
+// Logical manipulations
+	public OrFormula negate() {
+		return new OrFormula( getLHS().negate(), getRHS().negate() );
+	}
+
+	public Set<RealVariable> getBoundVariables() {
+		HashSet<RealVariable> boundVariables = new HashSet<RealVariable>();
+		boundVariables.addAll( getLHS().getBoundVariables() );
+		boundVariables.addAll( getRHS().getBoundVariables() );
+		return boundVariables;
+	}
+
+	public Set<RealVariable> getFreeVariables() {
+		HashSet<RealVariable> freeVariables = new HashSet<RealVariable>();
+		freeVariables.addAll( getLHS().getFreeVariables() );
+		freeVariables.addAll( getRHS().getFreeVariables() );
+		return freeVariables;
+	}
+
 }
+

@@ -21,6 +21,14 @@ public class ImpliesFormula extends dLFormula {
 		return (dLFormula)(children.get(1));
 	}
 
+	public dLFormula getLHS() {
+		return (dLFormula)(children.get(0));
+	}
+
+	public dLFormula getRHS() {
+		return (dLFormula)(children.get(1));
+	}
+
 // Substitution method
 	public ImpliesFormula substituteConcreteValuation( Valuation substitution ) {
 		return new ImpliesFormula( getAntecedent().substituteConcreteValuation( substitution ),
@@ -65,5 +73,25 @@ public class ImpliesFormula extends dLFormula {
         public boolean isQuantifierFree() {
                 return (getAntecedent().isQuantifierFree() && getSuccedent().isQuantifierFree());
         }
+
+// Logic
+	public AndFormula negate() {
+		// not( p implies q ) \equiv (p and (not q) )
+		return new AndFormula( getAntecedent(), getSuccedent().negate() );
+	}
+
+	public Set<RealVariable> getBoundVariables() {
+		HashSet<RealVariable> boundVariables = new HashSet<RealVariable>();
+		boundVariables.addAll( getLHS().getBoundVariables() );
+		boundVariables.addAll( getRHS().getBoundVariables() );
+		return boundVariables;
+	}
+
+	public Set<RealVariable> getFreeVariables() {
+		HashSet<RealVariable> freeVariables = new HashSet<RealVariable>();
+		freeVariables.addAll( getLHS().getFreeVariables() );
+		freeVariables.addAll( getRHS().getFreeVariables() );
+		return freeVariables;
+	}
 
 }

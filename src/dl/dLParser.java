@@ -27,7 +27,7 @@ public class dLParser {
 	public dLFormula invariant;
 	public dLFormula robustparameters;
 	public dLFormula domain;
-	public ConcreteAssignmentProgram control;
+	public dLFormula control;
 
 
 }

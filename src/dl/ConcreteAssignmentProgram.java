@@ -64,4 +64,15 @@ public class ConcreteAssignmentProgram extends DiscreteProgram {
 		return true;
 	}
 
+
+// This program cannot quantify variables
+//	public Set<RealVariable> getBoundVariables();
+
+	public Set<RealVariable> getFreeVariables() {
+		HashSet<RealVariable> freeVariables = new HashSet<RealVariable>();
+		freeVariables.addAll( getLHS().getFreeVariables() );
+		freeVariables.addAll( getRHS().getFreeVariables() );
+		return freeVariables;
+	}
+
 }

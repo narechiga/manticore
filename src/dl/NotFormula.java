@@ -4,6 +4,8 @@ import java.util.*;
 
 public class NotFormula extends dLFormula {
 
+	boolean debug = false;
+
 // Constructors and field getters
 	public NotFormula ( dLFormula child ) { 
 		operator = new Operator("not", 1); //
@@ -18,7 +20,11 @@ public class NotFormula extends dLFormula {
 
 // Substition method
 	public NotFormula substituteConcreteValuation( Valuation substitution ) {
-		return new NotFormula( getFormula().substituteConcreteValuation( substitution ) );
+		NotFormula substitutedFormula = new NotFormula( getFormula().substituteConcreteValuation( substitution ) );
+		if( debug ) {
+			System.out.println("Returning NotFormula: " + substitutedFormula.toMathematicaString() );
+		}
+		return substitutedFormula;
 	}
 
 // Clone method
@@ -59,5 +65,28 @@ public class NotFormula extends dLFormula {
         public boolean isQuantifierFree() {
                 return getFormula().isQuantifierFree();
         }	
+
+// Logic
+	public NotFormula negate() {
+		return new NotFormula( getFormula() );
+	}
+
+	public dLFormula pushNegation() {
+		return getFormula().negate();
+	}
+
+	public Set<RealVariable> getBoundVariables() {
+		HashSet<RealVariable> boundVariables = new HashSet<RealVariable>();
+		boundVariables.addAll( getFormula().getBoundVariables() );
+		return boundVariables;
+	}
+
+	public Set<RealVariable> getFreeVariables() {
+		HashSet<RealVariable> freeVariables = new HashSet<RealVariable>();
+		freeVariables.addAll( getFormula().getFreeVariables() );
+		return freeVariables;
+	}
+
+
 
 }

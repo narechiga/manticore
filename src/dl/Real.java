@@ -128,6 +128,10 @@ public class Real extends Term {
 		Double result = Math.min(aDouble,bDouble);
 		return new Real( result.toString() );
 	}
+// Logic
+	public Set<RealVariable> getFreeVariables() {
+		return new HashSet<RealVariable>();
+	}
 
 }
 

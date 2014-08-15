@@ -3,11 +3,24 @@ package manticore.dl;
 import java.util.*;
 import java.io.*;
 
-public class dLStructure {
+public abstract class dLStructure {
 
 	protected boolean debug = true;
 	protected Operator operator;
 	protected ArrayList<dLStructure> children;
+
+        // COLORS! OMG COLORS!
+        public static final String ANSI_RESET = "\u001B[0m";
+        public static final String ANSI_BLACK = "\u001B[30m";
+        public static final String ANSI_RED = "\u001B[31m";
+        public static final String ANSI_GREEN = "\u001B[32m";
+        public static final String ANSI_YELLOW = "\u001B[33m";
+        public static final String ANSI_BLUE = "\u001B[34m";
+        public static final String ANSI_PURPLE = "\u001B[35m";
+        public static final String ANSI_CYAN = "\u001B[36m";
+        public static final String ANSI_WHITE = "\u001B[37m";
+        public static final String ANSI_BOLD = "\u001B[1m";
+
 
 // Constructors and assorted getters and setters
 	public dLStructure() {
@@ -136,8 +149,10 @@ public class dLStructure {
 
 // Extract assorted bits and pieces
 // 1. getVariables
-// 2. extractContinuousBlocks
-// 3. extractFirstHybridProgram
+// 2. getBoundVariables
+// 3. getFreeVariables
+// 4. extractContinuousBlocks
+// 5. extractFirstHybridProgram
 	public Set<RealVariable> getVariables () {
 		Set<RealVariable> myVariables = new HashSet<RealVariable>();
 
@@ -154,6 +169,12 @@ public class dLStructure {
 
 		return myVariables;
 	}
+
+	public Set<RealVariable> getBoundVariables() {
+		return new HashSet<RealVariable>();
+	}
+
+	public abstract Set<RealVariable> getFreeVariables();
 
 	public ArrayList<ContinuousProgram> extractContinuousBlocks() {
 

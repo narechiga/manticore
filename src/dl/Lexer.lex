@@ -164,6 +164,14 @@ Comment = {TraditionalComment} | {EndOfLineComment} | {DocumentationComment}
 		}
 		return CONTROLTEMPLATE;
 	}
+	"\\settings" {
+                if ( debug ) { 
+                        System.out.println("Lexer: SETTINGS");
+                        System.out.println("Lexer @ " + yytext() );
+                }
+                return SETTINGS;
+        }
+
 	
 	
 	"R" { 
@@ -358,7 +366,21 @@ Comment = {TraditionalComment} | {EndOfLineComment} | {DocumentationComment}
 		}
 		return TRUE;
 	}
+	"True" { // for mathematica
+		if ( debug ) {
+			System.out.println("Lexer: TRUE");
+			System.out.println("Lexer @ " + yytext() );
+		}
+		return TRUE;
+	}
 	"false" { 
+		if ( debug ) {
+			System.out.println("Lexer: FALSE");
+			System.out.println("Lexer @ " + yytext() );
+		}
+		return FALSE;
+	}	
+	"False" { // for mathematica
 		if ( debug ) {
 			System.out.println("Lexer: FALSE");
 			System.out.println("Lexer @ " + yytext() );
@@ -372,7 +394,21 @@ Comment = {TraditionalComment} | {EndOfLineComment} | {DocumentationComment}
 		}
 		return AND;
 	}
+	"\&\&" { // For mathematica
+		if ( debug ) {
+			System.out.println("Lexer: AND");
+			System.out.println("Lexer @ " + yytext() );
+		}
+		return AND;
+	}
 	"\|" { 
+		if ( debug ) {
+			System.out.println("Lexer: OR");
+			System.out.println("Lexer @ " + yytext() );
+		}
+		return OR;
+	}
+	"\|\|" { // For mathematica
 		if ( debug ) {
 			System.out.println("Lexer: OR");
 			System.out.println("Lexer @ " + yytext() );

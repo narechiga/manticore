@@ -146,8 +146,7 @@ public class Term extends dLStructure {
 	//	}
 	//}
 
-
-	// Following two methods really only used for the "arbitrary" term, as in x := *
+// Following two methods really only used for the "arbitrary" term, as in x := *
 	public Term ( Operator operator ) {
 		this.operator = operator;
 		this.children = null;
@@ -157,5 +156,17 @@ public class Term extends dLStructure {
 		this.operator = new Operator( operator );
 		this.children = null;
 	}
+
+// Logic
+	public Set<RealVariable> getFreeVariables() {
+		HashSet<RealVariable> freeVariables = new HashSet<RealVariable>();
+		Iterator<Term> subTermIterator = getSubTerms().iterator();
+		while ( subTermIterator.hasNext() ) {
+			freeVariables.addAll( subTermIterator.next().getFreeVariables() );
+		}
+
+		return freeVariables;
+	}
+			
 
 }

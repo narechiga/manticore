@@ -22,6 +22,14 @@ public class DiamondModalityFormula extends dLFormula {
 		return (dLFormula)(children.get(1));
 	}
 
+//	public getLHS() {
+//		return getProgram();
+//	}
+//
+//	public getRHS() {
+//		return getFormula();
+//	}
+
 // Substitution method
 	public DiamondModalityFormula substituteConcreteValuation( Valuation substitution ) {
 		return new DiamondModalityFormula( getProgram().substituteConcreteValuation( substitution ),
@@ -58,6 +66,25 @@ public class DiamondModalityFormula extends dLFormula {
 
 	public boolean isQuantifierFree() {
 		return ( getProgram().isQuantifierFree() && getProgram().isQuantifierFree() );
+	}
+
+// Logic
+	public BoxModalityFormula negate() {
+		return new BoxModalityFormula( getProgram(), getFormula().negate() );
+	}
+
+	public Set<RealVariable> getBoundVariables() {
+		HashSet<RealVariable> boundVariables = new HashSet<RealVariable>();
+		boundVariables.addAll( getProgram().getBoundVariables() );
+		boundVariables.addAll( getFormula().getBoundVariables() );
+		return boundVariables;
+	}
+
+	public Set<RealVariable> getFreeVariables() {
+		HashSet<RealVariable> freeVariables = new HashSet<RealVariable>();
+		freeVariables.addAll( getProgram().getFreeVariables() );
+		freeVariables.addAll( getFormula().getFreeVariables() );
+		return freeVariables;
 	}
 
 }

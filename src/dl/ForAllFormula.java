@@ -63,6 +63,26 @@ public class ForAllFormula extends dLFormula {
 	public boolean isQuantifierFree() {
 		return false;
 	}
+
+// Logic
+	public ExistsFormula negate() {
+		return new ExistsFormula( getVariable(), getFormula().negate() );
+	}
+
+	public Set<RealVariable> getBoundVariables() {
+		HashSet<RealVariable> boundVariables = new HashSet<RealVariable>();
+		boundVariables.add( getVariable() );
+		return boundVariables;
+	}
+
+
+	public Set<RealVariable> getFreeVariables() {
+		HashSet<RealVariable> realVariables = new HashSet<RealVariable>();
+		realVariables.addAll( getFormula().getFreeVariables() );
+		realVariables.remove( getVariable() );
+		return realVariables;
+	}
+
 }
 
 

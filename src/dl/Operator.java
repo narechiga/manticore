@@ -39,7 +39,7 @@ public class Operator {
 	}
 	
 	public Operator clone() {
-		return new Operator( this.operator );
+		return new Operator( this.operator, this.arity, this.infix );
 	}
 
 	public boolean equals( Object otherObject ) {

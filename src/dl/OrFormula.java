@@ -65,4 +65,42 @@ public class OrFormula extends dLFormula {
         public boolean isQuantifierFree() {
                 return (getLHS().isQuantifierFree() && getRHS().isQuantifierFree());
         }
+
+// Logic
+	public AndFormula negate() {
+		return new AndFormula( getLHS().negate(), getRHS().negate() );
+	}
+
+	public Set<RealVariable> getBoundVariables() {
+		HashSet<RealVariable> boundVariables = new HashSet<RealVariable>();
+		boundVariables.addAll( getLHS().getBoundVariables() );
+		boundVariables.addAll( getRHS().getBoundVariables() );
+		return boundVariables;
+	}
+
+	public Set<RealVariable> getFreeVariables() {
+		HashSet<RealVariable> freeVariables = new HashSet<RealVariable>();
+		freeVariables.addAll( getLHS().getFreeVariables() );
+		freeVariables.addAll( getRHS().getFreeVariables() );
+		return freeVariables;
+	}
+
+	//public dLFormula simplifyOrFalse() {
+	//	if ( getLHS() instanceof FalseFormula ) {
+	//		if ( getRHS() instanceof OrFormula ) {
+	//			return ((OrFormula)getRHS()).simplifyOrFalse();
+	//		} else {
+	//			return getRHS().clone();
+	//		}
+	//	else if ( getRHS() instanceof FalseFormula ) {
+	//		if ( getLHS() instanceof OrFormula ) {
+	//			return ((OrFormula)getLHS()).simplifyOrFalse();
+	//		} else {
+	//			return getLHS().clone();
+	//		}
+	//	else {
+
+
+	//	}
+
 }

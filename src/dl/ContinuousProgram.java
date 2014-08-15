@@ -174,5 +174,22 @@ public class ContinuousProgram extends HybridProgram {
 	}
 
 
+	public Set<RealVariable> getBoundVariables() {
+		HashSet<RealVariable> boundVariables = new HashSet<RealVariable>();
+		boundVariables.addAll( getDOE().getBoundVariables() );
+		return boundVariables;
+	}
+
+	public Set<RealVariable> getFreeVariables() {
+		HashSet<RealVariable> freeVariables = new HashSet<RealVariable>();
+		freeVariables.addAll( getDOE().getFreeVariables() );
+
+		Iterator<ExplicitODE> odeIterator = getODEs().iterator();
+		while (odeIterator.hasNext() ) {
+			freeVariables.addAll( odeIterator.next().getFreeVariables() );
+		}
+
+		return freeVariables;
+	}
 
 }
