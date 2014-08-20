@@ -91,4 +91,11 @@ public class SequenceProgram extends HybridProgram {
 		return freeVariables;
 	}
 
+        public Set<RealVariable> getDynamicVariables() {
+                HashSet<RealVariable> dynamicVariables = new HashSet<RealVariable>();
+                dynamicVariables.addAll( getLHS().getDynamicVariables() );
+                dynamicVariables.addAll( getRHS().getDynamicVariables() );
+                return dynamicVariables;
+        }
+
 }

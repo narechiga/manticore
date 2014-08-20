@@ -88,4 +88,11 @@ public class BoxModalityFormula extends dLFormula {
 		return freeVariables;
 	}
 
+	public Set<RealVariable> getDynamicVariables() {
+		HashSet<RealVariable> dynamicVariables = new HashSet<RealVariable>();
+		dynamicVariables.addAll( getFormula().getDynamicVariables() );
+		dynamicVariables.addAll( getProgram().getDynamicVariables() );
+		return dynamicVariables;
+	}
+
 }

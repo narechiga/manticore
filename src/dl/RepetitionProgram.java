@@ -75,4 +75,11 @@ public class RepetitionProgram extends HybridProgram {
 		return freeVariables;
 	}
 
+	public Set<RealVariable> getDynamicVariables() {
+                HashSet<RealVariable> dynamicVariables = new HashSet<RealVariable>();
+                dynamicVariables.addAll( getProgram().getDynamicVariables() );
+                return dynamicVariables;
+        }
+
+
 }

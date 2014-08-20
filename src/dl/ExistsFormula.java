@@ -85,4 +85,10 @@ public class ExistsFormula extends dLFormula {
 	}
 
 
+	public Set<RealVariable> getDynamicVariables() {
+		HashSet<RealVariable> dynamicVariables = new HashSet<RealVariable>();
+		dynamicVariables.addAll( getFormula().getDynamicVariables() );
+		return dynamicVariables;
+	}
+
 }

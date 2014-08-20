@@ -87,4 +87,11 @@ public class DiamondModalityFormula extends dLFormula {
 		return freeVariables;
 	}
 
+	public Set<RealVariable> getDynamicVariables() {
+		HashSet<RealVariable> dynamicVariables = new HashSet<RealVariable>();
+		dynamicVariables.addAll( getProgram().getDynamicVariables() );
+		dynamicVariables.addAll( getFormula().getDynamicVariables() );
+		return dynamicVariables;
+	}
+
 }

@@ -56,4 +56,10 @@ public class ArbitraryAssignmentProgram extends DiscreteProgram {
 		return getLHS().getFreeVariables();
 	}
 
+	public Set<RealVariable> getDynamicVariables() {
+		HashSet<RealVariable> dynamicVariables = new HashSet<RealVariable>();
+		dynamicVariables.add( getLHS() );
+		return dynamicVariables;
+	}
+
 }

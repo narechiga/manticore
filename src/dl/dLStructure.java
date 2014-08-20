@@ -175,6 +175,7 @@ public abstract class dLStructure {
 	}
 
 	public abstract Set<RealVariable> getFreeVariables();
+	public abstract Set<RealVariable> getDynamicVariables();
 
 	public ArrayList<ContinuousProgram> extractContinuousBlocks() {
 

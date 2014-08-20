@@ -67,4 +67,9 @@ public class TrueFormula extends dLFormula {
 		return new HashSet<RealVariable>();
 	}
 
+	public Set<RealVariable> getDynamicVariables() {
+		HashSet<RealVariable> dynamicVariables = new HashSet<RealVariable>();
+		return dynamicVariables;
+	}
+
 }

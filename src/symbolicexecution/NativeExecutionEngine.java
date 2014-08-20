@@ -13,18 +13,21 @@ public class NativeExecutionEngine {
 	Interpretation interpretation;
 
 
+//
 	public NativeExecutionEngine ( Interpretation interpretation ) {
 		this.interpretation = interpretation;
 		this.iteration = 0;
 		this.maxIterations = 10; // Default
 	}
 
+//
 	public NativeExecutionEngine ( Interpretation interpretation, int maxIterations ) {
 		this.interpretation = interpretation;
 		this.iteration = 0;
 		this.maxIterations = 10; // Default
 	}
 
+//
 	public ValuationList runDiscreteSteps( HybridProgram program, ValuationList valuations ) throws Exception {
 
 		if ( this.iteration == this.maxIterations ) {
@@ -54,6 +57,7 @@ public class NativeExecutionEngine {
 		return returnValuations;
 	}
 
+//
 	protected ValuationList runConcreteAssignmentProgram( ConcreteAssignmentProgram program, 
 								ValuationList valuations ) throws Exception {
 		ValuationList returnValuations = valuations.clone();		
@@ -75,6 +79,7 @@ public class NativeExecutionEngine {
 		return returnValuations;
 	}
 
+//
 	protected ValuationList runTestProgram( TestProgram program, 
 							ValuationList valuations ) throws Exception {
 
@@ -94,6 +99,7 @@ public class NativeExecutionEngine {
 		return returnValuations;
 	}
 
+//
 	protected ValuationList runContinuousProgram( ContinuousProgram program,
 							ValuationList valuations ) throws Exception {
 
@@ -128,6 +134,7 @@ public class NativeExecutionEngine {
 		return returnValuations;
 	}
 
+//
 	protected ValuationList runSequenceProgram( SequenceProgram program, 
 							ValuationList valuations ) throws Exception {
 
@@ -148,6 +155,7 @@ public class NativeExecutionEngine {
 		return returnValuations;
 	}
 
+//
 	protected ValuationList runChoiceProgram( ChoiceProgram program, 
 							ValuationList valuations ) throws Exception {
 
@@ -166,6 +174,7 @@ public class NativeExecutionEngine {
 		return returnValuations;
 	}
 
+//
 	public ValuationList runRepetitionProgram( RepetitionProgram program,
 							ValuationList valuations ) throws Exception {
 
@@ -174,6 +183,7 @@ public class NativeExecutionEngine {
 		return runDiscreteSteps( iterate, valuations );
 	}
 
+//
 	public boolean evaluateFormula( dLFormula formula, Valuation valuation ) throws Exception {
 		//evaluates only simple control-style logic, at the current valuation
 		return interpretation.evaluateFormula( formula, valuation );

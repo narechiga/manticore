@@ -164,6 +164,8 @@ public class ComparisonFormula extends dLFormula {
 		return freeVariables;
 	}
 	
-
+	public Set<RealVariable> getDynamicVariables() {
+		return new HashSet<RealVariable>();
+	}
 
 }
