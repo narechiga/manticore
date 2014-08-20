@@ -62,5 +62,11 @@ public class ExplicitODE extends dLStructure {
 		return freeVariables;
 	}
 
+	public Set<RealVariable> getDynamicVariables() {
+		HashSet<RealVariable> dynamicVariables = new HashSet<RealVariable>();
+		dynamicVariables.add( getLHS() );
+		return dynamicVariables;
+	}
+
 
 }

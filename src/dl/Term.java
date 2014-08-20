@@ -167,6 +167,13 @@ public class Term extends dLStructure {
 
 		return freeVariables;
 	}
+
+	public Set<RealVariable> getDynamicVariables() {
+		HashSet<RealVariable> dynamicVariables = new HashSet<RealVariable>();
+		return dynamicVariables;
+	}
+
+
 			
 
 }

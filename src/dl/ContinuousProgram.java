@@ -195,9 +195,9 @@ public class ContinuousProgram extends HybridProgram {
 	public Set<RealVariable> getDynamicVariables() {
 		HashSet<RealVariable> dynamicVariables = new HashSet<RealVariable>();
 
-		Iterator<ExplicitODE> odeIterator = getODEs.iterator();
+		Iterator<ExplicitODE> odeIterator = getODEs().iterator();
 		while( odeIterator.hasNext() ) {
-			dynamicVariables.add( odeIterator.next().getLHS() );
+			dynamicVariables.addAll( odeIterator.next().getDynamicVariables() );
 		}
 
 		return dynamicVariables;
