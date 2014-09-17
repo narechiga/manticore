@@ -47,7 +47,8 @@ public class Valuation {
 	}
 
 	public String toString() {
-		return valuation.toString();
+		//return valuation.toString();
+		return toMathematicaString();
 	}
 
 	public String todRealString() {

@@ -2,12 +2,17 @@ package manticore.symbolicexecution;
 
 import manticore.dl.*;
 import java.util.*;
+import java.lang.*;
 
 public class NativeExecutionEngine {
 
 	//Determine behavior of star operator
 	int maxIterations;
 	int iteration;
+
+	// bounds
+	HashMap<RealVariable,Double> lowerBounds;
+	HashMap<RealVariable,Double> upperBounds;
 	
 
 	Interpretation interpretation;
@@ -18,15 +23,122 @@ public class NativeExecutionEngine {
 		this.interpretation = interpretation;
 		this.iteration = 0;
 		this.maxIterations = 10; // Default
+		lowerBounds = new HashMap<RealVariable, Double>();
+		upperBounds = new HashMap<RealVariable, Double>();
 	}
 
 //
 	public NativeExecutionEngine ( Interpretation interpretation, int maxIterations ) {
 		this.interpretation = interpretation;
 		this.iteration = 0;
+		this.maxIterations = maxIterations;
+		lowerBounds = new HashMap<RealVariable, Double>();
+		upperBounds = new HashMap<RealVariable, Double>();
+	}
+//
+	public NativeExecutionEngine ( Interpretation interpretation, int maxIterations, dLFormula bounds ) {
+		this.interpretation = interpretation;
+		this.iteration = 0;
+		this.maxIterations = maxIterations;
+		lowerBounds = new HashMap<RealVariable, Double>();
+		upperBounds = new HashMap<RealVariable, Double>();
+		parseBounds( bounds );
+	}
+//
+	public NativeExecutionEngine ( Interpretation interpretation, dLFormula bounds ) {
+		this.interpretation = interpretation;
+		this.iteration = 0;
 		this.maxIterations = 10; // Default
+		lowerBounds = new HashMap<RealVariable, Double>();
+		upperBounds = new HashMap<RealVariable, Double>();
+		parseBounds( bounds );
 	}
 
+//
+	protected void parseBounds( dLFormula bounds ) {
+		if ( bounds != null ) {
+			ArrayList<dLFormula> boundsList = bounds.splitOnAnds();
+
+			Iterator<dLFormula> boundsIterator = boundsList.iterator();
+			ComparisonFormula thisBound;
+			Set<RealVariable> theseVariables;
+			RealVariable thisVariable;
+
+			while ( boundsIterator.hasNext() ) {
+
+
+				try {
+					// Try to parse the bounds, but don't worry too
+					// much if it fails, since then bounds are
+					// replaced by unitary bounds and everything works
+					// out anyway
+
+					thisBound = (ComparisonFormula)(boundsIterator.next());
+
+					if ( thisBound.getOperator().equals( new Operator("<=") ) 
+						|| thisBound.getOperator().equals( new Operator("<") )) {
+
+						if ( (thisBound.getLHS() instanceof Real)
+							&& (thisBound.getRHS() instanceof RealVariable) ) {
+
+							lowerBounds.put( (RealVariable)(thisBound.getRHS()), 
+								((Real)(thisBound.getLHS())).toDouble() );
+
+						} else if ( (thisBound.getLHS() instanceof RealVariable)
+							&& (thisBound.getRHS() instanceof Real ) ) {
+
+							upperBounds.put( (RealVariable)(thisBound.getRHS()), 
+								((Real)(thisBound.getLHS())).toDouble() );
+						}
+
+					} else if ( thisBound.getOperator().equals( new Operator(">=") )
+						|| thisBound.getOperator().equals( new Operator(">") )) {
+
+						if ( (thisBound.getLHS() instanceof Real)
+							&& (thisBound.getRHS() instanceof RealVariable) ) {
+
+							upperBounds.put( (RealVariable)(thisBound.getRHS()), 
+								((Real)(thisBound.getLHS())).toDouble() );
+
+						} else if ( (thisBound.getLHS() instanceof RealVariable)
+							&& (thisBound.getRHS() instanceof Real ) ) {
+
+							lowerBounds.put( (RealVariable)(thisBound.getRHS()), 
+								((Real)(thisBound.getLHS())).toDouble() );
+						}
+					}
+				} catch ( Exception e ) {
+					System.out.println("WARNING: Bounds couldn't be parsed,"
+						+ " replacing with unitary bounds; ");
+					e.printStackTrace();
+				}
+
+			}
+
+		} else {
+
+			System.out.println("WARNING: Bounds couldn't be parsed,"
+				+ " replacing with unitary bounds; ");
+		}
+
+	}
+
+//
+	public Valuation sampleVectorField( HybridProgram program, Valuation initialState ) throws Exception {
+		ValuationList valuations = new ValuationList();
+		valuations.add( initialState );
+
+		valuations = runDiscreteSteps( program, valuations );
+
+		if ( valuations.size() == 1 ) {
+			return valuations.get( 0 );
+
+		} else {
+			int randomIndex = (int)(Math.round((valuations.size() - 1)*Math.random()));
+
+			return valuations.get( randomIndex );
+		}
+	}
 //
 	public ValuationList runDiscreteSteps( HybridProgram program, ValuationList valuations ) throws Exception {
 
@@ -38,6 +150,8 @@ public class NativeExecutionEngine {
 
 		if ( program instanceof ConcreteAssignmentProgram ) {
 			returnValuations = runConcreteAssignmentProgram( (ConcreteAssignmentProgram)program, valuations );
+		} else if ( program instanceof ArbitraryAssignmentProgram ) {
+			returnValuations = runArbitraryAssignmentProgram( (ArbitraryAssignmentProgram)program, valuations );
 		} else if ( program instanceof TestProgram ) {
 			returnValuations = runTestProgram( (TestProgram)program, valuations );
 		} else if ( program instanceof ContinuousProgram ) {
@@ -77,6 +191,39 @@ public class NativeExecutionEngine {
 		}
 
 		return returnValuations;
+	}
+	protected ValuationList runArbitraryAssignmentProgram( ArbitraryAssignmentProgram program, 
+								ValuationList valuations ) throws Exception {
+		ValuationList returnValuations = valuations.clone();		
+
+		Iterator<Valuation> valuationIterator = returnValuations.iterator();
+
+		// Recover upper and lower bounds, replace with unitary bounds if
+		// no bounds are given
+		double lower; double upper;
+		RealVariable thisVariable = program.getLHS();
+		if ( lowerBounds.get( thisVariable ) != null ) {
+			lower = lowerBounds.get( thisVariable );
+		} else {
+			lower = -1;
+		}
+		if ( upperBounds.get( thisVariable ) != null ) {
+			upper = upperBounds.get( thisVariable );
+		} else {
+			upper = 1;
+		}
+
+		double randomNumber;
+		while ( valuationIterator.hasNext() ) {
+			Valuation thisValuation = valuationIterator.next();
+
+			randomNumber = new Double( ( upper - lower )*Math.random() + lower );
+
+			thisValuation.put( thisVariable, new Real( randomNumber) );
+		}
+
+		return returnValuations;
+
 	}
 
 //

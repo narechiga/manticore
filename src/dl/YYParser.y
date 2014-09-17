@@ -17,6 +17,7 @@
 %token SCHEMATEXT
 %token PROBLEM
 %token ANNOTATION
+%token BOUNDS
 
 %token STATEVARIABLES
 %token EIPARAMETERS
@@ -191,7 +192,6 @@ input:
 	}
 	| hybridprogram {
 		try {
-			HybridProgram hp = (HybridProgram)$1;
 			$$ = "hybrid program"; 
 			parsedStructure = (HybridProgram)$1;	
 		} catch ( Exception e ) {
@@ -485,6 +485,14 @@ annotationblock:
 			this.annotations = (ArrayList<dLFormula>)$3;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location annotationblock:ANNOTATION OPENBRACE annotationlist CLOSEBRACE");
+			System.err.println( e );
+		}
+	}
+	| BOUNDS OPENBRACE dLformula CLOSEBRACE annotationblock {
+		try {
+			this.bounds = (dLFormula)$3;
+		} catch ( Exception e ) {
+			System.err.println("Exception at location annotationblock:BOUNDS OPENBRACE dLformula CLOSEBRACE annotationblock");
 			System.err.println( e );
 		}
 	}
@@ -986,9 +994,11 @@ odelist:
 	ode { 
 		//$$ = (String)$1;
 		try {
-			ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			args.add( (dLStructure)$1 );
+			ArrayList<ExplicitODE> args = new ArrayList<ExplicitODE>();
+			args.add( (ExplicitODE)$1 );
+
 			$$ = args;
+
 		} catch ( Exception e ) {
 			System.err.println("Exception at location odelist:ode");
 			System.err.println( e );
@@ -998,9 +1008,9 @@ odelist:
 	| odelist COMMA ode { 
 		//$$ = (String)$1 + ", " + (String)$3;
 		try {
-			ArrayList<dLStructure> args = new ArrayList<dLStructure>();
-			args.addAll( (ArrayList<dLStructure>)$1 );
-			args.add( (dLStructure)$3 );
+			ArrayList<ExplicitODE> args = new ArrayList<ExplicitODE>();
+			args.addAll( (ArrayList<ExplicitODE>)$1 );
+			args.add( (ExplicitODE)$3 );
 			$$ = args;
 		} catch ( Exception e ) {
 			System.err.println("Exception at location odelist:odelist COMMA ode");

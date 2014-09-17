@@ -14,14 +14,14 @@ public class ExplicitODE extends dLStructure {
 
 	}
 
-	public ExplicitODE ( dLStructure lhs, dLStructure rhs ) {
-		operator = new Operator( "explicit-ode" );
+	//public ExplicitODE ( dLStructure lhs, dLStructure rhs ) {
+	//	operator = new Operator( "explicit-ode" );
 
-		children = new ArrayList<dLStructure>();
-		children.add( lhs );
-		children.add( rhs );
+	//	children = new ArrayList<dLStructure>();
+	//	children.add( lhs );
+	//	children.add( rhs );
 
-	}
+	//}
 
 	public RealVariable getLHS() {
 		return (RealVariable)(children.get(0));

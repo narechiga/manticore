@@ -5,6 +5,7 @@ import java.util.regex.*;
 import manticore.dl.*;
 import manticore.symbolicexecution.*;
 import manticore.matlabsimulationkit.*;
+import manticore.matlabsamplingkit.*;
 
 class Manticore {
 
@@ -190,6 +191,12 @@ class Manticore {
 				} else if ( in.hasNext("simulate") ) {
 					in.skip("simulate");
 					runSimulate( in.nextLine() + "\n");
+				} else if ( in.hasNext("sampsearch") ) {
+					in.skip("sampsearch");
+					runSampSearch( in.nextLine() + "\n");
+				//} else if ( in.hasNext("symsim") ) {
+				//	in.skip("symsim");
+				//	runSymSimulate( in.nextLine() + "\n");
 				//} else if ( in.hasNext("execute") ) {
 				//	in.skip("execute");
 				//	runExecute( in.nextLine() + "\n");
@@ -239,6 +246,68 @@ class Manticore {
 //
 //	}
 
+	//public static String runSymSimulate ( String input ) throws Exception {
+
+	//	ValuationList valList = null;
+
+	//        StringReader inreader = new StringReader( input );
+	//        Lexer myLexer = new Lexer( inreader );
+	//        YYParser myParser = new YYParser( myLexer );
+	//        myParser.parse();
+
+	//	//Interpretation interpretation = new NativeInterpretation();
+
+	//	if ( (myParser.parsedStructure instanceof HybridProgram) && ( myParser.valuation != null ) ) {
+
+	//		UpdateList initialState = new UpdateList();
+	//		initialState.add( new UpdateRule( myParser.valuation ) );
+	//		NativeExecutionEngine engine = new NativeExecutionEngine( interpretation );
+	//		valList = engine.runDiscreteSteps( (HybridProgram)myParser.parsedStructure,
+	//								initialState );
+	//		if ( true ) {
+	//			System.out.println( "PARSED: " + myParser.parsedStructure.toKeYmaeraString() );
+	//			System.out.println("Valuation is: " + myParser.valuation.toString() );
+
+	//			if (valList == null) { throw new Exception("onoz null!"); }
+
+	//			System.out.println("Result of discrete execution is: " + valList.toString() );
+	//		}
+
+	//	}
+
+	//	Valuation toReturn = valList.get(0);		
+	//	return toReturn.toString();
+
+	//}
+	
+	public static void runSampSearch( String input ) throws Exception {
+		String[] parts = input.split("#");
+
+		// First the program
+		StringReader reader = new StringReader( parts[0] );
+		Lexer lexer = new Lexer( reader );
+		YYParser parser = new YYParser( lexer );
+		parser.parse();
+		HybridProgram program = (HybridProgram)(parser.parsedStructure);
+
+		// Then the region of interest as a logical formula
+		reader = new StringReader( parts[1] );
+		lexer = new Lexer( reader );
+		parser = new YYParser( lexer );
+		parser.parse();
+		dLFormula domain = (dLFormula)(parser.parsedStructure);
+
+		MatlabSamplingKit.generateProblemFile(
+							program,
+							2, //degree
+							new ArrayList<Double>(), // blank lowerBounds, replaced by -1
+							new ArrayList<Double>(), // blank upperBounds, replaced by 1
+							0.01, // exclusionRadius
+							2, //precision
+							1, //initial sampleNumber
+							150 //maxOuterIterations
+							);
+	}
 
 	public static String runSimulate ( String input ) throws Exception {
 

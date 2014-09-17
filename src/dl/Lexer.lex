@@ -90,6 +90,13 @@ Comment = {TraditionalComment} | {EndOfLineComment} | {DocumentationComment}
 		}
 		return ANNOTATION;
 	}
+	"\\bounds" {
+		if ( debug ) {
+			System.out.println("Lexer: BOUNDS");
+			System.out.println("Lexer @ " + yytext() );
+		}
+		return BOUNDS;
+	}
 		
 	
 	"\\schemaVariables" { 

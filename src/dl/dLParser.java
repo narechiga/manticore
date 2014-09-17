@@ -11,6 +11,8 @@ public class dLParser {
 
 	// for reading  a file with user annotations
 	public ArrayList<dLFormula> annotations;
+	// bounds on variables
+	public dLFormula bounds;
 
 	// Assorted fields of a KeYmaera input file
 	public String declaredFunctions;

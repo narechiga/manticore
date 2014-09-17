@@ -1,0 +1,19 @@
+#!/usr/bin/perl
+
+
+
+# Main task is to set environment variables, so that
+# things that need to know paths don"t have to use brittle
+# relative path specifications
+
+use FindBin;
+
+$ENV{"MANTICORE2"} = "$FindBin::Bin";
+$ENV{"MATLABKIT"} = "manticore/matlabkit";
+$ENV{"SYMBOLICEXECUTION"} = "manticore/symbolicexecution";
+$ENV{"MATLABSAMPLINGKIT"} = "manticore/matlabsamplingkit";
+$ENV{"MATLABSIMULATIONKIT"} = "manticore/matlabsimulationkit";
+$ENV{"DL"} = "manticore/dl";
+
+system("java Manticore");
+

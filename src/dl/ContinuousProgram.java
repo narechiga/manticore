@@ -8,6 +8,8 @@ public class ContinuousProgram extends HybridProgram {
 	// constructor with DOE
 	public ContinuousProgram ( ArrayList<ExplicitODE> odeList, dLFormula doe ) {
 		this.operator = new Operator("continuous-evolution");
+
+		spawnChildren();
 		this.children.addAll( odeList );
 
 		// Guarantee: Must always have a doe, even if it's just "true"
@@ -17,6 +19,8 @@ public class ContinuousProgram extends HybridProgram {
 	// constructor without DOE
 	public ContinuousProgram ( ArrayList<ExplicitODE> odeList ) {
 		this.operator = new Operator("continuous-evolution");
+		
+		spawnChildren();
 		this.children.addAll( odeList );
 
 		// Guarantee: Must always have a doe, even if it's just "true"
