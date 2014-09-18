@@ -172,6 +172,21 @@ public class Term extends dLStructure {
 		HashSet<RealVariable> dynamicVariables = new HashSet<RealVariable>();
 		return dynamicVariables;
 	}
+// Arithmetic properties
+	public boolean isLinearIn( RealVariable variable ) {
+		return true;
+	}
+	public boolean isAffineIn( RealVariable variable ) {
+		return true;	
+	}
+
+	public boolean isLinearIn( ArrayList<RealVariable> variable ) {
+		return true;
+	}
+
+	public boolean isAffineIn( ArrayList<RealVariable> variable ) {
+		return true;
+	}
 
 
 			

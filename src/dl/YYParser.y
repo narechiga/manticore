@@ -1088,10 +1088,11 @@ term:
 	}
 	| term PLUS term { 
 		try {
-			ArrayList<Term> args = new ArrayList<Term>();
-			args.add( (Term)$1 );
-			args.add( (Term)$3 );
-			$$ = new Term( new Operator("+", 2, true), args );
+			//ArrayList<Term> args = new ArrayList<Term>();
+			//args.add( (Term)$1 );
+			//args.add( (Term)$3 );
+			//$$ = new Term( new Operator("+", 2, true), args );
+			$$ = new AdditionTerm( (Term)$1, (Term)$3 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:term PLUS term");
 			System.err.println( e );
@@ -1099,10 +1100,11 @@ term:
 	}
 	| term MINUS term { 
 		try {
-			ArrayList<Term> args = new ArrayList<Term>();
-			args.add( (Term)$1 );
-			args.add( (Term)$3 );
-			$$ = new Term( new Operator("-", 2, true), args );
+			//ArrayList<Term> args = new ArrayList<Term>();
+			//args.add( (Term)$1 );
+			//args.add( (Term)$3 );
+			//$$ = new Term( new Operator("-", 2, true), args );
+			$$ = new SubtractionTerm( (Term)$1, (Term)$3 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:term MINUS term");
 			System.err.println( e );
@@ -1110,10 +1112,11 @@ term:
 	}
 	| term MULTIPLY term { 
 		try {
-			ArrayList<Term> args = new ArrayList<Term>();
-			args.add( (Term)$1 );
-			args.add( (Term)$3 );
-			$$ = new Term( new Operator("*", 2, true), args );
+			//ArrayList<Term> args = new ArrayList<Term>();
+			//args.add( (Term)$1 );
+			//args.add( (Term)$3 );
+			//$$ = new Term( new Operator("*", 2, true), args );
+			$$ = new MultiplicationTerm( (Term)$1, (Term)$3 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:term ASTERISK term");
 			System.err.println( e );
@@ -1121,10 +1124,11 @@ term:
 	}
 	| term DIVIDE term { 
 		try {
-			ArrayList<Term> args = new ArrayList<Term>();
-			args.add( (Term)$1 );
-			args.add( (Term)$3 );
-			$$ = new Term( new Operator("/", 2, true), args );
+			//ArrayList<Term> args = new ArrayList<Term>();
+			//args.add( (Term)$1 );
+			//args.add( (Term)$3 );
+			//$$ = new Term( new Operator("/", 2, true), args );
+			$$ = new DivisionTerm( (Term)$1, (Term)$3 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:term DIVIDE term");
 			System.err.println( e );
@@ -1132,10 +1136,11 @@ term:
 	}
 	| term POWER term { 
 		try {
-			ArrayList<Term> args = new ArrayList<Term>();
-			args.add( (Term)$1 );
-			args.add( (Term)$3 );
-			$$ = new Term( new Operator("^", 2, true), args );
+			//ArrayList<Term> args = new ArrayList<Term>();
+			//args.add( (Term)$1 );
+			//args.add( (Term)$3 );
+			//$$ = new Term( new Operator("^", 2, true), args );
+			$$ = new PowerTerm( (Term)$1, (Term)$3 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:term POWER tterm:term POWER term");
 			System.err.println( e );
@@ -1143,10 +1148,11 @@ term:
 	}
 	| MINUS term %prec NEGATIVE { 
 		try {
-			ArrayList<Term> args = new ArrayList<Term>();
-			args.add( new Real( "0" ) );
-			args.add( (Term)$2 );
-			$$ = new Term( new Operator("-", 2, true), args );
+			//ArrayList<Term> args = new ArrayList<Term>();
+			//args.add( new Real( "0" ) );
+			//args.add( (Term)$2 );
+			//$$ = new Term( new Operator("-", 2, true), args );
+			$$ = new SubtractionTerm( new Real("0"), (Term)$2 );
 		} catch ( Exception e ) {
 			System.err.println("Exception at location term:MINUS term");
 			System.err.println( e );
