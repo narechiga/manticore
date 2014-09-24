@@ -7,7 +7,7 @@ public abstract class dLStructure {
 
 	protected boolean debug = true;
 	protected Operator operator;
-	protected ArrayList<dLStructure> children;
+	protected ArrayList<? extends dLStructure> children;
 
         // COLORS! OMG COLORS!
         public static final String ANSI_RESET = "\u001B[0m";

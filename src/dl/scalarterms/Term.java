@@ -2,7 +2,7 @@ package manticore.dl;
 
 import java.util.*;
 
-public class Term extends dLStructure {
+public class Term extends GeneralizedTerm {
 
 	public Term () {
 	}
