@@ -1,5 +1,7 @@
 package manticore.dl.semantics;
 
+import manticore.dl.syntax.*;
+
 import java.util.*;
 
 public class Valuation {

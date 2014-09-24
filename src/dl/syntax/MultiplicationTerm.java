@@ -1,5 +1,7 @@
 package manticore.dl.syntax;
 
+import manticore.dl.semantics.*;
+
 public class MultiplicationTerm extends Term {
 
 	public MultiplicationTerm( Term leftFactor, Term rightFactor ) {

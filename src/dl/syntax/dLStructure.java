@@ -1,13 +1,16 @@
-package manticore.dl.syntax.syntax;
+package manticore.dl.syntax;
+
+import manticore.dl.semantics.*;
+import manticore.dl.parser.*;
 
 import java.util.*;
 import java.io.*;
 
 public abstract class dLStructure {
 
-	protected boolean debug = true;
-	protected Operator operator;
-	protected ArrayList<? extends dLStructure> children;
+	public boolean debug = true;
+	public Operator operator;
+	public ArrayList<dLStructure> children;
 
         // COLORS! OMG COLORS!
         public static final String ANSI_RESET = "\u001B[0m";
@@ -86,8 +89,8 @@ public abstract class dLStructure {
 	public static dLStructure parseStructure( String structureString ) throws Exception {
 		// returns the dLStructure that exists in the string
 		StringReader thisReader = new StringReader( structureString );
-		Lexer thisLexer = new Lexer( thisReader );
-		YYParser thisParser = new YYParser( thisLexer );
+		dLLexer thisdLLexer = new dLLexer( thisReader );
+		dLParser thisParser = new dLParser( thisdLLexer );
 
 		thisParser.parse();
 

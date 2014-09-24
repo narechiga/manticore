@@ -1,6 +1,7 @@
 package manticore.dl.semantics;
 
 import java.util.*;;
+import manticore.dl.syntax.*;;
 import java.lang.*;;
 
 public class NativeInterpretation implements Interpretation {

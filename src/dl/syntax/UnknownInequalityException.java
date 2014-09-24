@@ -1,4 +1,6 @@
-package manticore.dl.syntax.syntax;
+package manticore.dl.syntax;
+
+import manticore.dl.semantics.*;
 
 public class UnknownInequalityException extends RuntimeException {
 	// Extends RuntimeException because if you wrote something with a bad

@@ -2,7 +2,9 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
-import manticore.dl.*;
+import manticore.dl.parser.*;
+import manticore.dl.syntax.*;
+import manticore.dl.semantics.*;
 import manticore.symbolicexecution.*;
 import manticore.matlabsimulationkit.*;
 import manticore.matlabsamplingkit.*;
@@ -28,8 +30,8 @@ class Manticore {
 		// Try to parse the input file
 		try {
 			FileReader inputReader = new FileReader( args[0] );
-			Lexer fileLexer = new Lexer( inputReader );
-			YYParser fileParser = new YYParser( fileLexer );
+			dLLexer filedLLexer = new dLLexer( inputReader );
+			dLParser fileParser = new dLParser( filedLLexer );
 
 			fileParser.parse();
 			System.out.println( "PARSED: " + fileParser.parsedStructure.toKeYmaeraString() );
@@ -220,8 +222,8 @@ class Manticore {
 //		ValuationList valList = null;
 //
 //	        StringReader valuationReader = new StringReader( valuationString );
-//	        Lexer valuationLexer = new Lexer( valuationReader );
-//	        YYParser valuationParser = new YYParser( valuationLexer );
+//	        dLLexer valuationdLLexer = new dLLexer( valuationReader );
+//	        dLParser valuationParser = new dLParser( valuationdLLexer );
 //	        valuationParser.parse();
 //
 //		Interpretation interpretation = new NativeInterpretation();
@@ -251,8 +253,8 @@ class Manticore {
 	//	ValuationList valList = null;
 
 	//        StringReader inreader = new StringReader( input );
-	//        Lexer myLexer = new Lexer( inreader );
-	//        YYParser myParser = new YYParser( myLexer );
+	//        dLLexer mydLLexer = new dLLexer( inreader );
+	//        dLParser myParser = new dLParser( mydLLexer );
 	//        myParser.parse();
 
 	//	//Interpretation interpretation = new NativeInterpretation();
@@ -285,15 +287,15 @@ class Manticore {
 
 		// First the program
 		StringReader reader = new StringReader( parts[0] );
-		Lexer lexer = new Lexer( reader );
-		YYParser parser = new YYParser( lexer );
+		dLLexer lexer = new dLLexer( reader );
+		dLParser parser = new dLParser( lexer );
 		parser.parse();
 		HybridProgram program = (HybridProgram)(parser.parsedStructure);
 
 		// Then the region of interest as a logical formula
 		reader = new StringReader( parts[1] );
-		lexer = new Lexer( reader );
-		parser = new YYParser( lexer );
+		lexer = new dLLexer( reader );
+		parser = new dLParser( lexer );
 		parser.parse();
 		dLFormula domain = (dLFormula)(parser.parsedStructure);
 
@@ -314,8 +316,8 @@ class Manticore {
 		ValuationList valList = null;
 
 	        StringReader inreader = new StringReader( input );
-	        Lexer myLexer = new Lexer( inreader );
-	        YYParser myParser = new YYParser( myLexer );
+	        dLLexer mydLLexer = new dLLexer( inreader );
+	        dLParser myParser = new dLParser( mydLLexer );
 	        myParser.parse();
 
 		Interpretation interpretation = new NativeInterpretation();
@@ -347,8 +349,8 @@ class Manticore {
 
 	//public static void runExecute ( String input ) throws Exception {
 	//        StringReader inreader = new StringReader( input );
-	//        Lexer myLexer = new Lexer( inreader );
-	//        YYParser myParser = new YYParser( myLexer );
+	//        dLLexer mydLLexer = new dLLexer( inreader );
+	//        dLParser myParser = new dLParser( mydLLexer );
 	//        myParser.parse();
 
 	//	Interpretation interpretation = new NativeInterpretation();
@@ -367,8 +369,8 @@ class Manticore {
 
 	public static void runEvaluate( String input ) throws Exception {
 	        StringReader inreader = new StringReader( input );
-	        Lexer myLexer = new Lexer( inreader );
-	        YYParser myParser = new YYParser( myLexer );
+	        dLLexer mydLLexer = new dLLexer( inreader );
+	        dLParser myParser = new dLParser( mydLLexer );
 	        myParser.parse();
 
 		Interpretation interpretation = new NativeInterpretation();
@@ -383,8 +385,8 @@ class Manticore {
 
 	public static dLStructure runParser( String input ) throws Exception {
 	        StringReader inreader = new StringReader( input );
-	        Lexer myLexer = new Lexer( inreader );
-	        YYParser myParser = new YYParser( myLexer );
+	        dLLexer mydLLexer = new dLLexer( inreader );
+	        dLParser myParser = new dLParser( mydLLexer );
 	        myParser.parse();
 
 		if ( myParser.parsedStructure == null ) {

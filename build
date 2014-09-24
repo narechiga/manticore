@@ -3,6 +3,9 @@
 `cd bin; rm -rf *`;
 `mkdir bin/manticore`;
 `mkdir bin/manticore/dl`;
+`mkdir bin/manticore/dl/parser`;
+`mkdir bin/manticore/dl/syntax`;
+`mkdir bin/manticore/dl/semantics`;
 `mkdir bin/manticore/symbolicexecution`;
 `mkdir bin/manticore/matlabkit`;
 `mkdir bin/manticore/matlabsimulationkit`;
@@ -10,16 +13,20 @@
 `mkdir bin/manticore/matlabsamplingkit/lyapunovsearch`;
 
 # Compile
-`cd src/dl; jflex Lexer.lex; bison YYParser.y`;
-`cd src/dl; ./GenerateNativeInterpretation`;
-`cd src; javac *.java dl/*.java symbolicexecution/*.java matlabsimulationkit/*.java matlabsamplingkit/*.java`; #keymaerakit/*.java`;
+`cd src/dl/parser; jflex dLLexer.lex; bison dLParser.y`;
+`cd src/dl/semantics; ./GenerateNativeInterpretation`;
+`cd src; javac *.java dl/parser/*.java dl/syntax/*.java dl/semantics/*.java symbolicexecution/*.java matlabsimulationkit/*.java matlabsamplingkit/*.java`; #keymaerakit/*.java`;
 
 # Organize
 `cp src/matlabsimulationkit/*.m bin/manticore/matlabsimulationkit/`;
 `cp src/matlabkit/*.m bin/manticore/matlabkit/`;
 `cp -R src/matlabsamplingkit/lyapunovsearch/* bin/manticore/matlabsamplingkit/lyapunovsearch/`;
 `mv src/*.class bin;`;
-`mv src/dl/*.class bin/manticore/dl/`;
+
+`mv src/dl/parser/*.class bin/manticore/dl/parser/`;
+`mv src/dl/syntax/*.class bin/manticore/dl/syntax/`;
+`mv src/dl/semantics/*.class bin/manticore/dl/semantics/`;
+
 `mv src/matlabsimulationkit/*.class bin/manticore/matlabsimulationkit/`;
 `mv src/matlabsamplingkit/*.class bin/manticore/matlabsamplingkit/`;
 `mv src/symbolicexecution/*.class bin/manticore/symbolicexecution/`;

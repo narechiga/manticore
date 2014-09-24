@@ -1,6 +1,7 @@
 package manticore.symbolicexecution;
 
-import manticore.dl.*;
+import manticore.dl.syntax.*;
+import manticore.dl.semantics.*;
 import java.util.*;
 import java.lang.*;
 

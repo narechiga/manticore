@@ -1,4 +1,7 @@
-package manticore.dl.parser.parser;
+package manticore.dl.parser;
+
+import manticore.dl.syntax.*;
+import manticore.dl.semantics.*;
 
 import java.util.*;
 

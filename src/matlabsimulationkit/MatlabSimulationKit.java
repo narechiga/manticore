@@ -2,7 +2,9 @@ package manticore.matlabsimulationkit;
 
 import java.io.*;
 import java.util.*;
-import manticore.dl.*;
+import manticore.dl.parser.*;
+import manticore.dl.syntax.*;
+import manticore.dl.semantics.*;
 
 public class MatlabSimulationKit {
 

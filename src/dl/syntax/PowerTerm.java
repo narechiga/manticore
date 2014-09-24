@@ -1,5 +1,7 @@
 package manticore.dl.syntax;
 
+import manticore.dl.semantics.*;
+
 public class PowerTerm extends Term {
 
 	public PowerTerm( Term base, Term exponent ) {

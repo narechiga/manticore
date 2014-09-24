@@ -1,5 +1,7 @@
 package manticore.dl.syntax;
 
+import manticore.dl.semantics.*;
+
 import java.util.*;
 
 public class Real extends Term {

@@ -1,12 +1,14 @@
 
 %{
 	import java.util.*;
+	import manticore.dl.syntax.*;
+	import manticore.dl.semantics.*;
 
 	@SuppressWarnings({"unchecked"})
 %}
 
 %language "Java"
-%define package manticore.dl.parser.parser
+%define package manticore.dl.parser
 %define extends {AbstractdLParser}
 %define parser_class_name {dLParser}
 %define public

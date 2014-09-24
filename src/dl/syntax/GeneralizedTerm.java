@@ -1,5 +1,7 @@
-package manticore.dl.syntax.syntax.*;
+package manticore.dl.syntax;
 
-public abstract class GeneralizedTerm {
+import manticore.dl.semantics.*;
+
+public abstract class GeneralizedTerm extends dLStructure {
 }
 

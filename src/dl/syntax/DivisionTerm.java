@@ -1,5 +1,7 @@
 package manticore.dl.syntax;
 
+import manticore.dl.semantics.*;
+
 public class DivisionTerm extends Term {
 
 	public DivisionTerm ( Term dividend, Term divisor ) {
