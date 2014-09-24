@@ -1,6 +1,6 @@
 package manticore.keymaerakit;
 
-import hephaestos.dl.*;
+import proteus.dl.*;
 import java.util.*;
 
 public class Sequent {

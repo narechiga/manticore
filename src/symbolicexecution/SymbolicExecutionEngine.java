@@ -1,7 +1,7 @@
 package manticore.symbolicexecution;
 
-import hephaestos.dl.syntax.*;
-import hephaestos.dl.semantics.*;
+import proteus.dl.syntax.*;
+import proteus.dl.semantics.*;
 import java.util.*;
 
 public class SymbolicExecutionEngine {

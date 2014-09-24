@@ -2,9 +2,9 @@ package manticore.matlabsimulationkit;
 
 import java.io.*;
 import java.util.*;
-import hephaestos.dl.parser.*;
-import hephaestos.dl.syntax.*;
-import hephaestos.dl.semantics.*;
+import proteus.dl.parser.*;
+import proteus.dl.syntax.*;
+import proteus.dl.semantics.*;
 
 public class MatlabSimulationKit {
 
