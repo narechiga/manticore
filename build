@@ -1,11 +1,24 @@
 #!/usr/bin/perl
 
+use FindBin;
+
+$ENV{"MANTICORE2"} = "$FindBin::Bin";
+$ENV{"MATLABKIT"} = "manticore/matlabkit";
+$ENV{"SYMBOLICEXECUTION"} = "manticore/symbolicexecution";
+$ENV{"MATLABSAMPLINGKIT"} = "manticore/matlabsamplingkit";
+$ENV{"MATLABSIMULATIONKIT"} = "manticore/matlabsimulationkit";
+$ENV{"DL"} = "manticore/dl";
+$ENV{"HEPHAESTOS"} = "/home/nikos/Programs/hephaestos";
+
 `cd bin; rm -rf *`;
 `mkdir bin/manticore`;
-`mkdir bin/manticore/dl`;
-`mkdir bin/manticore/dl/parser`;
-`mkdir bin/manticore/dl/syntax`;
-`mkdir bin/manticore/dl/semantics`;
+
+`mkdir bin/hephaestos`;
+`mkdir bin/hephaestos/dl`;
+`mkdir bin/hephaestos/dl/parser`;
+`mkdir bin/hephaestos/dl/syntax`;
+`mkdir bin/hephaestos/dl/semantics`;
+
 `mkdir bin/manticore/symbolicexecution`;
 `mkdir bin/manticore/matlabkit`;
 `mkdir bin/manticore/matlabsimulationkit`;
@@ -13,9 +26,9 @@
 `mkdir bin/manticore/matlabsamplingkit/lyapunovsearch`;
 
 # Compile
-`cd src/dl/parser; jflex dLLexer.lex; bison dLParser.y`;
-`cd src/dl/semantics; ./GenerateNativeInterpretation`;
-`cd src; javac *.java dl/parser/*.java dl/syntax/*.java dl/semantics/*.java symbolicexecution/*.java matlabsimulationkit/*.java matlabsamplingkit/*.java`; #keymaerakit/*.java`;
+`cd \$HEPHAESTOS/src/dl/parser; jflex dLLexer.lex; bison dLParser.y`;
+`cd \$HEPHAESTOS/src/dl/semantics; ./GenerateNativeInterpretation`;
+`cd src; javac *.java \$HEPHAESTOS/src/dl/parser/*.java \$HEPHAESTOS/src/dl/syntax/*.java \$HEPHAESTOS/src/dl/semantics/*.java symbolicexecution/*.java matlabsimulationkit/*.java matlabsamplingkit/*.java`; #keymaerakit/*.java`;
 
 # Organize
 `cp src/matlabsimulationkit/*.m bin/manticore/matlabsimulationkit/`;
@@ -23,9 +36,9 @@
 `cp -R src/matlabsamplingkit/lyapunovsearch/* bin/manticore/matlabsamplingkit/lyapunovsearch/`;
 `mv src/*.class bin;`;
 
-`mv src/dl/parser/*.class bin/manticore/dl/parser/`;
-`mv src/dl/syntax/*.class bin/manticore/dl/syntax/`;
-`mv src/dl/semantics/*.class bin/manticore/dl/semantics/`;
+`mv \$HEPHAESTOS/src/dl/parser/*.class bin/hephaestos/dl/parser/`;
+`mv \$HEPHAESTOS/src/dl/syntax/*.class bin/hephaestos/dl/syntax/`;
+`mv \$HEPHAESTOS/src/dl/semantics/*.class bin/hephaestos/dl/semantics/`;
 
 `mv src/matlabsimulationkit/*.class bin/manticore/matlabsimulationkit/`;
 `mv src/matlabsamplingkit/*.class bin/manticore/matlabsamplingkit/`;

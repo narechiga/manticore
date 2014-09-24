@@ -2,9 +2,9 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
-import manticore.dl.parser.*;
-import manticore.dl.syntax.*;
-import manticore.dl.semantics.*;
+import hephaestos.dl.parser.*;
+import hephaestos.dl.syntax.*;
+import hephaestos.dl.semantics.*;
 import manticore.symbolicexecution.*;
 import manticore.matlabsimulationkit.*;
 import manticore.matlabsamplingkit.*;

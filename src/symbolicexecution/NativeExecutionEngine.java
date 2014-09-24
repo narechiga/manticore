@@ -1,7 +1,7 @@
 package manticore.symbolicexecution;
 
-import manticore.dl.syntax.*;
-import manticore.dl.semantics.*;
+import hephaestos.dl.syntax.*;
+import hephaestos.dl.semantics.*;
 import java.util.*;
 import java.lang.*;
 

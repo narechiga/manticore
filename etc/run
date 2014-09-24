@@ -14,6 +14,7 @@ $ENV{"SYMBOLICEXECUTION"} = "manticore/symbolicexecution";
 $ENV{"MATLABSAMPLINGKIT"} = "manticore/matlabsamplingkit";
 $ENV{"MATLABSIMULATIONKIT"} = "manticore/matlabsimulationkit";
 $ENV{"DL"} = "manticore/dl";
+$ENV{"HEPHAESTOS"} = "/home/nikos/Programs/hephaestos";
 
 system("java Manticore");
 
