@@ -1,0 +1,401 @@
+package manticore.dl.semantics;
+
+import java.util.*;
+import java.lang.*;
+
+public class NativeInterpretation implements Interpretation {
+
+	// Basic arithmetic
+	protected final Operator addition = new Operator("+");
+	protected final Operator subtraction = new Operator("-");
+	protected final Operator multiplication = new Operator("*");
+	protected final Operator division = new Operator("/");
+	protected final Operator power = new Operator("^");
+
+	// Other arithmetic
+	protected final Operator abs = new Operator("abs");
+	protected final Operator acos = new Operator("acos");
+	protected final Operator asin = new Operator("asin");
+	protected final Operator atan = new Operator("atan");
+	protected final Operator atan2 = new Operator("atan2");
+	protected final Operator cos = new Operator("cos");
+	protected final Operator cosh = new Operator("cosh");
+	protected final Operator exp = new Operator("exp");
+	protected final Operator floor = new Operator("floor");
+	/*log*/protected final Operator ln = new Operator("ln");
+	/*log10*/protected final Operator log = new Operator("log");
+	protected final Operator max = new Operator("max");
+	protected final Operator min = new Operator("min");
+	protected final Operator round = new Operator("round");
+	/*signum*/ protected final Operator sign = new Operator("sign");
+	protected final Operator sin = new Operator("sin");
+	protected final Operator sinh = new Operator("sinh");
+	protected final Operator sqrt = new Operator("sqrt");
+	protected final Operator tan = new Operator("tan");
+	protected final Operator tanh = new Operator("tanh");
+
+
+
+
+	// Comparison logic
+	protected final Operator gt = new Operator(">");
+	protected final Operator ge = new Operator(">=");
+	protected final Operator lt = new Operator("<");
+	protected final Operator le = new Operator("<=");
+	protected final Operator eq = new Operator("=");
+
+
+
+
+	public NativeInterpretation () {
+	}
+	
+	public Real evaluateTerm( Term thisTerm, Valuation valuation) throws Exception {
+		Real result = null;
+		
+		if ( thisTerm instanceof Real ) {
+
+			try {
+				result = (Real)thisTerm;
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm instanceof Real )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm instanceof RealVariable ) {
+
+			try {
+				result = (valuation.get( (RealVariable)thisTerm ));
+
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm instanceof RealVariable )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( addition ) ) {
+
+			try {
+				result = Real.add(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ),
+						evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( addition ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( subtraction ) ) {
+
+			try {
+				result = Real.subtract(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ),
+						evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( subtraction ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( multiplication ) ) {
+
+			try {
+				result = Real.multiply(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ),
+						evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( multiplication ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( division ) ) {
+
+			try {
+				result = Real.divide(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ),
+						evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( division ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( power ) ) {
+
+			try {
+				result = Real.power(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ), 
+					evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( power ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( abs ) ) {
+
+			try {
+				result = Real.abs(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ), 
+					evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( abs ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( acos ) ) {
+
+			try {
+				result = Real.acos(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ), 
+					evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( acos ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( asin ) ) {
+
+			try {
+				result = Real.asin(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ), 
+					evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( asin ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( atan ) ) {
+
+			try {
+				result = Real.atan(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ), 
+					evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( atan ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( atan2 ) ) {
+
+			try {
+				result = Real.atan2(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ), 
+					evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( atan2 ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( cos ) ) {
+
+			try {
+				result = Real.cos(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ), 
+					evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( cos ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( cosh ) ) {
+
+			try {
+				result = Real.cosh(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ), 
+					evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( cosh ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( exp ) ) {
+
+			try {
+				result = Real.exp(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ), 
+					evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( exp ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( floor ) ) {
+
+			try {
+				result = Real.floor(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ), 
+					evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( floor ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( ln ) ) {
+
+			try {
+				result = Real.log(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ), 
+					evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( floor ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( : ) ) {
+
+			try {
+				result = Real.power(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ), 
+					evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( power ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( power ) ) {
+
+			try {
+				result = Real.power(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ), 
+					evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( power ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( power ) ) {
+
+			try {
+				result = Real.power(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ), 
+					evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( power ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( power ) ) {
+
+			try {
+				result = Real.power(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ), 
+					evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( power ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( power ) ) {
+
+			try {
+				result = Real.power(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ), 
+					evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( power ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( power ) ) {
+
+			try {
+				result = Real.power(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ), 
+					evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( power ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( power ) ) {
+
+			try {
+				result = Real.power(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ), 
+					evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( power ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( power ) ) {
+
+			try {
+				result = Real.power(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ), 
+					evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( power ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else if ( thisTerm.operator.equals( power ) ) {
+
+			try {
+				result = Real.power(evaluateTerm( (Term)(thisTerm.children.get(0)), valuation ), 
+					evaluateTerm( (Term)(thisTerm.children.get(1)), valuation ));
+			} catch ( Exception e ) {
+				System.err.println("Exception encountered in ( thisTerm.operator.equals( power ) )");
+				System.err.println(e);
+				e.printStackTrace();
+			}
+
+		} else {
+			throw new Exception(
+				"This arithmetic operator is not implemented in the native interpretation: "
+				+ thisTerm.getOperator().toString() );
+		}
+
+		return result;
+	}
+
+	public Boolean evaluateFormula( dLFormula thisFormula, Valuation valuation ) throws Exception {
+
+		if ( thisFormula instanceof TrueFormula ) {
+			return true;
+		} else if ( thisFormula instanceof FalseFormula ) {
+			return false;
+		} else if ( thisFormula instanceof ComparisonFormula ) {
+
+		/**/	if ( thisFormula.getOperator().equals( gt ) ) {
+		/**/		return ( (evaluateTerm( ((ComparisonFormula)thisFormula).getLHS(), valuation ).toDouble())
+		/**/   		> (evaluateTerm( ((ComparisonFormula)thisFormula).getRHS(), valuation ) ).toDouble());
+		/**/	} else if ( thisFormula.getOperator().equals( ge ) ) {
+		/**/		return ( (evaluateTerm( ((ComparisonFormula)thisFormula).getLHS(), valuation ).toDouble()) 
+		/**/   		>= (evaluateTerm( ((ComparisonFormula)thisFormula).getRHS(), valuation ) ).toDouble());
+		/**/	}else if ( thisFormula.getOperator().equals( lt ) ) {
+		/**/		return ( (evaluateTerm( ((ComparisonFormula)thisFormula).getLHS(), valuation ).toDouble())
+		/**/   		< (evaluateTerm( ((ComparisonFormula)thisFormula).getRHS(), valuation ) ).toDouble());
+		/**/	}else if ( thisFormula.getOperator().equals( le ) ) {
+		/**/		return ( (evaluateTerm( ((ComparisonFormula)thisFormula).getLHS(), valuation ).toDouble())
+		/**/   		<= (evaluateTerm( ((ComparisonFormula)thisFormula).getRHS(), valuation ) ).toDouble());
+		/**/	}else if ( thisFormula.getOperator().equals( eq ) ) {
+		/**/		return ( (evaluateTerm( ((ComparisonFormula)thisFormula).getLHS(), valuation ).toDouble())
+		/**/   		== (evaluateTerm( ((ComparisonFormula)thisFormula).getRHS(), valuation ) ).toDouble());
+		/**/	} else {
+		/**/		throw new Exception(
+		/**/   		"This comparison operator is not implemented in the native interpretation: " 
+		/**/   		+ thisFormula.getOperator() );
+		/**/	}
+
+		} else if ( thisFormula instanceof NotFormula ) {
+			return (! evaluateFormula( ((NotFormula)thisFormula).getChild(), valuation ) );
+		} else if ( thisFormula instanceof AndFormula ) {
+			return (evaluateFormula( ((AndFormula)thisFormula).getLHS(), valuation ) 
+				&& evaluateFormula( ((AndFormula)thisFormula).getRHS(), valuation ));
+		} else if ( thisFormula instanceof OrFormula ) {
+			return (evaluateFormula( ((OrFormula)thisFormula).getLHS(), valuation ) 
+				|| evaluateFormula( ((OrFormula)thisFormula).getRHS(), valuation ));
+		} else if ( thisFormula instanceof ImpliesFormula ) {
+			return ( (! evaluateFormula( ((ImpliesFormula)thisFormula).getAntecedent(), valuation )) 
+				|| evaluateFormula( ((ImpliesFormula)thisFormula).getSuccedent(), valuation ) );
+		} else if ( thisFormula instanceof IffFormula ) {
+			return ( ( (! evaluateFormula( ((IffFormula)thisFormula).getAntecedent(), valuation )) 
+					|| evaluateFormula( ((IffFormula)thisFormula).getSuccedent(), valuation ) )
+				&& ( (! evaluateFormula( ((IffFormula)thisFormula).getSuccedent(), valuation )) 
+					|| evaluateFormula( ((IffFormula)thisFormula).getAntecedent(), valuation ) ) );
+		} else {
+			throw new Exception(
+				"This logical operator is not implemented in the native interpretation: " 
+				+ thisFormula.getOperator() );
+		}
+
+	}
+}
