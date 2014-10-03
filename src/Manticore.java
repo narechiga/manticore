@@ -202,6 +202,9 @@ class Manticore {
 				//} else if ( in.hasNext("execute") ) {
 				//	in.skip("execute");
 				//	runExecute( in.nextLine() + "\n");
+				} else if ( in.hasNext("distribute") ) {
+					in.skip("distribute");
+					runDistribute( in.nextLine() + "\n");
 				} else if ( in.hasNext("version") ) {
 					System.out.println("Manticore version 0");
 					in.nextLine();
@@ -281,6 +284,14 @@ class Manticore {
 	//	return toReturn.toString();
 
 	//}
+	
+	public static void runDistribute( String input ) throws Exception {
+		Term termToDistribute = (Term)(dLStructure.parseStructure( input ) );
+		
+		System.out.println("Found term: " + termToDistribute.toKeYmaeraString() );
+		Term distributedTerm = termToDistribute.distributeMultiplication();
+		System.out.println("Distributed term: " + distributedTerm.toKeYmaeraString() );
+	}
 	
 	public static void runSampSearch( String input ) throws Exception {
 		String[] parts = input.split("#");
@@ -417,6 +428,21 @@ class Manticore {
 			System.out.println("Is propositional primitive: " + parsedFormula.isPropositionalPrimitive());
 			System.out.println("=================================================================");
 		}
+
+		if ( myParser.parsedStructure instanceof ContinuousProgram ) {
+			System.out.println("Checking linearity of parsed continuous program... ");
+
+			ContinuousProgram continuousProgram = (ContinuousProgram)(myParser.parsedStructure);
+			ArrayList<RealVariable> stateList = continuousProgram.getStateList();
+
+			System.out.println("State vector is: " + stateList.toString() );
+			if ( continuousProgram.isLinearIn( stateList ) ) {
+				System.out.println("Continuous program is linear, coefficient matrix is");
+				MatrixTerm coefficients = continuousProgram.extractLinearCoefficients( stateList );
+				System.out.println( coefficients.toMatrixFormString() );
+			}
+		}
+
 
 		System.out.println("Continuous blocks================================================");
 		ArrayList<ContinuousProgram> continuousblocks = myParser.parsedStructure.extractContinuousBlocks();
