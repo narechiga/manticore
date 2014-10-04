@@ -1,4 +1,4 @@
-package manticore.invariantgeneration;
+package manticore.invariantsearch;
 
 public class NonlinearDynamicsException extends Exception {
 

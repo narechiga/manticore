@@ -1,4 +1,4 @@
-package manticore.invariantgeneration;
+package manticore.invariantsearch;
 
 public class HybridDynamicsException extends Exception {
 

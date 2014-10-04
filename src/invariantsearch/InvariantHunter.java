@@ -1,9 +1,10 @@
-package manticore.invariantgeneration;
+package manticore.invariantsearch;
 
+import proteus.logicsolvers.abstractions.*;
 import proteus.dl.syntax.*;
 import java.util.*;
 
-public abstract class CandidateInvariantGenerator {
+public abstract class InvariantHunter {
 
 	HybridProgram dynamics;
 
@@ -11,7 +12,8 @@ public abstract class CandidateInvariantGenerator {
 
 	dLFormula includedSet;
 	dLFormula excludedSet;
-	dLFormula parentSet;
+
+	LogicSolverInterface logicSolver;
 
 
 	public abstract Term generateCandidate();
