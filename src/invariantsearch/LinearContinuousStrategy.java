@@ -10,35 +10,64 @@ import java.util.*;
 import proteus.logicsolvers.mathematicakit.*;
 //import proteus.dl.parser.*;
 
-public class LinearContinuousStrategy extends InvariantHunter {
+public class LinearContinuousStrategy extends InvariantGenerator {
 
-	public LinearContinuousStrategy( ContinuousProgram dynamics,
-						dLFormula includedSet, 
-						dLFormula excludedSet, 
-						LogicSolverInterface logicSolver ) 
-							throws NonlinearDynamicsException,
-								HybridDynamicsException {
+// Convenient constructors
+	public LinearContinuousStrategy() {
+		resolution = new Real(0.01);
+		this.logicSolver = new MathematicaInterface();
 
-		this.stateList = dynamics.getStateList();
-
-		if ( !((ContinuousProgram)dynamics).isLinearIn( stateList ) ) {
-			throw new NonlinearDynamicsException("Nonlinear dynamics: " + dynamics.toKeYmaeraString() );
-		}
-
-		this.dynamics = dynamics;
-		this.includedSet = includedSet;
-		this.excludedSet = excludedSet;
-
-		this.logicSolver = logicSolver;
 	}
 
-	public Term generateCandidate() {
+	public LinearContinuousStrategy( Real resolution ) {
+		resolution = this.resolution;
+		this.logicSolver = new MathematicaInterface();
+	}
+
+	public LinearContinuousStrategy( Real resolution, LogicSolverInterface solver ) {
+		resolution = this.resolution;
+		this.logicSolver = solver;
+	}
+
+	public LinearContinuousStrategy( LogicSolverInterface solver ) {
+		resolution = new Real(0.01);
+		this.logicSolver = solver;
+	}
+
+	public ComparisonFormula computeInvariant( HybridProgram dynamics, 
+							dLFormula includedSet, 
+							dLFormula excludedSet ) 
+							throws InvariantNotFoundException {
+
+		if ( !dynamics.isPurelyContinuous() ) {
+			throw new HybridDynamicsException("Program is not continuous: " + dynamics.toKeYmaeraString() );
+		}
+
+		if ( !((ContinuousProgram)dynamics).isLinearIn( dynamics.getStateList() ) ) {
+			throw new NonlinearDynamicsException("Dynamics are not linear: " + dynamics.toKeYmaeraString() );
+		}
+
+		try {
+			Term barrier = generateCandidate( (ContinuousProgram)dynamics, includedSet, excludedSet, dynamics.getStateList() );
+			ComparisonFormula invariant = sliceBarrier( barrier, includedSet, excludedSet, dynamics.getStateList());
+			return invariant;
+
+		} catch ( BarrierSlicingException e ) {
+			throw new InvariantNotFoundException("Could not slice barrier!");
+		}
+	}
+
+	protected Term generateCandidate( ContinuousProgram dynamics, 
+						dLFormula includedSet, 
+						dLFormula excludedSet, 
+						ArrayList<RealVariable> stateList ) {
+
 		MatlabScriptingKit matlab = new MatlabScriptingKit();
 
 
 		Term lyapunovFunction = null;
 		try {
-			String matlabString = matlab.batch( writeLyapunovQueryString() );
+			String matlabString = matlab.batch( writeLyapunovQueryString( dynamics, stateList ) );
 			Scanner matlabScanner = new Scanner( matlabString );
 
 			while ( matlabScanner.hasNext() ) {
@@ -61,7 +90,11 @@ public class LinearContinuousStrategy extends InvariantHunter {
 		return lyapunovFunction;
 	}
 
-	public ComparisonFormula sliceBarrier( Term barrierFunction ) {
+	protected ComparisonFormula sliceBarrier( Term barrierFunction,
+							dLFormula includedSet,
+							dLFormula excludedSet,
+							ArrayList<RealVariable> stateList ) 
+							throws BarrierSlicingException {
 		// Want to find a sublevelset of the Lyapunov or Barrier function that
 		// 	1. excludes the undesired set. (safety)
 		// 	2. includes the desired set, (initialization), and
@@ -90,8 +123,11 @@ public class LinearContinuousStrategy extends InvariantHunter {
 		dLFormula certificate  = certificateUnquantified.universalClosure( stateList );
 		dLFormula safety = safetyUnquantified.universalClosure( stateList );
 
-		// First, try to find a sublevel set that will give us certificate-ness
+		// Add the constraint that c > 0.
+		certificate = new AndFormula( certificate, new ComparisonFormula( ">", c , new Real( 0 ) ) );
 
+		//-------------------------------------------------------------------------------------------------------
+		// First, try to find a sublevel set that will give us certificate-ness
 		LogicSolverResult result = null;
 		try {
 			result = logicSolver.findInstance( certificate );
@@ -100,33 +136,46 @@ public class LinearContinuousStrategy extends InvariantHunter {
 		}
 
 		if ( (result != null ) && result.satisfiability.equals("sat") ) {
-			System.out.println("Hooray! found a sublevelset that satisfies both exclusion and inclusion requirements: " + result.valuation.toMathematicaString() );
+			System.out.println("Found a sublevelset that satisfies both exclusion and inclusion requirements: " + result.valuation.toMathematicaString() );
 
 			return new ComparisonFormula( new Operator("<="), barrierFunction, result.valuation.get( c ) );
 		} else {
-			System.out.println("Could not find one that would work for both, trying to just do safety now" );
+			System.out.println("Could not find an appropriate slice for a safety certificate, trying safety alone.");
+
 		}
+		//-------------------------------------------------------------------------------------------------------
+		// If that fails, try to find the largest sublevelset that still provides safety. Do this by first 
+		// trying to find any sublevelset, and then trying to find one that is 0.01 larger than that one, 
+		// and continuing in this fashion until none is found.
+		boolean keepSearching = true;
+		Real currentValue = new Real(0);
+		while ( keepSearching ) {
+			try {
+				result = logicSolver.findInstance( new AndFormula( safety, new ComparisonFormula(">", c, new AdditionTerm( currentValue, new Real(0.01) )) ));
 
-		try {
-			result = logicSolver.findInstance( safety );
-		} catch ( Exception e ) {
-			e.printStackTrace();
+			} catch ( Exception e ) {
+				e.printStackTrace();
+			}
+
+			if ( (result != null) && (result.satisfiability.equals("sat") ) ) {
+				System.out.println("Found safe slice: " + result.valuation.toMathematicaString() );
+				currentValue = result.valuation.get( c );
+
+			} else {
+				if ( currentValue.equals( new Real( 0 ) ) ) {
+					throw new BarrierSlicingException("Could not find a satisfactory slice of the barrier function!");
+				}
+				keepSearching = false;
+			}
 		}
+		return new ComparisonFormula( new Operator("<="), barrierFunction, currentValue );
+		//-------------------------------------------------------------------------------------------------------
 
-		if ( (result != null) && result.satisfiability.equals("sat") ) {
-			System.out.println("Mildly happy: found a sublevelset that excludes the set to be excluded: " + result.valuation.toMathematicaString() );
-
-			return new ComparisonFormula( new Operator("<="), barrierFunction, result.valuation.get( c ) );
-
-		} else {
-			// TODO: This should definitely not be a runtime exception, because it is not programmer error,
-			// it just doesn't work for this problem instance
-			throw new RuntimeException("Could not find any sublevelset to guarantee anything!");
-		}
 
 	}
 
-	public String writeLyapunovQueryString() {
+
+	public String writeLyapunovQueryString( ContinuousProgram dynamics, ArrayList<RealVariable> stateList ) {
 		// 0. Make a list of the state variables
 		// 1. Declare syms for each free variable, form the state vector
 		// 2. Print out the matrix A
@@ -179,14 +228,11 @@ public class LinearContinuousStrategy extends InvariantHunter {
 
 			ContinuousProgram continuousProgram2 = 
 				(ContinuousProgram)dLStructure.parseStructure("{x' = -10*x + y, y' = 2*x - 11*y}");
+	
+			LinearContinuousStrategy myStrategy2 = new LinearContinuousStrategy();	
 
-			LinearContinuousStrategy myStrategy2 = new LinearContinuousStrategy( continuousProgram2,
-											includedSet,
-											excludedSet,
-											mathematica );
-			Term barrier2 = myStrategy2.generateCandidate();
-			System.out.println( barrier2.toMathematicaString() );
-			System.out.println( myStrategy2.sliceBarrier( barrier2 ).toMathematicaString() );
+			dLFormula finv = myStrategy2.computeInvariant( continuousProgram2, includedSet, excludedSet );
+			System.out.println( finv.toMathematicaString() );
 
 		} catch ( Exception e ) {
 			e.printStackTrace();

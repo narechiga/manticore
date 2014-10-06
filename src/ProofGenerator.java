@@ -57,11 +57,12 @@ class ProofGenerator {
 
 		proofWriter.println("(branch \" Invariant implies safety\"");
 
-		for ( int i = 0; i < numberOfDeclarations - 1; i++ ) {
-			proofWriter.println("\t(rule \"all_right\" (formula \"2\") )");
-			this.nodeNumber = this.nodeNumber + 1;
-			proofWriter.println("\t(builtin \"Update Simplification\" (formula \"2\"))");
-		}
+		//for ( int i = 0; i < numberOfDeclarations - 1; i++ ) {
+		//	proofWriter.println("\t(rule \"all_right\" (formula \"2\") )");
+		//	this.nodeNumber = this.nodeNumber + 1;
+		//	proofWriter.println("\t(builtin \"Update Simplification\" (formula \"2\"))");
+		//}
+		proofWriter.println("\t(builtin \"Update Simplification\" (formula \"2\"))");
 		//Apparently, the last one does not require an accompanying "Update simplification".
 		proofWriter.println("\t(rule \"all_right\" (formula \"2\") )");
 		proofWriter.println("(rule \"imp_right\" (formula \"2\") )");

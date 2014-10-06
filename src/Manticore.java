@@ -6,6 +6,7 @@ import proteus.dl.parser.*;
 import proteus.dl.syntax.*;
 import proteus.dl.semantics.*;
 import manticore.symbolicexecution.*;
+import manticore.invariantsearch.*;
 import manticore.matlabsimulationkit.*;
 import manticore.matlabsamplingkit.*;
 
@@ -54,60 +55,100 @@ class Manticore {
 			}
 
 			System.out.println("With annotations: " + fileParser.annotations);
+			ArrayList<dLFormula> annotations = fileParser.annotations;
 
-			System.out.println("Writing to dynsys.m file...");
-			MatlabSimulationKit.generateDynsysFile( fileParser.parsedStructure.extractFirstHybridProgram(), fileParser.annotations.get(0) );
-			System.out.println("Writing to problemstatement.m file...");
-			MatlabSimulationKit.generateProblemStatementFile( fileParser.annotations, 1);
-
-			// Run, devil run!
-			ProcessBuilder builder = new ProcessBuilder("matlab", "-nodesktop", "-nosplash",
-							"< manticore/matlabsimulationkit/run.m");
-			builder.redirectErrorStream(true);
-			Process process = builder.start();
-			InputStream stdout = process.getInputStream();
-			BufferedReader reader = new BufferedReader (new InputStreamReader(stdout));
-
-
-			
-			String lyapunovCandidate = "";
-			Double levelset = 0.0;
-			String line;
-			Pattern lyapunovCandidatePattern = Pattern.compile("V = (.+)");
-			Pattern levelsetPattern = Pattern.compile("Optimized levelset size: (\\d+.?\\d*)");
-			while ((line = reader.readLine()) != null) {
-				if ( true ) {
-					System.out.println ("Matlab output: " + line);
-				}
-
-				Matcher lyapunovCandidateMatcher = lyapunovCandidatePattern.matcher( line );
-				Matcher levelsetMatcher = levelsetPattern.matcher( line );
-
-				if ( lyapunovCandidateMatcher.find() ) {
-					lyapunovCandidate = lyapunovCandidateMatcher.group(1);
-
-					lyapunovCandidate = lyapunovCandidate.replace("V = ", "");
-					lyapunovCandidate = lyapunovCandidate.replace(">","");
-				}
-
-				if ( levelsetMatcher.find() ) {
-					levelset = Double.parseDouble(levelsetMatcher.group(1));
-				}
+			// Check linearity of the continuous blocks
+			boolean linearity = true;
+			for ( ContinuousProgram thisContinuousBlock : continuousblocks ) {
+				linearity = linearity && thisContinuousBlock.isLinearIn( 
+					new ArrayList<RealVariable> ( thisContinuousBlock.getContinuousVariables() ) );
 			}
 
-			System.out.println("Lyapunov candidate: " + lyapunovCandidate );
-			System.out.println("Level: " + levelset );
+			if ( linearity ) {
+				ArrayList<dLFormula> forwardInvariants = new ArrayList<>();
 
-			System.out.println("Generating partial proof file...");
-			ProofGenerator myPG = new ProofGenerator();
+				InvariantGenerator invGen = new LinearContinuousStrategy();
+				dLFormula finv = new TrueFormula();
+				for ( ContinuousProgram thisContinuousBlock : continuousblocks ) {
 
-			ComparisonFormula invariant = new ComparisonFormula(new Operator("<"),
-								(Term)runParser( lyapunovCandidate ),
-								new Real( levelset.toString() ) );
-			AndFormula finvcut = new AndFormula( invariant, 
-						MatlabSimulationKit.getNonBallPortion( fileParser.annotations.get(0) ) );
+					// Search throuth the annotations, generate an invariant for every invariant that
+					// seems to apply to this
+					for ( dLFormula annotation : annotations ) {
 
-			myPG.applyFirstCut( finvcut.toKeYmaeraString(), args[0] );
+						if ( annotation.getFreeVariables().containsAll( thisContinuousBlock.getContinuousVariables() ) ) {
+							try {
+								finv = invGen.computeInvariant( thisContinuousBlock, new TrueFormula(), new NotFormula( annotation ));
+
+								forwardInvariants.add( finv );
+								System.out.println("found finv at: " + finv.toMathematicaString() );
+							} catch ( InvariantNotFoundException e ) {
+								System.out.println("Could not find an invariant here, moving on");
+							}
+
+						}
+					}
+
+					ProofGenerator myPG = new ProofGenerator();
+					myPG.applyFirstCut( finv.toKeYmaeraString(), args[0] );
+
+
+				}
+
+			} else {
+				// Simulation-driven stuff
+				System.out.println("Writing to dynsys.m file...");
+				MatlabSimulationKit.generateDynsysFile( fileParser.parsedStructure.extractFirstHybridProgram(), fileParser.annotations.get(0) );
+				System.out.println("Writing to problemstatement.m file...");
+				MatlabSimulationKit.generateProblemStatementFile( fileParser.annotations, 1);
+
+				ProcessBuilder builder = new ProcessBuilder("matlab", "-nodesktop", "-nosplash",
+								"< manticore/matlabsimulationkit/run.m");
+				builder.redirectErrorStream(true);
+				Process process = builder.start();
+				InputStream stdout = process.getInputStream();
+				BufferedReader reader = new BufferedReader (new InputStreamReader(stdout));
+
+
+				
+				String lyapunovCandidate = "";
+				Double levelset = 0.0;
+				String line;
+				Pattern lyapunovCandidatePattern = Pattern.compile("V = (.+)");
+				Pattern levelsetPattern = Pattern.compile("Optimized levelset size: (\\d+.?\\d*)");
+				while ((line = reader.readLine()) != null) {
+					if ( true ) {
+						System.out.println ("Matlab output: " + line);
+					}
+
+					Matcher lyapunovCandidateMatcher = lyapunovCandidatePattern.matcher( line );
+					Matcher levelsetMatcher = levelsetPattern.matcher( line );
+
+					if ( lyapunovCandidateMatcher.find() ) {
+						lyapunovCandidate = lyapunovCandidateMatcher.group(1);
+
+						lyapunovCandidate = lyapunovCandidate.replace("V = ", "");
+						lyapunovCandidate = lyapunovCandidate.replace(">","");
+					}
+
+					if ( levelsetMatcher.find() ) {
+						levelset = Double.parseDouble(levelsetMatcher.group(1));
+					}
+				}
+
+				System.out.println("Lyapunov candidate: " + lyapunovCandidate );
+				System.out.println("Level: " + levelset );
+				ComparisonFormula invariant = new ComparisonFormula(new Operator("<"),
+									(Term)runParser( lyapunovCandidate ),
+									new Real( levelset.toString() ) );
+				AndFormula finvcut = new AndFormula( invariant, 
+							MatlabSimulationKit.getNonBallPortion( fileParser.annotations.get(0) ) );
+			
+
+				System.out.println("Generating partial proof file...");
+
+				ProofGenerator myPG = new ProofGenerator();
+				myPG.applyFirstCut( finvcut.toKeYmaeraString(), args[0] );
+			}
 
 		} catch ( Exception e ) {
 			System.err.println( e );
