@@ -5,48 +5,45 @@ import java.util.regex.*;
 
 class ProofGenerator {
 
-	int nodeNumber; // Which KeYmaera likes, for some reason that I do not fully understand
-	int numberOfDeclarations = 0;
+	PrintWriter proofWriter;
+	HybridProgram thisProgram;
 
-	public ProofGenerator() {
-		this.nodeNumber = 1;
-	}
-
-	/* Write the partial proof file */
-	public void applyFirstCut( String hybridInvariant, String inputFilename ){
-		applyFirstCut( hybridInvariant, inputFilename, generateDefaultOutputFilename(inputFilename) );
-	}
-	private String generateDefaultOutputFilename( String inputFilename ) {
-		return inputFilename.concat(".partial.proof");
-	}
-	public void applyFirstCut( String hybridInvariant, String inputFilename, String outputFilename) {
+	public ProofGenerator( String inputFilename ) {
+		String partialProofFileName = inputFilename.concat(".partial.proof");
 
 		try {
 			File inputFile = new File( inputFilename );
 			Scanner inputScanner = new Scanner( inputFile );
 			System.out.println("Will print partial proof file to: " + outputFilename );
-			PrintWriter proofWriter = new PrintWriter( outputFilename );
+			proofWriter = new PrintWriter( outputFilename );
 
-			copyProblemStatement( inputScanner, proofWriter );
+			copyProblemStatement( inputScanner );
+			/*-> fix this function*/applyPreprocessingRules( inputFilename );
 			
-			applyPreprocessingRules( inputFilename, proofWriter );
-			applyHCut( hybridInvariant, proofWriter );
-			proofWriter.println(")");
-			proofWriter.println("}");
-			proofWriter.flush(); proofWriter.close();
-		} catch ( Exception ex ) {
-			ex.printStackTrace();
+		} catch ( Exception e ) {
+			e.printStackTrace();
 		}
 	}
 
-	public void applyHCut( String hybridInvariant, PrintWriter proofWriter ) {
+	public void close() {
+		try {
+			proofWriter.println(")");
+			proofWriter.println("}");
+			proofWriter.flush(); proofWriter.close();
+
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		}
+	}
+
+
+	public void applyFINVCut( dLFormula finv ) {
 		proofWriter.println("(rule \"FInvCut\" (formula \"2\") (inst \"#finvariant="
-					+hybridInvariant+"\"))");
+					+finv+"\"))");
 
 		proofWriter.println("(branch \" Invariant holds\"");
 		for ( int i = 0; i < numberOfDeclarations - 1; i++ ) {
 			proofWriter.println("\t(rule \"all_right\" (formula \"2\") )");
-			this.nodeNumber = this.nodeNumber + 1;
 			proofWriter.println("\t(builtin \"Update Simplification\" (formula \"2\") )");
 		}
 		//Apparently, the last one does not require an accompanying "Update simplification".
@@ -182,7 +179,6 @@ class ProofGenerator {
 		}
 	}
 
-	// TODO: Add in declarations of barrier certs, hybrid cuts, and so on
 	public void copyProblemStatement( Scanner inputScanner, PrintWriter proofWriter ){
 		String thisString = "";
 		boolean skipThis = false;
