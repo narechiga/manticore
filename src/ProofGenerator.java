@@ -2,23 +2,28 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
+import proteus.dl.syntax.*;
 
 class ProofGenerator {
 
 	PrintWriter proofWriter;
 	HybridProgram thisProgram;
+	String inputFilename;
+
+	int numberOfDeclarations = 0;
+	int numberOfAssignments = 0;
 
 	public ProofGenerator( String inputFilename ) {
 		String partialProofFileName = inputFilename.concat(".partial.proof");
 
-		try {
-			File inputFile = new File( inputFilename );
-			Scanner inputScanner = new Scanner( inputFile );
-			System.out.println("Will print partial proof file to: " + outputFilename );
-			proofWriter = new PrintWriter( outputFilename );
+		this.inputFilename = inputFilename;
 
-			copyProblemStatement( inputScanner );
-			/*-> fix this function*/applyPreprocessingRules( inputFilename );
+		try {
+			System.out.println("Will print partial proof file to: " + partialProofFileName );
+			proofWriter = new PrintWriter( partialProofFileName );
+
+			copyProblemStatement();
+			applyPreprocessingRules();
 			
 		} catch ( Exception e ) {
 			e.printStackTrace();
@@ -37,37 +42,35 @@ class ProofGenerator {
 	}
 
 
-	public void applyFINVCut( dLFormula finv ) {
-		proofWriter.println("(rule \"FInvCut\" (formula \"2\") (inst \"#finvariant="
-					+finv+"\"))");
+	public void applyFINVCut( dLFormula finv, HybridProgram program ) {
 
+		Set<RealVariable> programVariables = program.getDynamicVariables();
+
+		proofWriter.println("(rule \"FInvCut\" (formula \"2\") (inst \"#finvariant="
+					+finv.toKeYmaeraString() +"\"))");
+
+		/* --------------------------- Invariance ---------------------------------------------------------------------*/
 		proofWriter.println("(branch \" Invariant holds\"");
-		for ( int i = 0; i < numberOfDeclarations - 1; i++ ) {
+		for ( RealVariable var : programVariables ) {
 			proofWriter.println("\t(rule \"all_right\" (formula \"2\") )");
-			proofWriter.println("\t(builtin \"Update Simplification\" (formula \"2\") )");
 		}
-		//Apparently, the last one does not require an accompanying "Update simplification".
-		proofWriter.println("\t(rule \"all_right\" (formula \"2\") )");
+		proofWriter.println("\t(builtin \"Update Simplification\" (formula \"2\") )");
 		proofWriter.println("\t(rule \"imp_right\" (formula \"2\") )");
 
 		proofWriter.println(")");
 
+		/* --------------------------- Safety ---------------------------------------------------------------------*/
 		proofWriter.println("(branch \" Invariant implies safety\"");
-
-		//for ( int i = 0; i < numberOfDeclarations - 1; i++ ) {
-		//	proofWriter.println("\t(rule \"all_right\" (formula \"2\") )");
-		//	this.nodeNumber = this.nodeNumber + 1;
-		//	proofWriter.println("\t(builtin \"Update Simplification\" (formula \"2\"))");
-		//}
-		proofWriter.println("\t(builtin \"Update Simplification\" (formula \"2\"))");
-		//Apparently, the last one does not require an accompanying "Update simplification".
-		proofWriter.println("\t(rule \"all_right\" (formula \"2\") )");
-		proofWriter.println("(rule \"imp_right\" (formula \"2\") )");
-
+		for ( RealVariable var : programVariables ) {
+			proofWriter.println("\t(rule \"all_right\" (formula \"2\") )");
+		}
+		proofWriter.println("\t(builtin \"Update Simplification\" (formula \"2\") )");
+		proofWriter.println("\t(rule \"imp_right\" (formula \"2\") )");
 		// Totally worth it when it works!
-		proofWriter.println("(builtin \"Eliminate Universal Quantifiers\" (quantifierEliminator \"Mathematica\") )");
+		proofWriter.println("\t(builtin \"Eliminate Universal Quantifiers\" (quantifierEliminator \"Mathematica\") )");
 		proofWriter.println(")");
 
+		/* --------------------------- Remaining states ---------------------------------------------------------------------*/
 		proofWriter.println("(branch \" Remaining states are safe\"");
 		proofWriter.println("\t(builtin \"Update Simplification\" (formula \"1\"))");
 		proofWriter.println("\t(rule \"simplify_form\" (formula \"1\") )");
@@ -75,12 +78,10 @@ class ProofGenerator {
 
 	}
 
-	public void applyPreprocessingRules( String inputFilename, PrintWriter proofWriter ) {
-		System.out.println("TODO: ProofWriter should have access to parser data, to make better decisions");
-		System.out.println("TODO: For that matter, a full-on representation of the proof tree might be in order");
+	public void applyPreprocessingRules() {
 		try{
-		File inputFile = new File( inputFilename );
-		Scanner inputScanner = new Scanner( inputFile );
+			File inputFile = new File( inputFilename );
+			Scanner inputScanner = new Scanner( inputFile );
 		String preamble = "";
 
 		/*
@@ -111,7 +112,7 @@ class ProofGenerator {
 
 		String thisString = "";
 		//int numberOfDeclarations = 0; Already declared as global above
-		int numberOfAssignments = 0;
+		//int numberOfAssignments = 0;
 
 		while ( inputScanner.hasNextLine() ){
 			thisString = inputScanner.nextLine();
@@ -165,9 +166,7 @@ class ProofGenerator {
 			proofWriter.println("(rule \"eliminate_variable_decl\" (formula \"1\"))");
 		}
 
-		//// Get the last one
-		//proofWriter.println("(rule \"eliminate_variable_decl\" (formula \"1\"))");
-
+		// Get the last one
 		for ( int i = 0; i < numberOfAssignments; i++ ) {
 			proofWriter.println("(rule \"modality_split_right\" (formula \"1\") )"); 
 			proofWriter.println( "(rule \"assignment_to_update_right\" (formula \"1\"))");
@@ -179,7 +178,11 @@ class ProofGenerator {
 		}
 	}
 
-	public void copyProblemStatement( Scanner inputScanner, PrintWriter proofWriter ){
+	public void copyProblemStatement(){
+		try {
+			File inputFile = new File( inputFilename );
+			Scanner inputScanner = new Scanner( inputFile );
+
 		String thisString = "";
 		boolean skipThis = false;
 		Pattern annotationStartPattern = Pattern.compile(Pattern.quote("\\annotations"));
@@ -209,9 +212,13 @@ class ProofGenerator {
 			if ( annotationEndMatcher.find() ) {
 				skipThis = false;
 			}
+		}
+
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		}
 
 			
-		}
 	}
 
 

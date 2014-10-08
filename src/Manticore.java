@@ -69,6 +69,8 @@ class Manticore {
 
 				InvariantGenerator invGen = new LinearContinuousStrategy();
 				dLFormula finv = new TrueFormula();
+
+				ProofGenerator myPG = new ProofGenerator( args[0] );
 				for ( ContinuousProgram thisContinuousBlock : continuousblocks ) {
 
 					// Search throuth the annotations, generate an invariant for every invariant that
@@ -81,6 +83,8 @@ class Manticore {
 
 								forwardInvariants.add( finv );
 								System.out.println("found finv at: " + finv.toMathematicaString() );
+								myPG.applyFINVCut( finv, thisContinuousBlock );
+
 							} catch ( InvariantNotFoundException e ) {
 								System.out.println("Could not find an invariant here, moving on");
 							}
@@ -88,8 +92,8 @@ class Manticore {
 						}
 					}
 
-					ProofGenerator myPG = new ProofGenerator();
-					myPG.applyFirstCut( finv.toKeYmaeraString(), args[0] );
+					myPG.close();
+
 
 
 				}
@@ -146,8 +150,9 @@ class Manticore {
 
 				System.out.println("Generating partial proof file...");
 
-				ProofGenerator myPG = new ProofGenerator();
-				myPG.applyFirstCut( finvcut.toKeYmaeraString(), args[0] );
+				ProofGenerator myPG = new ProofGenerator( args[0] );
+				myPG.applyFINVCut( finvcut,
+							fileParser.parsedStructure.extractFirstHybridProgram() );
 			}
 
 		} catch ( Exception e ) {
