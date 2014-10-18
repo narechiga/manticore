@@ -14,12 +14,12 @@ class ProofGenerator {
 	int numberOfAssignments = 0;
 
 	public ProofGenerator( String inputFilename ) {
-		String partialProofFileName = inputFilename.concat(".partial.proof");
+		String partialProofFileName = inputFilename.concat(".partial.proof.key");
 
 		this.inputFilename = inputFilename;
 
 		try {
-			System.out.println("Will print partial proof file to: " + partialProofFileName );
+			//System.out.println("Will print partial proof file to: " + partialProofFileName );
 			proofWriter = new PrintWriter( partialProofFileName );
 
 			copyProblemStatement();
@@ -124,14 +124,14 @@ class ProofGenerator {
 
 			if ( STATE == INIT ) {
 				if ( problemStartMatcher.find() ) {
-					System.out.println("Found beginning of problem statement: "+problemStartMatcher.group() );
+					//System.out.println("Found beginning of problem statement: "+problemStartMatcher.group() );
 					STATE = PROBLEMSTART;
 				}
 			}
 
 			if ( STATE == PROBLEMSTART ) {
 				if ( preambleStartMatcher.find() ) {
-					System.out.println("Found beginning of preamble: "+ preambleStartMatcher.group() );
+					//System.out.println("Found beginning of preamble: "+ preambleStartMatcher.group() );
 					STATE = PREAMBLESTART;
 				}
 			}//end-if: INIT
@@ -139,20 +139,20 @@ class ProofGenerator {
 			if ( STATE == PREAMBLESTART ) {
 				while ( declarationMatcher.find() ) {
 					numberOfDeclarations = numberOfDeclarations + 1;
-					System.out.println("Found declaration: "+declarationMatcher.group() );
+					//System.out.println("Found declaration: "+declarationMatcher.group() );
 				}
 				while ( assignmentMatcher.find() ) {
 					numberOfAssignments = numberOfAssignments + 1;
-					System.out.println("Found assignment: "+assignmentMatcher.group() );
+					//System.out.println("Found assignment: "+assignmentMatcher.group() );
 				}
 				if ( preambleEndMatcher.find () ) {
-					System.out.println("Found end of preamble: "+preambleEndMatcher.group() );
+					//System.out.println("Found end of preamble: "+preambleEndMatcher.group() );
 					STATE = PREAMBLEEND;
 				}
 			}//end-if: PREAMBLESTART
 
 			if ( STATE == PREAMBLEEND ) {
-				System.out.println("Breaking parse loop...");
+				//System.out.println("Breaking parse loop...");
 				break;
 			}//end-if: PREAMBLEEND
 
@@ -202,9 +202,9 @@ class ProofGenerator {
 			// Copy stuff
 			if ( !skipThis ) {
 				proofWriter.println( thisString  );
-				System.out.println("Copying string: "+thisString);
+				//System.out.println("Copying string: "+thisString);
 			} else {
-				System.out.println("Skipping string: "+thisString);
+				//System.out.println("Skipping string: "+thisString);
 
 			}
 

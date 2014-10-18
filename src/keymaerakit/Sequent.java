@@ -1,6 +1,6 @@
 package manticore.keymaerakit;
 
-import proteus.dl.*;
+import proteus.dl.syntax.*;
 import java.util.*;
 
 public class Sequent {
@@ -21,33 +21,33 @@ public class Sequent {
 		return this.succedent;
 	}
 
-	public ArrayList<int> skolemHideAround( int formulaIndex ) {
-		ArrayList<int> removalIndices;
-		dLFormula focusFormula = getFormula( formulaIndex );
-		ArrayList<RealVariable> taintedVariables = focusFormula.getDynamicVariables();
+	//public ArrayList<int> skolemHideAround( int formulaIndex ) {
+	//	ArrayList<int> removalIndices;
+	//	dLFormula focusFormula = getFormula( formulaIndex );
+	//	ArrayList<RealVariable> taintedVariables = focusFormula.getDynamicVariables();
 
-		dLFormula thisFormula;
-		Iterator<dLFormula> formulaIterator = antecedent.iterator();
-		while ( formulaIterator.hasNext() ) {
-			thisFormula = formulaIterator.next();
-			if ( thisFormula != focusFormula
-				&& thisFormula.getFreeVariables().removeAll( taintedVariables ) ) { // true if it changes
-				removalIndices.add( antecedent.indexOf(thisFormula) + 1);
-				formulaIterator.remove();
-			}
-		}
-		Iterator<dLFormula> formulaIterator = succedent.iterator();
-		while ( formulaIterator.hasNext() ) {
-			thisFormula = formulaIterator.next();
-			if ( thisFormula != focusFormula
-				&& thisFormula.getFreeVariables().removeAll( taintedVariables ) ) { // true if it changes
-				removalIndices.add( antecedent.indexOf(thisFormula) + 1 + antecedent.size() );
-				formulaIterator.remove();
-			}
-		}
+	//	dLFormula thisFormula;
+	//	Iterator<dLFormula> formulaIterator = antecedent.iterator();
+	//	while ( formulaIterator.hasNext() ) {
+	//		thisFormula = formulaIterator.next();
+	//		if ( thisFormula != focusFormula
+	//			&& thisFormula.getFreeVariables().removeAll( taintedVariables ) ) { // true if it changes
+	//			removalIndices.add( antecedent.indexOf(thisFormula) + 1);
+	//			formulaIterator.remove();
+	//		}
+	//	}
+	//	Iterator<dLFormula> formulaIterator = succedent.iterator();
+	//	while ( formulaIterator.hasNext() ) {
+	//		thisFormula = formulaIterator.next();
+	//		if ( thisFormula != focusFormula
+	//			&& thisFormula.getFreeVariables().removeAll( taintedVariables ) ) { // true if it changes
+	//			removalIndices.add( antecedent.indexOf(thisFormula) + 1 + antecedent.size() );
+	//			formulaIterator.remove();
+	//		}
+	//	}
 
-		return removalIndices;
-	}
+	//	return removalIndices;
+	//}
 
 	
 	public Sequent clone() {
@@ -56,30 +56,30 @@ public class Sequent {
 
 		Iterator<dLFormula> antecedentIterator = antecedent.iterator();
 		while( antecedentIterator.hasNext() ) {
-			antecedentClone.add( antecedentIterator.next().clone();
+			antecedentClone.add( antecedentIterator.next().clone() );
 		}
 
 		Iterator<dLFormula> succedentIterator = succedent.iterator();
 		while( succedentIterator.hasNext() ) {
-			succedentClone.add( succedentIterator.next().clone();
+			succedentClone.add( succedentIterator.next().clone() );
 		}
 
 		return new Sequent( antecedentClone, succedentClone );
 	}
 
-	public void addToAntecedent( dLFormula ) {
+	public void addToAntecedent( dLFormula newAntecedentFormula ) {
 		// Add it to the beginning. Sorry, because KeYmaera does it this silly way
 		ArrayList<dLFormula> newAntecedent = new ArrayList<dLFormula>();
-		newAntecedent.add(dLFormula);
+		newAntecedent.add( newAntecedentFormula );
 		newAntecedent.addAll( this.antecedent );
 
 		this.antecedent = newAntecedent;
 	}
 
-	public void addToSuccedent( dLFormula ) {
+	public void addToSuccedent( dLFormula newSuccedentFormula ) {
 		// Add it to the beginning. Sorry, because KeYmaera does it this silly way
 		ArrayList<dLFormula> newSuccedent = new ArrayList<dLFormula>();
-		newSuccedent.add(dLFormula);
+		newSuccedent.add( newSuccedentFormula );
 		newSuccedent.addAll( this.succedent );
 
 		this.succedent = newSuccedent;
@@ -93,7 +93,7 @@ public class Sequent {
 		this.succedent.remove( formulaNumber );
 	}
 
-	public void replaceAntecedentFormula( int formulaNumber, dLformula newFormula ) {
+	public void replaceAntecedentFormula( int formulaNumber, dLFormula newFormula ) {
 		this.antecedent.set( formulaNumber, newFormula );
 	}
 

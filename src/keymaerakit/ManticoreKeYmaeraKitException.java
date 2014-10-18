@@ -1,9 +1,8 @@
 package manticore.keymaerakit;
 
 public class ManticoreKeYmaeraKitException extends Exception {
-	putlic ManticoreReasoningException( String message ) {
+
+	public ManticoreKeYmaeraKitException( String message ) {
 		super( message );
 	}
 }
-
-

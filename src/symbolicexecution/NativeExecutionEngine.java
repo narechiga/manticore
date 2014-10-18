@@ -18,6 +18,17 @@ public class NativeExecutionEngine {
 
 	Interpretation interpretation;
 
+//
+	public NativeExecutionEngine () {
+		// Defaults to a NativeInterpretation, because after all this is NativeExecution
+		// and I don't want to have to think about interpretations all the time
+		this.interpretation = new NativeInterpretation();
+		this.iteration = 0;
+		this.maxIterations = 10; // Default
+		lowerBounds = new HashMap<RealVariable, Double>();
+		upperBounds = new HashMap<RealVariable, Double>();
+	}
+
 
 //
 	public NativeExecutionEngine ( Interpretation interpretation ) {
@@ -337,4 +348,4 @@ public class NativeExecutionEngine {
 		return interpretation.evaluateFormula( formula, valuation );
 	}
 
-}
+u

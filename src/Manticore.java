@@ -20,203 +20,21 @@ class Manticore {
 
 		if ( args.length < 1 ) {
 			commandLine();
+
 		} else if ( args.length > 1 ) {
 			System.out.println("Too many arguments.");
 			System.exit(1);
+
 		} else {
 			System.out.println("Input argument is: " + args[0] );
+			TacticalEngine ta = new TacticalEngine();
+			ta.run( args[0] );
 		}
-
-		
-		// Try to parse the input file
-		try {
-			FileReader inputReader = new FileReader( args[0] );
-			dLLexer filedLLexer = new dLLexer( inputReader );
-			dLParser fileParser = new dLParser( filedLLexer );
-
-			fileParser.parse();
-			System.out.println( "PARSED: " + fileParser.parsedStructure.toKeYmaeraString() );
-			System.out.println("Continuous blocks================================================");
-			ArrayList<ContinuousProgram> continuousblocks = fileParser.parsedStructure.extractContinuousBlocks();
-			System.out.println("Continuous blocks found: " + continuousblocks.size() );
-
-			Iterator<ContinuousProgram> cbit = continuousblocks.iterator();
-
-			ContinuousProgram thisBlock;
-			while ( cbit.hasNext() ) {
-				thisBlock = cbit.next();
-
-				System.out.println("_________________________________________________________________");
-				System.out.println("Continuous block:");
-				System.out.println( thisBlock.toKeYmaeraString() );
-				System.out.println("With continuous variables: ");
-				System.out.println( thisBlock.getContinuousVariables() );
-				System.out.println("_________________________________________________________________");
-			}
-
-			System.out.println("With annotations: " + fileParser.annotations);
-			ArrayList<dLFormula> annotations = fileParser.annotations;
-
-			// Check linearity of the continuous blocks
-			boolean linearity = true;
-			for ( ContinuousProgram thisContinuousBlock : continuousblocks ) {
-				linearity = linearity && thisContinuousBlock.isLinearIn( 
-					new ArrayList<RealVariable> ( thisContinuousBlock.getContinuousVariables() ) );
-			}
-
-			if ( linearity ) {
-				ArrayList<dLFormula> forwardInvariants = new ArrayList<>();
-
-				InvariantGenerator invGen = new LinearContinuousStrategy();
-				dLFormula finv = new TrueFormula();
-
-				ProofGenerator myPG = new ProofGenerator( args[0] );
-				for ( ContinuousProgram thisContinuousBlock : continuousblocks ) {
-
-					// Search throuth the annotations, generate an invariant for every invariant that
-					// seems to apply to this
-					for ( dLFormula annotation : annotations ) {
-
-						if ( annotation.getFreeVariables().containsAll( thisContinuousBlock.getContinuousVariables() ) ) {
-							try {
-								finv = invGen.computeInvariant( thisContinuousBlock, new TrueFormula(), new NotFormula( annotation ));
-
-								forwardInvariants.add( finv );
-								System.out.println("found finv at: " + finv.toMathematicaString() );
-								myPG.applyFINVCut( finv, thisContinuousBlock );
-
-							} catch ( InvariantNotFoundException e ) {
-								System.out.println("Could not find an invariant here, moving on");
-							}
-
-						}
-					}
-
-					myPG.close();
-
-
-
-				}
-
-			} else {
-				// Simulation-driven stuff
-				System.out.println("Writing to dynsys.m file...");
-				MatlabSimulationKit.generateDynsysFile( fileParser.parsedStructure.extractFirstHybridProgram(), fileParser.annotations.get(0) );
-				System.out.println("Writing to problemstatement.m file...");
-				MatlabSimulationKit.generateProblemStatementFile( fileParser.annotations, 1);
-
-				ProcessBuilder builder = new ProcessBuilder("matlab", "-nodesktop", "-nosplash",
-								"< manticore/matlabsimulationkit/run.m");
-				builder.redirectErrorStream(true);
-				Process process = builder.start();
-				InputStream stdout = process.getInputStream();
-				BufferedReader reader = new BufferedReader (new InputStreamReader(stdout));
-
-
-				
-				String lyapunovCandidate = "";
-				Double levelset = 0.0;
-				String line;
-				Pattern lyapunovCandidatePattern = Pattern.compile("V = (.+)");
-				Pattern levelsetPattern = Pattern.compile("Optimized levelset size: (\\d+.?\\d*)");
-				while ((line = reader.readLine()) != null) {
-					if ( true ) {
-						System.out.println ("Matlab output: " + line);
-					}
-
-					Matcher lyapunovCandidateMatcher = lyapunovCandidatePattern.matcher( line );
-					Matcher levelsetMatcher = levelsetPattern.matcher( line );
-
-					if ( lyapunovCandidateMatcher.find() ) {
-						lyapunovCandidate = lyapunovCandidateMatcher.group(1);
-
-						lyapunovCandidate = lyapunovCandidate.replace("V = ", "");
-						lyapunovCandidate = lyapunovCandidate.replace(">","");
-					}
-
-					if ( levelsetMatcher.find() ) {
-						levelset = Double.parseDouble(levelsetMatcher.group(1));
-					}
-				}
-
-				System.out.println("Lyapunov candidate: " + lyapunovCandidate );
-				System.out.println("Level: " + levelset );
-				ComparisonFormula invariant = new ComparisonFormula(new Operator("<"),
-									(Term)runParser( lyapunovCandidate ),
-									new Real( levelset.toString() ) );
-				AndFormula finvcut = new AndFormula( invariant, 
-							MatlabSimulationKit.getNonBallPortion( fileParser.annotations.get(0) ) );
-			
-
-				System.out.println("Generating partial proof file...");
-
-				ProofGenerator myPG = new ProofGenerator( args[0] );
-				myPG.applyFINVCut( finvcut,
-							fileParser.parsedStructure.extractFirstHybridProgram() );
-			}
-
-		} catch ( Exception e ) {
-			System.err.println( e );
-		}
-
 
 		System.exit(1);
 
 
 		
-		///* * * Everything below is still in testing! * * */
-		///* Parse the input file */	
-		//Mode myMode = new Mode("M1");
-		//try {
-		//	KeYmaeraParser myParser = new KeYmaeraParser( args[0] );
-
-		//	ArrayList<String> listOfModes = myParser.parseStableModes();
-		//	System.out.println("Stable modes are: ");
-		//	System.out.println(listOfModes);
-		//	
-		//	myParser.parseODEs( myMode );
-		//	myParser.parseGuardList( myMode );
-
-		//	myParser.die();
-		//} catch ( Exception ex ) {
-		//	ex.printStackTrace();
-		//}
-
-		///* Generate an SoS invariant */
-		///* * * Artificially generate a mode, because mode parsing is not yet functional * * */
-		////Mode myMode = new Mode("M1");
-		////myMode.addVariable("x1"); myMode.addVariable("x2"); myMode.addVariable("x3");
-		////myMode.addODE("(-x1^3 - x1*x3^2)*(x3^2 + 1)");
-		////myMode.addODE("(-x2 - x1^2*x2)*(x3^2 + 1)");
-		////myMode.addODE("(-x3 + 3*x1^2*x3)*(x3^2 + 1) - 3*x3");
-
-		////myMode.addVariable("firstVar"); myMode.addVariable("secondVar");
-		////myMode.addODE("secondVar"); myMode.addODE("-firstVar");
-
-		//SoSLyapunovCandidateGenerator candidateGenerator = new SoSLyapunovCandidateGenerator( myMode );
-		//MathematicaCandidateValidator candidateValidator = new MathematicaCandidateValidator( myMode );
-
-		//String lyapCandidate = candidateGenerator.generateCandidate();
-		//System.out.println("A candidate Lyapunov function is: " + lyapCandidate);
-
-		///* Conditions can be checked separately */
-		///*candidateValidator.checkLyapunovPositivity( lyapCandidate );
-		//candidateValidator.checkLyapunovDerivativeNegativity( lyapCandidate );*/
-		///* or all at once */
-
-		//boolean isLyapunov = candidateValidator.checkLyapunov( lyapCandidate );
-		//System.out.println("The result of checking the Lyapunov conditions is: " + isLyapunov);
-
-		//System.out.println("I will now try to find a sublevel set that excludes the mode guard.");
-		//String level = MathematicaSublevelSetFinder.findSublevelSet( myMode, lyapCandidate );
-
-		//String hybridInvariant = "("+lyapCandidate+" - "+level+" < 0 ) & M = " + myMode.modeID;
-		//System.out.println("Hybrid invariant is: " + hybridInvariant);
-
-		//ProofGenerator myProofGenerator = new ProofGenerator();
-		//myProofGenerator.applyFirstCut( hybridInvariant, args[0] );
-		////myProofGenerator.writePartialProof( args[0] );
-		////my
 
 	} 
 
