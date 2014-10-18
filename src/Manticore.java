@@ -317,8 +317,8 @@ class Manticore {
 		System.out.println( myParser.parsedStructure.extractFirstHybridProgram() );
 		System.out.println("=================================================================");
 
-		System.out.println("The variables that occur in this structure are:");
-		System.out.println( myParser.parsedStructure.getVariables() );
+		System.out.println("The free variables that occur in this structure are:");
+		System.out.println( myParser.parsedStructure.getFreeVariables() );
 
 		return myParser.parsedStructure;
 					

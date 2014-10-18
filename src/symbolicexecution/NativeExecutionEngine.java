@@ -348,4 +348,4 @@ public class NativeExecutionEngine {
 		return interpretation.evaluateFormula( formula, valuation );
 	}
 
-u
+}
