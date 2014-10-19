@@ -182,6 +182,13 @@ public class NativeExecutionEngine {
 
 		return returnValuations;
 	}
+//
+	public ProgramTrace runTrace( HybridProgram program, ProgramTrace trace ) throws Exception {
+
+		if ( this.iteration == this.maxIterations ) {
+			return trace;
+		}
+	}
 
 //
 	protected ValuationList runConcreteAssignmentProgram( ConcreteAssignmentProgram program, 

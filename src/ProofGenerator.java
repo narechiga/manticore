@@ -13,6 +13,8 @@ class ProofGenerator {
 	int numberOfDeclarations = 0;
 	int numberOfAssignments = 0;
 
+	int cutsApplied = 0;
+
 	public ProofGenerator( String inputFilename ) {
 		String partialProofFileName = inputFilename.concat(".partial.proof.key");
 
@@ -32,6 +34,11 @@ class ProofGenerator {
 
 	public void close() {
 		try {
+		
+			for ( int i = 0;  i < cutsApplied; i++ ) {	
+				proofWriter.println(")");
+			}
+
 			proofWriter.println(")");
 			proofWriter.println("}");
 			proofWriter.flush(); proofWriter.close();
@@ -74,7 +81,45 @@ class ProofGenerator {
 		proofWriter.println("(branch \" Remaining states are safe\"");
 		proofWriter.println("\t(builtin \"Update Simplification\" (formula \"1\"))");
 		proofWriter.println("\t(rule \"simplify_form\" (formula \"1\") )");
+
+		cutsApplied = cutsApplied + 1;
+
+	}
+
+	public void applyDiffInvCut( dLFormula finv, HybridProgram program ) {
+
+		Set<RealVariable> programVariables = program.getDynamicVariables();
+
+		proofWriter.println("(rule \"FInvCut\" (formula \"2\") (inst \"#finvariant="
+					+finv.toKeYmaeraString() +"\"))");
+
+		/* --------------------------- Invariance ---------------------------------------------------------------------*/
+		proofWriter.println("(branch \" Invariant holds\"");
+		for ( RealVariable var : programVariables ) {
+			proofWriter.println("\t(rule \"all_right\" (formula \"2\") )");
+		}
+		proofWriter.println("\t(builtin \"Update Simplification\" (formula \"2\") )");
+		proofWriter.println("\t(rule \"imp_right\" (formula \"2\") )");
+
 		proofWriter.println(")");
+
+		/* --------------------------- Safety ---------------------------------------------------------------------*/
+		proofWriter.println("(branch \" Invariant implies safety\"");
+		for ( RealVariable var : programVariables ) {
+			proofWriter.println("\t(rule \"all_right\" (formula \"2\") )");
+		}
+		proofWriter.println("\t(builtin \"Update Simplification\" (formula \"2\") )");
+		proofWriter.println("\t(rule \"imp_right\" (formula \"2\") )");
+		// Totally worth it when it works!
+		proofWriter.println("\t(builtin \"Eliminate Universal Quantifiers\" (quantifierEliminator \"Mathematica\") )");
+		proofWriter.println(")");
+
+		/* --------------------------- Remaining states ---------------------------------------------------------------------*/
+		proofWriter.println("(branch \" Remaining states are safe\"");
+		proofWriter.println("\t(builtin \"Update Simplification\" (formula \"1\"))");
+		proofWriter.println("\t(rule \"simplify_form\" (formula \"1\") )");
+
+		cutsApplied = cutsApplied + 1;
 
 	}
 
