@@ -50,26 +50,46 @@ public class TacticalEngine {
 
 	}
 
-	//protected HashMap<dLFormula, List<ContinuousProgram>
-	//	inferAnnotationPairings( 
-	//		HybridProgram thisProgram, 
-	//		List<dLFormula> theseAnnotations ) {
+	protected HashMap<dLFormula,ContinuousProgram> inferAnnotationPairings( HybridProgram thisProgram, List<dLFormula> theseAnnotations ) {
 
-	//	// Look at the purely discrete variables of the hybrid program
-	//	Set<RealVariable> discreteVariables = thisProgram.getPurelyDiscreteVariables();
+		HashMap<dLFormula, ContinuousProgram> annotationBinding = new HashMap<>();
 
-	//	// Go through the annotations, find which mentions which
-	//	HashMap<RealVariable, List<dLFormula>> discreteVariableToAnnotationMatching = new HashMap<>();
+		System.out.println("Warning: inference of annotation pairings is experimental!");
+		// Generate some satisfying instances
+		List<ValuationList> initialConditions;
+		Valuation thisIC;
+		ValuationList theseICs
+		MathematicaInterface solver = new MathematicaInterface();
+		for ( dLFormula annotation : theseAnnotations ) {
+			thisIC = solver.findInstance( annotation );
+			theseICs = new ValuationList();
+			theseICs.add( thisIC );
 
-	//	for ( RealVariable thisDiscreteVariable : discreteVariables ) {
+			initialConditions.add( thseseICs.clone() );
+		}
 
-	//	// Find valuations that satisfy those annotations
-	//	// Run the hybrid program on them
-	//	// Look at the result, and match up the active continuous block with
-	//	// 	the values of active annotation
-	//	// It's a match!
+		// For each Valuation:
+		// 	1. Run the program
+		// 	2. See which annotation is active (evaluates to true)
+		// 	3. Attach the active continuous program to that annotation
+		Interpretation interpretation = new NativeInterpretation();
+		NativeExecutionEngine engine = new NativeExecutionEngine( interpretation );
+		ValuationList endpoints;
+		Valuation endpoint;
+		for ( ValuationList theseICs : initialConditions ) {
+			endpoints = engine.runDiscreteSteps( thisProgram, theseICs );
+			endpoint = endpoints.get( 0 );
 
-	//}
+			for ( dLFormula annotation : annotations ) {
+				if ( interpretation.evaluateFormula( annotation, endpoint ) {
+					annotationBinding.set(annotation, engine.activeContinuousBlock);
+				}
+			}
+		}
+
+		return annotationBinding;
+
+	}
 
 	protected dLFormula linearityTactic( ContinuousProgram thisLinearProgram, dLFormula annotation ) {
 		System.out.println("Searching for finv for linear subsystem: " 
@@ -118,7 +138,16 @@ public class TacticalEngine {
 
 			ArrayList<dLFormula> forwardInvariants = new ArrayList<>();
 			proofGenerator = new ProofGenerator( inputFilename );
-			linearityTactic( continuousBlocks, fileParser.annotations );
+
+			HashMap<dLFormula, HybridProgram> annotationBinding = inferAnnotationPairings( parsedProgram, fileParser.annotations );
+
+			for ( dLFormula annotation : fileParser.annotations ) {
+				linearityTactic( annotationBinding<annotation>, annotation );
+			}
+
+			//linearityTactic( continuousBlocks, fileParser.annotations );
+
+
 			proofGenerator.close();
 
 

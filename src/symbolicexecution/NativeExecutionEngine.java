@@ -15,6 +15,7 @@ public class NativeExecutionEngine {
 	HashMap<RealVariable,Double> lowerBounds;
 	HashMap<RealVariable,Double> upperBounds;
 	
+	ContinuousProgram activeContinuousBlock;
 
 	Interpretation interpretation;
 
@@ -183,14 +184,6 @@ public class NativeExecutionEngine {
 		return returnValuations;
 	}
 //
-	public ProgramTrace runTrace( HybridProgram program, ProgramTrace trace ) throws Exception {
-
-		if ( this.iteration == this.maxIterations ) {
-			return trace;
-		}
-	}
-
-//
 	protected ValuationList runConcreteAssignmentProgram( ConcreteAssignmentProgram program, 
 								ValuationList valuations ) throws Exception {
 		ValuationList returnValuations = valuations.clone();		
@@ -285,6 +278,9 @@ public class NativeExecutionEngine {
 		ExplicitODE thisODE = null;
 		RealVariable thisDerivativeVariable = null;
 		Valuation thisValuation = valuations.get(0); // Remember, there should be only one!
+
+		activeContinuousBlock = program;
+
 		Valuation derivativeValuation = thisValuation.clone();
 
 		while ( odeIterator.hasNext() ) {
@@ -354,5 +350,6 @@ public class NativeExecutionEngine {
 		//evaluates only simple control-style logic, at the current valuation
 		return interpretation.evaluateFormula( formula, valuation );
 	}
+
 
 }
