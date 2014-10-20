@@ -15,7 +15,7 @@ public class NativeExecutionEngine {
 	HashMap<RealVariable,Double> lowerBounds;
 	HashMap<RealVariable,Double> upperBounds;
 	
-	ContinuousProgram activeContinuousBlock;
+	public ContinuousProgram activeContinuousBlock;
 
 	Interpretation interpretation;
 

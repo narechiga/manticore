@@ -1,7 +1,11 @@
 import proteus.dl.syntax.*;
+import proteus.dl.semantics.*;
 import proteus.dl.parser.*;
 import java.util.*;
 import manticore.invariantsearch.*;
+import manticore.symbolicexecution.*;
+import proteus.logicsolvers.mathematicakit.*;
+import proteus.logicsolvers.abstractions.*;
 
 import java.io.*;
 
@@ -50,22 +54,25 @@ public class TacticalEngine {
 
 	}
 
-	protected HashMap<dLFormula,ContinuousProgram> inferAnnotationPairings( HybridProgram thisProgram, List<dLFormula> theseAnnotations ) {
+	protected HashMap<dLFormula,ContinuousProgram> inferAnnotationPairings( HybridProgram thisProgram, List<dLFormula> theseAnnotations ) throws Exception {
 
 		HashMap<dLFormula, ContinuousProgram> annotationBinding = new HashMap<>();
 
 		System.out.println("Warning: inference of annotation pairings is experimental!");
 		// Generate some satisfying instances
-		List<ValuationList> initialConditions;
+		List<ValuationList> initialConditions = new ArrayList<>();
 		Valuation thisIC;
-		ValuationList theseICs
+		ValuationList theseICs;
 		MathematicaInterface solver = new MathematicaInterface();
+		LogicSolverResult thisInstance;
 		for ( dLFormula annotation : theseAnnotations ) {
-			thisIC = solver.findInstance( annotation );
+			thisInstance = solver.findInstance( annotation );
+
+			thisIC = thisInstance.valuation;
 			theseICs = new ValuationList();
 			theseICs.add( thisIC );
 
-			initialConditions.add( thseseICs.clone() );
+			initialConditions.add( theseICs.clone() );
 		}
 
 		// For each Valuation:
@@ -76,13 +83,13 @@ public class TacticalEngine {
 		NativeExecutionEngine engine = new NativeExecutionEngine( interpretation );
 		ValuationList endpoints;
 		Valuation endpoint;
-		for ( ValuationList theseICs : initialConditions ) {
-			endpoints = engine.runDiscreteSteps( thisProgram, theseICs );
+		for ( ValuationList theseInitialConditions : initialConditions ) {
+			endpoints = engine.runDiscreteSteps( thisProgram, theseInitialConditions );
 			endpoint = endpoints.get( 0 );
 
-			for ( dLFormula annotation : annotations ) {
-				if ( interpretation.evaluateFormula( annotation, endpoint ) {
-					annotationBinding.set(annotation, engine.activeContinuousBlock);
+			for ( dLFormula annotation : theseAnnotations ) {
+				if ( interpretation.evaluateFormula( annotation, endpoint ) ) {
+					annotationBinding.put(annotation, engine.activeContinuousBlock);
 				}
 			}
 		}
@@ -139,11 +146,17 @@ public class TacticalEngine {
 			ArrayList<dLFormula> forwardInvariants = new ArrayList<>();
 			proofGenerator = new ProofGenerator( inputFilename );
 
-			HashMap<dLFormula, HybridProgram> annotationBinding = inferAnnotationPairings( parsedProgram, fileParser.annotations );
+			try {
+				HashMap<dLFormula, ContinuousProgram> annotationBinding = inferAnnotationPairings( parsedProgram, fileParser.annotations );
 
-			for ( dLFormula annotation : fileParser.annotations ) {
-				linearityTactic( annotationBinding<annotation>, annotation );
+				for ( dLFormula annotation : fileParser.annotations ) {
+					linearityTactic( annotationBinding.get(annotation), annotation );
+				}
+
+			} catch ( Exception e ) {
+				e.printStackTrace();
 			}
+
 
 			//linearityTactic( continuousBlocks, fileParser.annotations );
 
