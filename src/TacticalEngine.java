@@ -57,6 +57,9 @@ public class TacticalEngine {
 	protected HashMap<dLFormula,ContinuousProgram> inferAnnotationPairings( HybridProgram thisProgram, List<dLFormula> theseAnnotations ) throws Exception {
 
 		HashMap<dLFormula, ContinuousProgram> annotationBinding = new HashMap<>();
+		if ( thisProgram instanceof RepetitionProgram ) {
+			thisProgram = ((RepetitionProgram)thisProgram).getProgram(); // Don't repeat
+		}
 
 		System.out.println("Warning: inference of annotation pairings is experimental!");
 		// Generate some satisfying instances
@@ -84,15 +87,28 @@ public class TacticalEngine {
 		ValuationList endpoints;
 		Valuation endpoint;
 		for ( ValuationList theseInitialConditions : initialConditions ) {
+			System.out.println("Using initial conditions: " + theseInitialConditions );
+
+			// reset the engine
+			engine = new NativeExecutionEngine( interpretation );
 			endpoints = engine.runDiscreteSteps( thisProgram, theseInitialConditions );
 			endpoint = endpoints.get( 0 );
+			System.out.println("Endpoint was: " + endpoint );
 
 			for ( dLFormula annotation : theseAnnotations ) {
 				if ( interpretation.evaluateFormula( annotation, endpoint ) ) {
 					annotationBinding.put(annotation, engine.activeContinuousBlock);
+					System.out.println("(...)Binding annotation: " + annotation.toKeYmaeraString() );
+					System.out.println("(...)To program: " + engine.activeContinuousBlock.toKeYmaeraString() );
+
+					
 				}
 			}
 		}
+
+		System.out.println(annotationBinding.toString() );
+
+
 
 		return annotationBinding;
 
@@ -109,23 +125,41 @@ public class TacticalEngine {
 		Set<RealVariable> positiveTimers = thisLinearProgram.getPositiveTimers();
 
 
-		if ( annotation.getFreeVariables().containsAll( untimedProgram.getContinuousVariables() ) ) {
+		//if ( annotation.getFreeVariables().containsAll( untimedProgram.getContinuousVariables() ) ) {
+			
 			try {
 				finv = invGen.computeInvariant( untimedProgram, new TrueFormula(), 
 								new NotFormula( annotation ));
 
 				System.out.println("found finv at: " + finv.toMathematicaString() );
 
+				List<dLFormula> subannotations = annotation.splitOnAnds();
+				for ( dLFormula sub : subannotations ) {
+					if ( sub.getFreeVariables().removeAll( untimedProgram.getPurelyContinuousVariables() ) ) {
+						// if it changes when we remove, we don't ant this part
+					} else {
+						System.out.println("Attaching: " + sub.toKeYmaeraString() );
+						System.out.println("Because sub free variables are " + sub.getFreeVariables() );
+						System.out.println("and untimed program purely cont variables are " + untimedProgram.getPurelyContinuousVariables() );
+						System.out.println("And equality is: "+ untimedProgram.getPurelyContinuousVariables().equals( sub.getFreeVariables() ));
+						System.out.println("And containment is: "+ sub.getFreeVariables().removeAll( untimedProgram.getPurelyContinuousVariables()) );
+						
+
+						finv = new AndFormula( finv, sub );
+					}
+				}
+
 			} catch ( InvariantNotFoundException e ) {
 				System.out.println("Could not find an invariant here, moving on");
 			}
 
-		}
+		//}
 		
 		for ( RealVariable positiveTimer : positiveTimers ) {
 			//proofGenerator.applyFINVCut( new ComparisonFormula(">=", positiveTimer, new Real(0)), thisLinearProgram );
 			finv = new AndFormula( finv, new ComparisonFormula(">=", positiveTimer, new Real(0)));
 		}
+
 
 		// Should use the full linear program instead of the untimed program, since KeYmaera
 		// actually doesn't know about the untimed program at all, it's just for our analysis

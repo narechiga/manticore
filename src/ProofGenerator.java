@@ -53,7 +53,7 @@ class ProofGenerator {
 
 		Set<RealVariable> programVariables = program.getDynamicVariables();
 
-		proofWriter.println("(rule \"FInvCut\" (formula \"2\") (inst \"#finvariant="
+		proofWriter.println("(rule \"FInvCutStar\" (formula \""+ (2+cutsApplied) +"\") (inst \"#finvariant="
 					+finv.toKeYmaeraString() +"\"))");
 
 		/* --------------------------- Invariance ---------------------------------------------------------------------*/

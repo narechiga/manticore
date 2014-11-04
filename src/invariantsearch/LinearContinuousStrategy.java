@@ -68,6 +68,8 @@ public class LinearContinuousStrategy extends InvariantGenerator {
 		Term lyapunovFunction = null;
 		try {
 			String matlabString = matlab.batch( writeLyapunovQueryString( dynamics, stateList ) );
+			System.out.println("Matlab output is: " + matlabString);
+
 			Scanner matlabScanner = new Scanner( matlabString );
 
 			while ( matlabScanner.hasNext() ) {
@@ -120,6 +122,11 @@ public class LinearContinuousStrategy extends InvariantGenerator {
 		// We will do this for the certificate and for the safety formula, but won't bother to do this
 		// for intiialization, since if the certificate fails we won't care about initialization alone,
 		// only about safety.
+
+		
+		System.out.println("State list is: " + stateList );
+		System.out.println("Unquantified certificate is: " + certificateUnquantified.toKeYmaeraString() );
+
 		dLFormula certificate  = certificateUnquantified.universalClosure( stateList );
 		dLFormula safety = safetyUnquantified.universalClosure( stateList );
 

@@ -155,27 +155,57 @@ public class NativeExecutionEngine {
 //
 	public ValuationList runDiscreteSteps( HybridProgram program, ValuationList valuations ) throws Exception {
 
-		if ( this.iteration == this.maxIterations ) {
-			return valuations;
-		}
+		
+		System.out.println("(... ... ...)");
+		//if ( this.iteration == this.maxIterations ) {
+		//	return valuations;
+		//}
 
 		ValuationList returnValuations;
 
 		if ( program instanceof ConcreteAssignmentProgram ) {
+			System.out.println("(...) Reached Concrete Assignment evaluation...");
+			System.out.println("(...) Incoming ValuationList is: " + valuations );
 			returnValuations = runConcreteAssignmentProgram( (ConcreteAssignmentProgram)program, valuations );
+			System.out.println("(...) Outgoing ValuationList is: " + returnValuations );
+
 		} else if ( program instanceof ArbitraryAssignmentProgram ) {
+			System.out.println("(...) Reached Arbitrary Assignment evaluation...");
+			System.out.println("(...) Incoming ValuationList is: " + valuations );
 			returnValuations = runArbitraryAssignmentProgram( (ArbitraryAssignmentProgram)program, valuations );
+			System.out.println("(...) Outgoing ValuationList is: " + returnValuations );
+
 		} else if ( program instanceof TestProgram ) {
+			System.out.println("(...) Reached Test evaluation...");
+			System.out.println("(...) Incoming ValuationList is: " + valuations );
 			returnValuations = runTestProgram( (TestProgram)program, valuations );
+			System.out.println("(...) Outgoing ValuationList is: " + returnValuations );
+
 		} else if ( program instanceof ContinuousProgram ) {
 			// Evaluate the RHS of the differential equations, but don't actually evolve
+			System.out.println("(...) Reached continuous evaluation...");
+			System.out.println("(...) Incoming ValuationList is: " + valuations );
 			returnValuations = runContinuousProgram( (ContinuousProgram)program, valuations );
+			System.out.println("(...) Outgoing ValuationList is: " + returnValuations );
+
 		} else if ( program instanceof SequenceProgram ) {
+			System.out.println("(...) Reached Sequence evaluation...");
+			System.out.println("(...) Incoming ValuationList is: " + valuations );
 			returnValuations = runSequenceProgram( (SequenceProgram)program, valuations );
+			System.out.println("(...) Outgoing ValuationList is: " + returnValuations );
+
 		} else if ( program instanceof ChoiceProgram ) {
+			System.out.println("(...) Reached Choice evaluation...");
+			System.out.println("(...) Incoming ValuationList is: " + valuations );
 			returnValuations = runChoiceProgram( (ChoiceProgram)program, valuations );
+			System.out.println("(...) Outgoing ValuationList is: " + returnValuations );
+
 		} else if ( program instanceof RepetitionProgram ) {
+			System.out.println("(...) Reached Repetition evaluation...");
+			System.out.println("(...) Incoming ValuationList is: " + valuations );
 			returnValuations = runRepetitionProgram( (RepetitionProgram)program, valuations );
+			System.out.println("(...) Outgoing ValuationList is: " + returnValuations );
+
 		} else {
 			returnValuations = null;
 			throw new Exception("NativeExecutionEngine does not recognize this program type");
@@ -249,7 +279,13 @@ public class NativeExecutionEngine {
 		while ( valuationIterator.hasNext() ) {
 			thisValuation = valuationIterator.next();
 
+			System.out.println("(... ...) In runTestProgram,");
+			System.out.println("(... ...) Formula is: " + program.getFormula().toKeYmaeraString() );
+			System.out.println("(... ...) thisValuation is: " + thisValuation.toMathematicaString() );
+			System.out.println("(... ...) evaluates to: " + evaluateFormula( program.getFormula(), thisValuation )  );
+
 			if ( evaluateFormula( program.getFormula(), thisValuation ) ) {
+
 			    returnValuations.add( thisValuation.clone() );
 			} 
 
@@ -277,23 +313,30 @@ public class NativeExecutionEngine {
 		Real thisRHS = null;
 		ExplicitODE thisODE = null;
 		RealVariable thisDerivativeVariable = null;
-		Valuation thisValuation = valuations.get(0); // Remember, there should be only one!
+		
+		try {
+			Valuation thisValuation = valuations.get(0); // Remember, there should be only one!
 
-		activeContinuousBlock = program;
+			activeContinuousBlock = program;
 
-		Valuation derivativeValuation = thisValuation.clone();
+			Valuation derivativeValuation = thisValuation.clone();
 
-		while ( odeIterator.hasNext() ) {
-				
-			thisODE = odeIterator.next();
-			thisRHS = (Real)(interpretation.evaluateTerm( thisODE.getRHS(), thisValuation ));
-			thisDerivativeVariable = new RealVariable( "_d"+thisODE.getLHS().toString()+"dt_" );
-			derivativeValuation.put( thisDerivativeVariable, thisRHS );
+			while ( odeIterator.hasNext() ) {
+					
+				thisODE = odeIterator.next();
+				thisRHS = (Real)(interpretation.evaluateTerm( thisODE.getRHS(), thisValuation ));
+				thisDerivativeVariable = new RealVariable( "_d"+thisODE.getLHS().toString()+"dt_" );
+				derivativeValuation.put( thisDerivativeVariable, thisRHS );
+			}
+
+			ValuationList returnValuations = new ValuationList();
+			returnValuations.add( derivativeValuation );
+			return returnValuations;
+
+		} catch ( Exception e ) {
+			return new ValuationList();
 		}
 
-		ValuationList returnValuations = new ValuationList();
-		returnValuations.add( derivativeValuation );
-		return returnValuations;
 	}
 
 //
@@ -323,15 +366,16 @@ public class NativeExecutionEngine {
 
 		ValuationList returnValuations;
 	
-		//System.out.println( "Initial states for choice program: " + valuations );
+		System.out.println( "Initial states for choice program: " + valuations );
 		// Run left program
 		returnValuations = runDiscreteSteps( program.getLHS(), valuations );
-		//System.out.println("After choice subthread 1: " + returnValuations );
+		System.out.println("After choice subthread 1: " + returnValuations );
 		
 		// Run right program
-		//System.out.println( "Starting choice subthread 2 with: " + valuations );
+		System.out.println( "Starting choice subthread 2 with: " + valuations );
+		System.out.println("Program to run is: " + program.getRHS().toKeYmaeraString() );
 		returnValuations.addAll( runDiscreteSteps( program.getRHS(), valuations ) );
-		//System.out.println("After choice subthread 2: " + returnValuations );
+		System.out.println("After choice subthread 2: " + returnValuations );
 
 		return returnValuations;
 	}
