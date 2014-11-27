@@ -1,0 +1,46 @@
+:\annotations{
+	x1^2 + x2^2 < 1;
+}
+
+\functions{
+	R sin(R);
+}
+
+\schemaVariables{
+        \formula #postcondition;
+        \formula #safety;
+
+        \program DLFormula #hybridinvariant;
+        \program DLProgram #dlprogram;
+
+}
+
+\rules{
+
+HybridCut {
+        \find( ==> \[ #dlprogram \] #safety )
+        "Invariant holds":
+                \replacewith( ==> #dlUniversalClosure( \[#dlprogram\]true, #hybridinvariant -> \[#dlprogram\] (#hybridinvariant), false) );
+        "Invariant implies safety":
+                \replacewith( ==> #dlUniversalClosure(\[#dlprogram\]true, #hybridinvariant -> #safety, false )); 
+        "Remaining states are safe":
+                \replacewith( ==> \[ (?(! #hybridinvariant); #dlprogram; ?(! (#hybridinvariant)))* \] #safety )
+        \displayname "Hybrid cut"
+};
+
+}
+
+
+\problem{
+	
+	\[
+		R x1, x2;
+	\]
+(
+	( x1^2 + x2^2 < 100 )->
+	\[
+		{ x1' = x2, x2' = -sin(x1) - x2 }
+
+	\] (x1^2 + x2^2 < 1000 )
+)
+}

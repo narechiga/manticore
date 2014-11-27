@@ -1,0 +1,22 @@
+Initialized on 22-Aug-2014
+Generating initial samples...\n
+Generating initial samples took 7.224900e-02 time units
+
+Appending sample constraints...
+Appending sample constraints took 2.372370e-01 time units
+
+Starting iteration 0
+
+Generating candidate...
+Candidate successfully computed
+Generating candidate took 4.388830e-01 time units
+
+Starting optimizer iteration 0
+Checking positivity with optimizer took 1.205524e+00
+Checking negativity with optimizer took 4.995920e-01
+Improving function positivity with optimizer counterexample...
+Appending sample...
+Appending sample constraints...
+Appending sample constraints took 2.124640e-01 time units
+
+Derivative negativity succeeds w.r.t. optimizer

@@ -1,0 +1,225 @@
+\settings {
+"#Proof-Settings-Config-File
+#Wed Aug 20 09:14:52 PDT 2014
+[DLOptions]counterExampleGenerator=Mathematica
+[DecisionProcedure]Exec=
+[DLOptions]termFactoryClass=de.uka.ilkd.key.dl.model.impl.TermFactoryImpl
+[Z3Options]z3ElimExPrefix=true
+[ReduceOptions]qepcadFallback=false
+[MathematicaOptions]eliminateFractions=false
+[TacletTranslation]filename=
+[Libraries]Default=/home/nikos/.keymaera/libraries/acc.key-false, /home/nikos/.keymaera/libraries/deprecatedRules.key-false, /home/nikos/.keymaera/libraries/stringRules.key-false
+[StrategyProperty]USER_TACLETS_OPTIONS_KEY3=USER_TACLETS_OFF
+[DLOptions]BuiltInArithmeticIneqs=OFF
+[ReduceOptions]rlcadpbfvs=DEFAULT
+[ReduceOptions]rlcadaproj=DEFAULT
+[StrategyProperty]USER_TACLETS_OPTIONS_KEY2=USER_TACLETS_OFF
+[StrategyProperty]USER_TACLETS_OPTIONS_KEY1=USER_TACLETS_OFF
+[General]ProofAssistant=true
+[ReduceOptions]rlcadprojonly=DEFAULT
+[DLOptions]reduceOnFreshBranch=false
+[StrategyProperty]LOOP_OPTIONS_KEY=LOOP_INVARIANT
+[ReduceOptions]rlqeqsc=DEFAULT
+[ReduceOptions]rlcadbaseonly=DEFAULT
+[DLOptions]simplifyAfterReduce=false
+[DLOptions]readdQuantifiers=true
+[DecisionProcedure]ActiveRule=_noname_
+[ReduceOptions]rlcadrawformula=DEFAULT
+[DLOptions]applyLocalSimplify=false
+[SimultaneousUpdateSimplifier]DeleteEffectLessLocations=true
+[ReduceOptions]quantifierEliminationMethod=RLQE
+[DLOptions]DiffSat=AUTO
+[DLOptions]simplifier=Mathematica
+[StrategyProperty]QUERY_OPTIONS_KEY=QUERY_NONE
+[StrategyProperty]QUANTIFIERS_OPTIONS_KEY=QUANTIFIERS_NON_SPLITTING_WITH_PROGS
+[DLOptions]simplifyAfterODESolve=false
+[ReduceOptions]rlall=false
+[MetiTarskiOptions]metitBacktracking=true
+[DLOptions]diffSatTimeout=4000
+[DLOptions]linearTimeoutIncreaseFactor=2
+[ReduceOptions]groebnerBasis=false
+[DecisionProcedure]Timeout=600
+[ReduceOptions]rlqesqsc=DEFAULT
+[General]SoundNotification=false
+[StrategyProperty]STOPMODE_OPTIONS_KEY=STOPMODE_DEFAULT
+[Choice]DefaultChoices=initialisation-initialisation\\:disableStaticInitialisation , throughout-throughout\\:toutOn , nullPointerPolicy-nullPointerPolicy\\:nullCheck , javacard-javacard\\:jcOff , transactionAbort-transactionAbort\\:abortOn , transactions-transactions\\:transactionsOn , intRules-intRules\\:arithmeticSemanticsIgnoringOF , programRules-programRules\\:Java
+[ReduceOptions]rlsimpl=ON
+[MathematicaOptions]useParallelize=false
+[ReduceOptions]rlcadextonly=DEFAULT
+[Strategy]MaximumNumberOfAutomaticApplications=2000
+[ReduceOptions]rlanuexsgnopt=DEFAULT
+[ReduceOptions]rlcadpartial=DEFAULT
+[General]UseJML=true
+[DLOptions]useSOS=false
+[MathematicaOptions]useEliminateList=true
+[DecisionProcedure]savefile=false
+[DLOptions]applyGammaRules=ONLY_TO_MODALITIES
+[DecisionProcedure]showSMTResDialog=false
+[TacletTranslation]assignment=11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
+[DLOptions]QEOnlyToTrue=false
+[General]StupidMode=true
+[DLOptions]constantTimeoutIncreaseFactor=0
+[DLOptions]solveODE=true
+[StrategyProperty]METHOD_OPTIONS_KEY=METHOD_EXPAND
+[DLOptions]loopSatTimeout=2000000
+[DLOptions]odeSolver=Mathematica
+[OrbitalOptions]precision=34
+[HOLLightOptions]qeMethod=ProofProducing
+[ReduceOptions]rlqedfs=DEFAULT
+[HOLLightOptions]useSnapshots=false
+[QepcadOptions]qepcadMemoryLimit=2000000
+[ReduceOptions]rlqeheu=DEFAULT
+[ReduceOptions]rlanuexpsremseq=DEFAULT
+[DecisionProcedure]multprovers=Z3\\=true\\:Yices\\=true\\:Simplify\\=true\\:CVC3\\=true
+[ReduceOptions]rlcadfulldimonly=DEFAULT
+[DLOptions]csdpForceInternal=false
+[DLOptions]invariantRule=QUANTIFIERS
+[DLOptions]addRigidFormulas=true
+[General]DnDDirectionSensitive=true
+[DLOptions]simplifyBeforeReduce=false
+[Z3Options]z3Prenex=true
+[DLOptions]applyToModality=false
+[DLOptions]initialTimeout=2000
+[ReduceOptions]rlcadaprojalways=DEFAULT
+[DLOptions]CexFinder=ITER_DEEP
+[DLOptions]useIterativeReduceRule=false
+[Choice]Choices=initialisation-initialisation\\:disableStaticInitialisation-initialisation\\:enableStaticInitialisation , throughout-throughout\\:toutOff-throughout\\:toutOn , nullPointerPolicy-nullPointerPolicy\\:nullCheck-nullPointerPolicy\\:noNullCheck , javacard-javacard\\:jcOff-javacard\\:jcOn , transactionAbort-transactionAbort\\:abortOn-transactionAbort\\:abortOff , transactions-transactions\\:transactionsOff-transactions\\:transactionsOn , intRules-intRules\\:javaSemantics-intRules\\:arithmeticSemanticsIgnoringOF-intRules\\:arithmeticSemanticsCheckingOF , programRules-programRules\\:ODL-programRules\\:Java-programRules\\:dL
+[CohenhormanderOptions]eliminatorMode=DNF
+[DLOptions]percentOfPowersetForIterativeReduce=70
+[hints]used=
+[ReduceOptions]rlcadhongproj=DEFAULT
+[ReduceOptions]rlanuexgcdnormalize=DEFAULT
+[MathematicaOptions]memoryConstraint=-1
+[ReduceOptions]rlcadtrimtree=DEFAULT
+[DLOptions]groebnerBasisCalculator=Mathematica
+[ReduceOptions]rlcadfac=DEFAULT
+[Strategy]Timeout=-1
+[DLOptions]applyGlobalReduce=true
+[OrbitalOptions]representation=big
+[SimultaneousUpdateSimplifier]EagerSimplification=true
+[TacletTranslation]maxGeneric=2
+[DLOptions]ibcOnlyToFO=true
+[DLOptions]TracerStat=OFF
+[TacletTranslation]saveToFile=false
+[DLOptions]BuiltInArithmetic=OFF
+[DLOptions]counterexampleTest=ON
+[StrategyProperty]GOALCHOOSER_OPTIONS_KEY=GOALCHOOSER_DEFAULT
+[DecisionProcedure]WaitForAllProvers=false
+[DLOptions]useODEIndFinMethods=false
+[StrategyProperty]NON_LIN_ARITH_OPTIONS_KEY=NON_LIN_ARITH_NONE
+[ReduceOptions]rlcadisoallroots=DEFAULT
+[ReduceOptions]rlnzden=ON
+[MathematicaOptions]quantifierEliminationMethod=REDUCE
+[StrategyProperty]SPLITTING_OPTIONS_KEY=SPLITTING_DELAYED
+[ReduceOptions]eliminateFractions=false
+[DecisionProcedure]WeakenSMTTranslation=false
+[ReduceOptions]rlcadte=DEFAULT
+[DLOptions]ignoreAnnotations=false
+[StrategyProperty]VBT_PHASE=VBT_SYM_EX
+[DLOptions]sosChecker=HOL Light
+[General]UseOCL=false
+[OrbitalOptions]sparsePolynomials=true
+[ReduceOptions]rlposden=DEFAULT
+[DLOptions]simplifyTimeout=0
+[Strategy]ActiveStrategy=DLStrategy
+[DLOptions]usePowersetIterativeReduce=true
+[DLOptions]quadricTimeoutIncreaseFactor=0
+[DLOptions]FOStrategy=LAZY
+[ReduceOptions]rlqepnf=DEFAULT
+[DLOptions]applyLocalReduce=OFF
+[DLOptions]quantifierEliminator=Mathematica
+"
+}
+
+
+
+
+\functions{
+	\external R Sin(R);
+}
+
+\schemaVariables{
+        \formula #postcondition;
+        \formula #safety;
+
+        \program DLFormula #hybridinvariant;
+        \program DLProgram #dlprogram;
+
+}
+
+\rules{
+
+HybridCut {
+        \find( ==> \[ #dlprogram \] #safety )
+        "Invariant holds":
+                \replacewith( ==> #dlUniversalClosure( \[#dlprogram\]true, #hybridinvariant -> \[#dlprogram\] (#hybridinvariant), false) );
+        "Invariant implies safety":
+                \replacewith( ==> #dlUniversalClosure(\[#dlprogram\]true, #hybridinvariant -> #safety, false )); 
+        "Remaining states are safe":
+                \replacewith( !#hybridinvariant ==> \[ (#dlprogram; ?(! (#hybridinvariant)))* \] #safety )
+        \displayname "Hybrid cut"
+};
+
+}
+
+
+\problem {
+\[
+  (R x1) ;
+    (R x2)
+  \] (   ((((x1) ^ (2)) + ((x2) ^ (2))) <  (100))
+      -> (\[
+            {(x1') = (x2), (x2') = ((-(Sin(x1))) - (x2))}
+            \] ((((x1) ^ (2)) + ((x2) ^ (2))) <  (1000))))
+
+}
+
+\proof {
+(keyLog "0" (keyUser "nikos" ) (keyVersion "7be9eec3f514d59dbacb33a82348b5180e723058"))
+
+(autoModeTime "0")
+
+(nodes "24")
+
+(branches "4")
+
+(interactiveSteps "15")
+
+(branch "dummy ID"
+(rule "modality_split_right" (formula "1") (userinteraction) (quantifierEliminator "Mathematica") (nodenum "774"))
+(rule "eliminate_variable_decl" (formula "1") (userinteraction) (quantifierEliminator "Mathematica") (nodenum "787"))
+(rule "eliminate_variable_decl" (formula "1") (userinteraction) (quantifierEliminator "Mathematica") (nodenum "800"))
+(rule "imp_right" (formula "1") (userinteraction) (quantifierEliminator "Mathematica") (nodenum "813"))
+(rule "HybridCut" (formula "2") (inst "#hybridinvariant=((((99.6721) * ((x1) ^ (2))) + (((43.2267) * (x1)) * (x2))) + ((94.9209) * ((x2) ^ (2)))) < (61.197929)") (userinteraction) (quantifierEliminator "Mathematica") (nodenum "835"))
+(branch " Invariant holds"
+   (rule "all_right" (formula "2") (inst "skC=x2_2") (userinteraction) (quantifierEliminator "Mathematica") (nodenum "883"))
+   (builtin "Update Simplification" (formula "2") (nodenum "897"))
+   (rule "all_right" (formula "2") (inst "skC=x1_2") (userinteraction) (quantifierEliminator "Mathematica") (nodenum "917"))
+   (rule "imp_right" (formula "2") (userinteraction) (quantifierEliminator "Mathematica") (nodenum "930"))
+   (rule "barriercert_lt" (formula "3") (userinteraction) (quantifierEliminator "Mathematica") (nodenum "1345"))
+   (branch " Invariant Initially Valid"
+      (builtin "Update Simplification" (formula "1") (nodenum "2101"))
+      (builtin "Update Simplification" (formula "4") (nodenum "2125"))
+      (opengoal " true,       99.6721 * (x1_2) ^ 2 + 43.2267 * x1_2 * x2_2     + 94.9209 * (x2_2) ^ 2  <  61.197929,  x1 ^ 2 + x2 ^ 2 <  100 ==>       99.6721 * (x1_2) ^ 2 + 43.2267 * x1_2 * x2_2     + 94.9209 * (x2_2) ^ 2  <  61.197929   ")
+   )
+   (branch " ODE Preserves Invariant"
+      (builtin "Update Simplification" (formula "3") (nodenum "1829"))
+      (rule "hide_left" (formula "1") (userinteraction) (quantifierEliminator "Mathematica") (nodenum "2761"))
+      (rule "hide_right" (formula "2") (userinteraction) (quantifierEliminator "Mathematica") (nodenum "2795"))
+      (opengoal "x1 ^ 2 + x2 ^ 2 <  100 ==>  ")
+   )
+)
+(branch " Invariant implies safety"
+   (rule "all_right" (formula "2") (inst "skC=x2_1") (userinteraction) (quantifierEliminator "Mathematica") (nodenum "954"))
+   (builtin "Update Simplification" (formula "2") (nodenum "968"))
+   (rule "all_right" (formula "2") (inst "skC=x1_1") (userinteraction) (quantifierEliminator "Mathematica") (nodenum "988"))
+   (rule "imp_right" (formula "2") (userinteraction) (quantifierEliminator "Mathematica") (nodenum "1001"))
+   (opengoal "      99.6721 * (x1_1) ^ 2 + 43.2267 * x1_1 * x2_1     + 94.9209 * (x2_1) ^ 2  <  61.197929,  x1 ^ 2 + x2 ^ 2 <  100 ==>  (x1_1) ^ 2 + (x2_1) ^ 2 <  1000   ")
+)
+(branch " Remaining states are safe"
+   (rule "simplify_form" (formula "1") (userinteraction) (quantifierEliminator "Mathematica") (nodenum "868"))
+   (opengoal "      100     * (  996721 * x1 ^ 2 + 432267 * x1 * x2        + 949209 * x2 ^ 2)  >= 61197929,  x1 ^ 2 + x2 ^ 2 <  100 ==>  \\[    ({x1' = x2, x2' = -Sin(x1) - x2} ;      ?!99.6721 * x1 ^ 2 + 43.2267 * x1 * x2 + 94.9209 * x2 ^ 2 < 61.197929)*    \\] x1 ^ 2 + x2 ^ 2 <  1000   ")
+)
+)
+
+}
