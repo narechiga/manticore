@@ -8,12 +8,10 @@ import proteus.logicsolvers.mathematicakit.*;
 import proteus.logicsolvers.abstractions.*;
 
 import java.io.*;
+import java.util.regex.Pattern;
 
 public class TacticalEngine {
 
-	// Holds a "checklist" of which continuous blocks
-	// we have found invariants for
-	HashMap<ContinuousProgram, Boolean> checkList;
 
 	ProofGenerator proofGenerator;
 	
@@ -62,7 +60,7 @@ public class TacticalEngine {
 		}
 
 		System.out.println("Warning: inference of annotation pairings is experimental!");
-		// Generate some satisfying instances
+		// Generate some satisfying instances for each annotation to use as initial conditions
 		List<ValuationList> initialConditions = new ArrayList<>();
 		Valuation thisIC;
 		ValuationList theseICs;
@@ -80,7 +78,7 @@ public class TacticalEngine {
 
 		// For each Valuation:
 		// 	1. Run the program
-		// 	2. See which annotation is active (evaluates to true)
+		// 	2. See which annotation is active (evaluates to true) at the end of program evaluation
 		// 	3. Attach the active continuous program to that annotation
 		Interpretation interpretation = new NativeInterpretation();
 		NativeExecutionEngine engine = new NativeExecutionEngine( interpretation );
@@ -108,8 +106,6 @@ public class TacticalEngine {
 
 		System.out.println(annotationBinding.toString() );
 
-
-
 		return annotationBinding;
 
 	}
@@ -117,6 +113,13 @@ public class TacticalEngine {
 	protected dLFormula linearityTactic( ContinuousProgram thisLinearProgram, dLFormula annotation ) {
 		System.out.println("Searching for finv for linear subsystem: " 
 					+ thisLinearProgram.toKeYmaeraString() );
+
+		// 1. Remove the timers 
+		// 2. Compute an finv using LinearContinuousStrategy
+		// 3. Break down the annotation by conjuncts, extract the ones that only talk about the continuous variables in our mode
+		// 4. Take the conjuncts computed in step three, and them with our computed invariant, and return the conjunction as an finv
+		// 5. Add additional finvs for each timer, saying that it is positive
+		// 6. Apply the finvcut
 
 		dLFormula finv = new TrueFormula();
 		InvariantGenerator invGen = new LinearContinuousStrategy();
@@ -136,7 +139,8 @@ public class TacticalEngine {
 				List<dLFormula> subannotations = annotation.splitOnAnds();
 				for ( dLFormula sub : subannotations ) {
 					if ( sub.getFreeVariables().removeAll( untimedProgram.getPurelyContinuousVariables() ) ) {
-						// if it changes when we remove, we don't ant this part
+						// if the list of free variables changes when we remove continuous variables, we don't want this part
+						// because then it talks about mode variables. we want just the pieces that talk about continuous variables
 					} else {
 						System.out.println("Attaching: " + sub.toKeYmaeraString() );
 						System.out.println("Because sub free variables are " + sub.getFreeVariables() );
@@ -171,13 +175,20 @@ public class TacticalEngine {
 
 	public void run( String inputFilename ) {
 		try {
+			// Run currently does:
+			// 1. Take a filename, parse the problem statement inside ( apparently, WTF why does it do so much )
+			// 2. Initialize the proof generator
+			// 3. Infer the continuous program (strictly one) corresponding to each annotation
+			// 4. For each annotation, apply the linearity tactic to infer an invariant. Note that the linearity tactic
+			// 	for some reason goes ahead and applies the finvcut that it computes, WTF
 
 			dLParser fileParser = parseInput( inputFilename );
 			HybridProgram parsedProgram = fileParser.parsedStructure.extractFirstHybridProgram();
 
 			List<ContinuousProgram> continuousBlocks = fileParser.parsedStructure.extractContinuousBlocks();
 
-			ArrayList<dLFormula> forwardInvariants = new ArrayList<>();
+			// Tentatively commented out; untested
+			//ArrayList<dLFormula> forwardInvariants = new ArrayList<>();
 			proofGenerator = new ProofGenerator( inputFilename );
 
 			try {
@@ -236,60 +247,58 @@ public class TacticalEngine {
 	
 	protected List<dLFormula> simulationTactic( List<ContinuousProgram> continuousBlocks ) {
 		return null;
-			//	// Simulation-driven stuff
-			//	System.out.println("Writing to dynsys.m file...");
-			//	MatlabSimulationKit.generateDynsysFile( fileParser.parsedStructure.extractFirstHybridProgram(), fileParser.annotations.get(0) );
-			//	System.out.println("Writing to problemstatement.m file...");
-			//	MatlabSimulationKit.generateProblemStatementFile( fileParser.annotations, 1);
+	//	// Simulation-driven stuff
+	//	System.out.println("Writing to dynsys.m file...");
+	//	MatlabSimulationKit.generateDynsysFile( fileParser.parsedStructure.extractFirstHybridProgram(), fileParser.annotations.get(0) );
+	//	System.out.println("Writing to problemstatement.m file...");
+	//	MatlabSimulationKit.generateProblemStatementFile( fileParser.annotations, 1);
 
-			//	ProcessBuilder builder = new ProcessBuilder("matlab", "-nodesktop", "-nosplash",
-			//					"< manticore/matlabsimulationkit/run.m");
-			//	builder.redirectErrorStream(true);
-			//	Process process = builder.start();
-			//	InputStream stdout = process.getInputStream();
-			//	BufferedReader reader = new BufferedReader (new InputStreamReader(stdout));
+	//	ProcessBuilder builder = new ProcessBuilder("matlab", "-nodesktop", "-nosplash",
+	//					"< manticore/matlabsimulationkit/run.m");
+	//	builder.redirectErrorStream(true);
+	//	Process process = builder.start();
+	//	InputStream stdout = process.getInputStream();
+	//	BufferedReader reader = new BufferedReader (new InputStreamReader(stdout));
+	//	
+	//	String lyapunovCandidate = "";
+	//	Double levelset = 0.0;
+	//	String line;
+	//	Pattern lyapunovCandidatePattern = Pattern.compile("V = (.+)");
+	//	Pattern levelsetPattern = Pattern.compile("Optimized levelset size: (\\d+.?\\d*)");
+	//	while ((line = reader.readLine()) != null) {
+	//		if ( true ) {
+	//			System.out.println ("Matlab output: " + line);
+	//		}
 
+	//		Matcher lyapunovCandidateMatcher = lyapunovCandidatePattern.matcher( line );
+	//		Matcher levelsetMatcher = levelsetPattern.matcher( line );
 
-			//	
-			//	String lyapunovCandidate = "";
-			//	Double levelset = 0.0;
-			//	String line;
-			//	Pattern lyapunovCandidatePattern = Pattern.compile("V = (.+)");
-			//	Pattern levelsetPattern = Pattern.compile("Optimized levelset size: (\\d+.?\\d*)");
-			//	while ((line = reader.readLine()) != null) {
-			//		if ( true ) {
-			//			System.out.println ("Matlab output: " + line);
-			//		}
+	//		if ( lyapunovCandidateMatcher.find() ) {
+	//			lyapunovCandidate = lyapunovCandidateMatcher.group(1);
 
-			//		Matcher lyapunovCandidateMatcher = lyapunovCandidatePattern.matcher( line );
-			//		Matcher levelsetMatcher = levelsetPattern.matcher( line );
+	//			lyapunovCandidate = lyapunovCandidate.replace("V = ", "");
+	//			lyapunovCandidate = lyapunovCandidate.replace(">","");
+	//		}
 
-			//		if ( lyapunovCandidateMatcher.find() ) {
-			//			lyapunovCandidate = lyapunovCandidateMatcher.group(1);
+	//		if ( levelsetMatcher.find() ) {
+	//			levelset = Double.parseDouble(levelsetMatcher.group(1));
+	//		}
+	//	}
 
-			//			lyapunovCandidate = lyapunovCandidate.replace("V = ", "");
-			//			lyapunovCandidate = lyapunovCandidate.replace(">","");
-			//		}
+	//	System.out.println("Lyapunov candidate: " + lyapunovCandidate );
+	//	System.out.println("Level: " + levelset );
+	//	ComparisonFormula invariant = new ComparisonFormula(new Operator("<"),
+	//						(Term)runParser( lyapunovCandidate ),
+	//						new Real( levelset.toString() ) );
+	//	AndFormula finvcut = new AndFormula( invariant, 
+	//				MatlabSimulationKit.getNonBallPortion( fileParser.annotations.get(0) ) );
+	//	
 
-			//		if ( levelsetMatcher.find() ) {
-			//			levelset = Double.parseDouble(levelsetMatcher.group(1));
-			//		}
-			//	}
+	//	System.out.println("Generating partial proof file...");
 
-			//	System.out.println("Lyapunov candidate: " + lyapunovCandidate );
-			//	System.out.println("Level: " + levelset );
-			//	ComparisonFormula invariant = new ComparisonFormula(new Operator("<"),
-			//						(Term)runParser( lyapunovCandidate ),
-			//						new Real( levelset.toString() ) );
-			//	AndFormula finvcut = new AndFormula( invariant, 
-			//				MatlabSimulationKit.getNonBallPortion( fileParser.annotations.get(0) ) );
-			//
-
-			//	System.out.println("Generating partial proof file...");
-
-			//	ProofGenerator proofGenerator = new ProofGenerator( args[0] );
-			//	proofGenerator.applyFINVCut( finvcut,
-			//				fileParser.parsedStructure.extractFirstHybridProgram() );
+	//	ProofGenerator proofGenerator = new ProofGenerator( args[0] );
+	//	proofGenerator.applyFINVCut( finvcut,
+					//fileParser.parsedStructure.extractFirstHybridProgram() );
 	}
 
 	protected List<dLFormula> sosTactic( List<ContinuousProgram> continuousBlocks ) {

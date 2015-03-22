@@ -86,6 +86,12 @@ class ProofGenerator {
 
 	}
 
+	public void printInvariantComment( dLFormula finv ) {
+
+		proofWriter.println("/* finv is:\n" + finv.toKeYmaeraString() +"\n*/" );
+
+	}
+
 	public void applyDiffInvCut( dLFormula finv, HybridProgram program ) {
 
 		Set<RealVariable> programVariables = program.getDynamicVariables();
@@ -246,7 +252,8 @@ class ProofGenerator {
 
 			// Copy stuff
 			if ( !skipThis ) {
-				proofWriter.println( thisString  );
+				// copy it, but replace our kleene star and arbitrary assignment operators with keymaera's
+				proofWriter.println( thisString.replace("***", "*").replace("**", "*")  );
 				//System.out.println("Copying string: "+thisString);
 			} else {
 				//System.out.println("Skipping string: "+thisString);

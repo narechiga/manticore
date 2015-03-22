@@ -26,15 +26,41 @@ class Manticore {
 			System.exit(1);
 
 		} else {
-			System.out.println("Input argument is: " + args[0] );
-			TacticalEngine ta = new TacticalEngine();
-			ta.run( args[0] );
+			try{
+				//System.out.println("Input argument is: " + args[0] );
+				//ta.run( args[0] );
+
+				TacticalEngine ta = new TacticalEngine();
+				dLParser fileParser = ta.parseInput( args[0] );
+				HybridProgram program = fileParser.parsedStructure.extractFirstHybridProgram();
+				List<dLFormula> annots= fileParser.annotations;
+				dLFormula domain = annots.get(0);
+
+				ProofGenerator proofGenerator = new ProofGenerator( args[0] );
+				
+				// First the program
+				System.out.println("Program is: " + program.toKeYmaeraString() );
+
+				// Then the region of interest as a logical formula
+				System.out.println("Formula is: " + domain.toKeYmaeraString() );
+
+				// and the desired degree of the polynomial template
+				int desiredDegree = 2;
+				System.out.println("Desired degree is: " + desiredDegree );
+
+				ComparisonFormula fInvariant = runSimSearch( program, domain, desiredDegree );
+
+				proofGenerator.printInvariantComment( fInvariant );
+				proofGenerator.close();
+
+
+			} catch ( Exception e ) {
+				System.out.println(e);
+			}
+
 		}
 
 		System.exit(1);
-
-
-		
 
 	} 
 
@@ -60,6 +86,26 @@ class Manticore {
 				} else if ( in.hasNext("sampsearch") ) {
 					in.skip("sampsearch");
 					runSampSearch( in.nextLine() + "\n");
+				} else if ( in.hasNext("simsearch") ) {
+					in.skip("simsearch");
+					String argumentstuff = in.nextLine() + "\n";
+
+					String[] parts = argumentstuff.split("#");
+
+					// First the program
+					HybridProgram program = (HybridProgram)(dLStructure.parseStructure( parts[0] ));
+					System.out.println("Program is: " + program.toKeYmaeraString() );
+
+					// Then the region of interest as a logical formula
+					dLFormula domain = (dLFormula)(dLStructure.parseStructure( parts[1] ));
+					System.out.println("Formula is: " + domain.toKeYmaeraString() );
+
+					// and the desired degree of the polynomial template
+					int desiredDegree = Integer.parseInt( parts[2].trim() );
+					System.out.println("Desired degree is: " + desiredDegree );
+
+					runSimSearch( program, domain, desiredDegree );
+
 				//} else if ( in.hasNext("symsim") ) {
 				//	in.skip("symsim");
 				//	runSymSimulate( in.nextLine() + "\n");
@@ -166,6 +212,7 @@ class Manticore {
 		dLParser parser = new dLParser( lexer );
 		parser.parse();
 		HybridProgram program = (HybridProgram)(parser.parsedStructure);
+		System.out.println("Program is: " + program.toKeYmaeraString() );
 
 		// Then the region of interest as a logical formula
 		reader = new StringReader( parts[1] );
@@ -173,6 +220,7 @@ class Manticore {
 		parser = new dLParser( lexer );
 		parser.parse();
 		dLFormula domain = (dLFormula)(parser.parsedStructure);
+		System.out.println("Formula is: " + domain.toKeYmaeraString() );
 
 		MatlabSamplingKit.generateProblemFile(
 							program,
@@ -186,7 +234,20 @@ class Manticore {
 							);
 	}
 
+	public static ComparisonFormula runSimSearch( HybridProgram program, dLFormula domain, int desiredDegree ) throws Exception {
+
+		// generateDynsysFile
+		MatlabSimulationKit.generateDynsysFile( program, domain );
+		// generateProblemStatementFile
+		ArrayList<dLFormula> annotations = new ArrayList<>();
+		annotations.add( domain );
+		MatlabSimulationKit.generateProblemStatementFile( annotations, desiredDegree );
+		// run it through matlab... matlabSimulationKit shou + ld support this directly!
+		return MatlabSimulationKit.runSimSearch();
+	}
+
 	public static String runSimulate ( String input ) throws Exception {
+		// Used by simsearch, through MatlabSimulationKit
 
 		ValuationList valList = null;
 

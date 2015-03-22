@@ -11,7 +11,7 @@ public class NativeExecutionEngine {
 	int maxIterations;
 	int iteration;
 
-	// bounds
+	// bounds, for random variable stuff
 	HashMap<RealVariable,Double> lowerBounds;
 	HashMap<RealVariable,Double> upperBounds;
 	
@@ -234,6 +234,8 @@ public class NativeExecutionEngine {
 
 		return returnValuations;
 	}
+
+//
 	protected ValuationList runArbitraryAssignmentProgram( ArbitraryAssignmentProgram program, 
 								ValuationList valuations ) throws Exception {
 		ValuationList returnValuations = valuations.clone();		
@@ -345,9 +347,9 @@ public class NativeExecutionEngine {
 
 		ValuationList returnValuations;
 
-		if ( program.getFirstProgram() instanceof ContinuousProgram ) {
-			throw new Exception("Sequential composition after continuous blocks are not currently supported");
-		}
+		//if ( program.getFirstProgram() instanceof ContinuousProgram ) {
+		//	throw new Exception("Sequential composition after continuous blocks are not currently supported");
+		//}
 
 		// Run first step
 		returnValuations = runDiscreteSteps( program.getFirstProgram(), valuations );
@@ -384,9 +386,14 @@ public class NativeExecutionEngine {
 	public ValuationList runRepetitionProgram( RepetitionProgram program,
 							ValuationList valuations ) throws Exception {
 
+
+		System.out.println("NOTE: Normal behavior of * has been suspended in NativeExecutionEngine");
 		this.iteration = this.iteration + 1;
-		SequenceProgram iterate = new SequenceProgram( program.getProgram(), program );
-		return runDiscreteSteps( iterate, valuations );
+		//SequenceProgram iterate = new SequenceProgram( program.getProgram(), program );
+		return runDiscreteSteps( program.getProgram(), valuations );
+
+		//TODO: is it possible to rearrange other code, so that this function can also add the
+		// current valuation to the return list, fully allowing for proper handling of the repetition operator?
 	}
 
 //

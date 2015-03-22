@@ -135,9 +135,10 @@ public class SymbolicExecutionEngine {
 
 		UpdateRuleList returnUpdateRules;
 
-		if ( program.getFirstProgram() instanceof ContinuousProgram ) {
-			throw new Exception("Sequential composition after continuous blocks are not currently supported");
-		}
+		//// Just fuggedaboutit
+		//if ( program.getFirstProgram() instanceof ContinuousProgram ) {
+		//	throw new Exception("Sequential composition after continuous blocks are not currently supported");
+		//}
 
 		// Run first step
 		returnUpdateRules = runDiscreteSteps( program.getFirstProgram(), updateRules );

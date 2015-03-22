@@ -8,7 +8,7 @@
 
 use FindBin;
 
-$ENV{"MANTICORE2"} = "$FindBin::Bin";
+$ENV{"MANTICORE"} = "$FindBin::Bin";
 $ENV{"MATLABKIT"} = "manticore/matlabkit";
 $ENV{"SYMBOLICEXECUTION"} = "manticore/symbolicexecution";
 $ENV{"MATLABSAMPLINGKIT"} = "manticore/matlabsamplingkit";

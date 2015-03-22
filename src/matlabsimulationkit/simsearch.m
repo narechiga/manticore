@@ -54,10 +54,11 @@ while optim_cost<0&&iter<=max_iter
     
     % Perform LMI optimization that creates a P matrix that satisfies the
     % conditions for every trace in the list of traces
-    F = set(P-eye(lenZ)*0.001>0); % + set(P-eye(9)<0);
-    F = F + set(-100<P(:)<100) + set(alph>0);
+    F = [P-eye(lenZ)*0.001>0]; % + [P-eye(9)<0];
+    F = F + [-100<P(:)<100] + [alph>0];
     F = F + linear_constraint_list;
-    diagnostic = solvesdp(F,[], sdpsettings('usex0',1)); % Using [] for cost seems to do a better, faster job.  Need to check answer.
+    %diagnostic = solvesdp(F,[], sdpsettings('usex0',1)); % Using [] for cost seems to do a better, faster job.  Need to check answer.
+    diagnostic = solvesdp(F,[]); % Using [] for cost seems to do a better, faster job.  Need to check answer.
     Pout = double(P);
     
     fprintf('\nAlpha: %f\n',double(alph));
@@ -187,7 +188,7 @@ if true % Solve a semidefinite program to determine maximum levelset size
     % L. Vandenberghe and S. Boyd. Semidefinite programming. SIAM Review,
     % 38(1):49{95, Mar. 1996.
     %
-    F = sos(V-lambda*(X*X'-search_radius^2)-gam) + set(lambda>0);
+    F = sos(V-lambda*(X*X'-search_radius^2)-gam) + [lambda>0];
     [sol,v,Q] = solvesos(F,-gam);
     maxsize = double(gam);
 else % Use the feasible points from the optimizations to determine the maximum levelset size
@@ -386,7 +387,7 @@ if false % Try performing linear program to determin whether new constraint is r
         % constraint is NOT redundant, so add it to the list of constraints.
         % Otherwise, neglect it.
         if double(new_constraint_lhs)<0
-            linear_constraint_list = linear_constraint_list + set(new_constraint_lhs>0);
+            linear_constraint_list = linear_constraint_list + [new_constraint_lhs>0];
         else
             disp('Trace neglected');
         end
@@ -398,7 +399,7 @@ else % Add new trace regardless of whether it is redundant
         Ztemp = replace(Z,X,xtrace(time_ind,:));
         Ztempnext = replace(Z,X,xtrace(time_ind+1,:));
         new_constraint_lhs = Ztemp'*Pindet*Ztemp-Ztempnext'*Pindet*Ztempnext;
-        linear_constraint_list = linear_constraint_list + set(new_constraint_lhs - alph*xtrace(time_ind,:)*xtrace(time_ind,:)'>0);
+        linear_constraint_list = linear_constraint_list + [new_constraint_lhs - alph*xtrace(time_ind,:)*xtrace(time_ind,:)'>0];
     end
         initial_conditions_list = [initial_conditions_list xtrace(1,:)'];
 end

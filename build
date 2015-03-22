@@ -43,7 +43,7 @@ $ENV{"CLASSPATH"} = "/usr/share/java/junit4.jar";
 # Compile
 `cd \$PROTEUS/src/dl/parser; jflex dLLexer.lex; bison dLParser.y`;
 #`cd \$PROTEUS/src/dl/semantics; ./GenerateNativeInterpretation`;
-`cd src; javac *.java \$PROTEUS/src/logicsolvers/abstractions/*.java \$PROTEUS/src/logicsolvers/mathematicakit/*.java \$PROTEUS/src/dl/parser/*.java \$PROTEUS/src/dl/syntax/*.java \$PROTEUS/src/dl/semantics/*.java \$PROTEUS/src/externaltools/matlabscriptingkit/*.java \$PROTEUS/src/tests/*.java symbolicexecution/*.java matlabsimulationkit/*.java matlabsamplingkit/*.java invariantsearch/*.java keymaerakit/*.java`; #keymaerakit/*.java`; \$PROTEUS/src/analytics/*.java 
+`cd src; javac *.java \$PROTEUS/src/logicsolvers/abstractions/*.java \$PROTEUS/src/logicsolvers/mathematicakit/*.java \$PROTEUS/src/dl/parser/*.java \$PROTEUS/src/dl/syntax/*.java \$PROTEUS/src/dl/semantics/*.java \$PROTEUS/src/externaltools/matlabscriptingkit/*.java symbolicexecution/*.java matlabsimulationkit/*.java matlabsamplingkit/*.java invariantsearch/*.java keymaerakit/*.java`; #keymaerakit/*.java`; \$PROTEUS/src/analytics/*.java \$PROTEUS/src/tests/*.java 
 
 # Organize
 `cp src/matlabsimulationkit/*.m bin/manticore/matlabsimulationkit/`;

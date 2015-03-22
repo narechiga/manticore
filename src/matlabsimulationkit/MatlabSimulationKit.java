@@ -2,16 +2,30 @@ package manticore.matlabsimulationkit;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.*;
 import proteus.dl.parser.*;
 import proteus.dl.syntax.*;
 import proteus.dl.semantics.*;
 
 public class MatlabSimulationKit {
 
+	// Command line cuteness
+	public static final String ANSI_RESET = "\u001B[0m";
+        public static final String ANSI_BLACK = "\u001B[30m";
+        public static final String ANSI_RED = "\u001B[31m";
+        public static final String ANSI_GREEN = "\u001B[32m";
+        public static final String ANSI_YELLOW = "\u001B[33m";
+        public static final String ANSI_BLUE = "\u001B[34m";
+        public static final String ANSI_PURPLE = "\u001B[35m";
+        public static final String ANSI_CYAN = "\u001B[36m";
+        public static final String ANSI_WHITE = "\u001B[37m";
+        public static final String ANSI_BOLD = "\u001B[1m";
+
+
 	public static Operator lt = new Operator("<");
 	public static Operator le = new Operator("<=");
 	public static Operator ball = new Operator("ball");
-
+//
 	public static void generateDynsysFile( HybridProgram program, dLFormula annotation ) throws Exception {
 
 		PrintWriter dynsysFile = new PrintWriter("manticore/matlabsimulationkit/dynsys.m");
@@ -57,8 +71,8 @@ public class MatlabSimulationKit {
 		dynsysFile.print("\tcommas = [commas, strfind( valstring, '}') ];\n");
 		dynsysFile.print("\td = [];\n");
 		dynsysFile.print("\tfor i = 1:length(x)\n");
-		dynsysFile.print("\t\td(i) = strfind(valstring, sprintf('_dx%idt_=', i ));\n");
-		dynsysFile.print("\t\td(i) = d(i) + length(num2str(i)) + 7;\n");
+		dynsysFile.print("\t\td(i) = strfind(valstring, sprintf('_dx%idt_ ->', i ));\n");
+		dynsysFile.print("\t\td(i) = d(i) + length(num2str(i)) + 9;\n");
 		dynsysFile.print("\tend\n");
 		dynsysFile.print("\tds = sort(d);\n");
 
@@ -67,15 +81,13 @@ public class MatlabSimulationKit {
 		dynsysFile.print("\t\tdxdt(i) = str2num(valstring(d(i):commas(find(ds == d(i))))  );\n");
 		dynsysFile.print("\tend\n");
 
-
-
 		dynsysFile.println("\tdxdt = transpose(dxdt);\n"							);
 
 		dynsysFile.println("end\n");
 		dynsysFile.close();
 
 	}
-
+//
 	public static String buildValuationFragment( dLFormula annotation ) throws Exception {
 		System.out.println("INFO: buildValuationFragment currently only supports conjunctions of equalities");
 		if ( !isPureConjunction( annotation ) ) {
@@ -109,7 +121,7 @@ public class MatlabSimulationKit {
 		}
 	}
 
-
+//
 	public static double getBallRadius( dLFormula annotation ) throws Exception { 
 		// defaults to a radius of one if there is no ball constraint
 
@@ -130,7 +142,7 @@ public class MatlabSimulationKit {
 		return radius;
 
 	}
-
+//
 	public static ArrayList<RealVariable> getBallVariables( dLFormula annotation ) throws Exception { 
 
 		ArrayList<RealVariable> varList = new ArrayList<RealVariable>();
@@ -163,7 +175,7 @@ public class MatlabSimulationKit {
 		return varList;
 
 	}
-
+//
 	public static dLFormula getNonBallPortion( dLFormula annotation ) throws Exception {
 		//dLFormula nonBallPortion;
 
@@ -190,7 +202,7 @@ public class MatlabSimulationKit {
 
 
 	}
-
+//
 	public static boolean isPureConjunction( dLFormula annotation ) {
 		
 		if ( annotation.isPropositionalPrimitive() ) {
@@ -204,7 +216,7 @@ public class MatlabSimulationKit {
 			return false;
 		}
 	}
-
+//
 	public static boolean containsBall( dLFormula annotation ) {
 		if ( isBall(annotation) ) {
 			return true;
@@ -215,7 +227,7 @@ public class MatlabSimulationKit {
 				|| containsBall(((AndFormula)annotation).getRHS()) );
 		}
 	}
-
+//
 	public static boolean isBall( dLFormula annotation ) {
 
 
@@ -233,7 +245,7 @@ public class MatlabSimulationKit {
 			return false;
 		}
 	}
-
+//
 	public static void generateProblemStatementFile( ArrayList<dLFormula> annotations,
 							int templateDegree ) throws Exception {
 
@@ -310,10 +322,65 @@ public class MatlabSimulationKit {
 
 
 		probFile.close();
-		
-
 	}
 
+	public static ComparisonFormula runSimSearch() {
+		boolean debug = false;
+                // If matlab cannot run, the output string will contain this error message
+                ComparisonFormula invariant = null;
+                String lyapunovCandidate = "nothing";
+                Double levelset = -1.0;
+                try {
+                        ProcessBuilder builder = new ProcessBuilder("matlab",
+                                                                "-nodesktop",
+                                                                "-nosplash",
+                                                                "< " + "manticore\\/matlabsimulationkit\\/run.m" );
+                        builder.redirectErrorStream(true);
+                        Process process = builder.start();
+                        InputStream is = process.getInputStream();
+                        BufferedReader reader = new BufferedReader (new InputStreamReader(is));
+
+                        String line;
+			Pattern lyapunovCandidatePattern = Pattern.compile("V = (.+)");
+	                Pattern levelsetPattern = Pattern.compile("Optimized levelset size: (\\d+.?\\d*)");
+
+                        while ((line = reader.readLine()) != null) {
+                                //returnString = returnString + line + "\n";
+				// keep just the last line
+	
+                                if ( debug ) { 
+                                        System.out.println ("Matlab output: " + line);
+                                }
+
+				Matcher lyapunovCandidateMatcher = lyapunovCandidatePattern.matcher( line );
+                        	Matcher levelsetMatcher = levelsetPattern.matcher( line );
+
+                        	if ( lyapunovCandidateMatcher.find() ) { 
+                        	        lyapunovCandidate = lyapunovCandidateMatcher.group(1);
+
+                        	        lyapunovCandidate = lyapunovCandidate.replace("V = ", "");
+                        	        lyapunovCandidate = lyapunovCandidate.replace(">","");
+                        	}
+
+                        	if ( levelsetMatcher.find() ) { 
+                        	        levelset = Double.parseDouble(levelsetMatcher.group(1));
+                        	}
+
+                        }
+
+			System.out.println("Lyapunov candidate: " + lyapunovCandidate );
+	                System.out.println("Level: " + levelset );
+	                invariant = new ComparisonFormula(new Operator("<"),
+	                                                        (Term)dLStructure.parseStructure( lyapunovCandidate ),
+	                                                        new Real( levelset.toString() ) );
+	
+
+                } catch ( Exception e ) { 
+                        e.printStackTrace();
+                }
+
+                return invariant;
+	}
 
 }
 
