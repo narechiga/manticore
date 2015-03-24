@@ -95,6 +95,35 @@ public class TacticalEngine {
 
 			for ( dLFormula annotation : theseAnnotations ) {
 				if ( interpretation.evaluateFormula( annotation, endpoint ) ) {
+					
+				/* temporary adaptation, until matsimkit is modernized */
+				/* package things like x1^2 + x2^2 <= 1 as ball(x1,x2) <= 1 */
+				/**/
+				/**/ try {
+				/**/ 	NormTerm ball = NormTerm.parseNormTerm( ((ComparisonFormula)annotation).getLHS(), 2);
+				/**/ 	Real radius = ((Real) (((ComparisonFormula)annotation).getRHS()));
+
+				/**/ 	FunctionApplicationTerm ballLHS = new FunctionApplicationTerm(
+				/**/ 						new Operator("ball"),
+				/**/ 						ball.getTerms() );
+
+				/**/ 	annotation = new ComparisonFormula(
+				/**/ 				((ComparisonFormula)annotation).getInequality(),
+				/**/ 				ballLHS,
+				/**/ 				radius );
+				/**/ 						
+
+				/**/ } catch ( NormTermFormatException e ) {
+				/**/ 	// then it's not a normterm, move on
+				/**/ } catch ( Exception e ) {
+					System.out.println("Something awful happened!");
+					e.printStackTrace();
+				     }
+				/**/
+				/**/
+				/**/
+				/******************************************************/
+
 					annotationBinding.put(annotation, engine.activeContinuousBlock);
 					System.out.println("(...)Binding annotation: " + annotation.toKeYmaeraString() );
 					System.out.println("(...)To program: " + engine.activeContinuousBlock.toKeYmaeraString() );

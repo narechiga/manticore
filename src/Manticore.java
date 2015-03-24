@@ -33,8 +33,16 @@ class Manticore {
 				TacticalEngine ta = new TacticalEngine();
 				dLParser fileParser = ta.parseInput( args[0] );
 				HybridProgram program = fileParser.parsedStructure.extractFirstHybridProgram();
-				List<dLFormula> annots= fileParser.annotations;
-				dLFormula domain = annots.get(0);
+				List<dLFormula> annotations= fileParser.annotations;
+
+				/* experimental: inferring annotation bindings */
+				/**/ HashMap<dLFormula,ContinuousProgram> annotationPairings = ta.inferAnnotationPairings( program, annotations );
+				/**/ System.out.println("Pairings are:\n" + annotationPairings.toString() );
+				/**/
+				/**/ System.exit(1);
+				/* end annotation binding experiments */
+
+				dLFormula domain = annotations.get(0);
 
 				ProofGenerator proofGenerator = new ProofGenerator( args[0] );
 				

@@ -2,12 +2,11 @@
 
 use FindBin;
 
-$ENV{"MANTICORE2"} = "$FindBin::Bin";
+$ENV{"MANTICORE"} = "$FindBin::Bin";
 $ENV{"MATLABKIT"} = "manticore/matlabkit";
 $ENV{"SYMBOLICEXECUTION"} = "manticore/symbolicexecution";
 $ENV{"MATLABSAMPLINGKIT"} = "manticore/matlabsamplingkit";
 $ENV{"MATLABSIMULATIONKIT"} = "manticore/matlabsimulationkit";
-$ENV{"DL"} = "manticore/dl";
 $ENV{"PROTEUS"} = "/home/nikos/Programs/proteus";
 $ENV{"CLASSPATH"} = "/usr/share/java/junit4.jar";
 
